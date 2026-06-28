@@ -10,7 +10,6 @@ public_folder: "/images/uploads"
 
 site_url: https://muhammad-fiaz.github.io/awesome/
 display_url: https://muhammad-fiaz.github.io/awesome/
-base: /awesome/
 
 slug:
   encoding: "ascii"
