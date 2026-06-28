@@ -1,0 +1,292 @@
+---
+import PostLayout from '@/layouts/PostLayout.astro';
+import Prose from '@/components/common/Prose.astro';
+import { Icon } from 'astro-icon/components';
+import { BASE_PATH, OWNER, SITE_CONFIG } from '@/config/site';
+
+const headings = [
+  { depth: 2, slug: 'overview', text: 'Overview' },
+  { depth: 2, slug: 'decap-cms', text: 'Using Decap CMS' },
+  { depth: 3, slug: 'decap-step-1', text: 'Step 1: Access the CMS' },
+  { depth: 3, slug: 'decap-step-2', text: 'Step 2: Create a New Post' },
+  { depth: 3, slug: 'decap-step-3', text: 'Step 3: What Happens Next' },
+  { depth: 2, slug: 'manual', text: 'Manual Submission via GitHub' },
+  { depth: 3, slug: 'manual-step-1', text: 'Step 1: Fork the Repository' },
+  { depth: 3, slug: 'manual-step-2', text: 'Step 2: Create Your Post' },
+  { depth: 3, slug: 'manual-step-3', text: 'Step 3: Add Front Matter' },
+  { depth: 3, slug: 'manual-step-4', text: 'Step 4: Submit a Pull Request' },
+  { depth: 2, slug: 'frontmatter', text: 'Front Matter Reference' },
+  { depth: 3, slug: 'frontmatter-required', text: 'Required Fields' },
+  { depth: 3, slug: 'frontmatter-optional', text: 'Optional Fields' },
+  { depth: 2, slug: 'content-structure', text: 'Content Structure' },
+  { depth: 2, slug: 'tips', text: 'Tips & Best Practices' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'How to Publish a Post on Awesome',
+  description: 'Step-by-step guide to publishing developer resources on the Awesome platform using Decap CMS or manual submission.',
+  author: {
+    '@type': 'Person',
+    name: OWNER.name,
+    url: OWNER.portfolio,
+    sameAs: [
+      OWNER.github,
+      OWNER.twitter,
+      OWNER.linkedin,
+      OWNER.portfolio,
+    ],
+  },
+  publisher: {
+    '@type': 'Person',
+    name: OWNER.name,
+    url: OWNER.portfolio,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `${SITE_CONFIG.url}${BASE_PATH}/guide/`,
+  },
+  datePublished: '2025-01-01',
+  dateModified: new Date().toISOString().split('T')[0],
+  inLanguage: 'en',
+  keywords: 'developer resources, publishing guide, Decap CMS, GitHub, content management',
+};
+---
+
+<PostLayout
+  title="How to Publish a Post"
+  description="Step-by-step guide to publishing developer resources on the Awesome platform using Decap CMS or manual submission."
+  headings={headings}
+  keywords="publishing guide, Decap CMS, GitHub submission, developer resources, content management"
+>
+  <Fragment slot="head">
+    <meta property="article:author" content={OWNER.name} />
+    <meta property="article:published_time" content="2025-01-01" />
+    <meta property="article:modified_time" content={new Date().toISOString().split('T')[0]} />
+  </Fragment>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- Hero Header -->
+  <div class="px-6 pt-8 pb-6">
+    <div class="max-w-3xl mx-auto">
+      <div class="flex items-center gap-2 mb-4">
+        <a href={`${BASE_PATH}/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Guide</span>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-ds-on-surface tracking-tight mb-3">
+        How to Publish a Post
+      </h1>
+      <p class="text-ds-on-surface-variant text-lg leading-relaxed max-w-2xl">
+        This guide walks you through publishing developer resources on the Awesome platform.
+        You can use the visual editor (Decap CMS) or submit content manually via GitHub.
+      </p>
+      <div class="flex flex-wrap items-center gap-3 mt-4 text-sm text-ds-text-muted">
+        <span class="flex items-center gap-1.5">
+          <Icon name="mdi:account-outline" class="w-4 h-4" />
+          {OWNER.name}
+        </span>
+        <span>·</span>
+        <span>10 min read</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-6 pb-8">
+    <div class="max-w-3xl mx-auto">
+      <Prose>
+        <h2 id="overview">Overview</h2>
+        <p>
+          This guide walks you through publishing developer resources on the Awesome platform.
+          You can use the visual editor (Decap CMS) or submit content manually via GitHub.
+        </p>
+
+        <h2 id="decap-cms">Method 1: Using Decap CMS (Recommended)</h2>
+        <p>Decap CMS provides a visual editor for creating and managing content without touching code.</p>
+
+        <h3 id="decap-step-1">Step 1: Access the CMS</h3>
+        <ol>
+          <li>Navigate to <a href={`${BASE_PATH}/admin/`}>{BASE_PATH}/admin/</a></li>
+          <li>Click "Login with GitHub"</li>
+          <li>Authorize the application</li>
+        </ol>
+
+        <h3 id="decap-step-2">Step 2: Create a New Post</h3>
+        <ol>
+          <li>Click "Posts" in the left sidebar</li>
+          <li>Click "New Post" button</li>
+          <li>Fill in the required fields:
+            <ul>
+              <li><strong>Title</strong> - Your post title (minimum 5 characters)</li>
+              <li><strong>Description</strong> - SEO description (minimum 20 characters)</li>
+            </ul>
+          </li>
+          <li>Fill in optional fields as needed</li>
+          <li>Write your content in the Markdown editor</li>
+          <li>Click "Publish" when ready</li>
+        </ol>
+
+        <h3 id="decap-step-3">Step 3: What Happens Next</h3>
+        <p>
+          When you publish, Decap CMS creates a pull request on GitHub. Once merged to the main branch,
+          GitHub Actions automatically builds and deploys the site. Your post will be live within minutes.
+        </p>
+
+        <h2 id="manual">Method 2: Manual Submission via GitHub</h2>
+        <p>If you prefer working directly with files:</p>
+
+        <h3 id="manual-step-1">Step 1: Fork the Repository</h3>
+        <ol>
+          <li>Go to <a href="https://github.com/muhammad-fiaz/awesome" target="_blank" rel="noopener noreferrer">github.com/muhammad-fiaz/awesome</a></li>
+          <li>Click "Fork" to create your own copy</li>
+          <li>Clone your fork locally</li>
+        </ol>
+
+        <h3 id="manual-step-2">Step 2: Create Your Post</h3>
+        <p>Create a new Markdown file in the appropriate category folder:</p>
+        <pre><code>src/content/posts/your-category/your-post-slug.md</code></pre>
+
+        <h3 id="manual-step-3">Step 3: Add Front Matter and Content</h3>
+        <pre><code>---
+title: "Your Post Title"
+description: "A clear description of what this resource covers."
+authors: ["your-author-slug"]
+categories: ["your-category"]
+tags: ["tag1", "tag2"]
+thumbnail: "/images/posts/your-thumb.jpg"
+featured: false
+draft: false
+difficulty: "intermediate"
+license: "MIT"
+language: "English"
+links:
+  website: "https://example.com"
+  github: "https://github.com/org/repo"
+  downloadUrl: "https://example.com/download"
+references:
+  - "https://example.com/reference1"
+---
+
+# Your Post Title
+
+Write your content here using Markdown...</code></pre>
+
+        <h3 id="manual-step-4">Step 4: Submit a Pull Request</h3>
+        <ol>
+          <li>Commit your changes</li>
+          <li>Push to your fork</li>
+          <li>Open a Pull Request to the main repository</li>
+          <li>Wait for review and merge</li>
+        </ol>
+
+        <h2 id="frontmatter">Front Matter Reference</h2>
+
+        <h3 id="frontmatter-required">Required Fields</h3>
+        <div class="overflow-x-auto -mx-6 px-6">
+          <table>
+            <thead>
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>title</code></td><td>string</td><td>Post title (min 5 characters)</td></tr>
+              <tr><td><code>description</code></td><td>string</td><td>SEO description (min 20 characters)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="frontmatter-optional">Optional Fields</h3>
+        <div class="overflow-x-auto -mx-6 px-6">
+          <table>
+            <thead>
+              <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>summary</code></td><td>string</td><td>—</td><td>Short summary for cards and previews</td></tr>
+              <tr><td><code>authors</code></td><td>string[]</td><td><code>[]</code></td><td>Author slug(s) from <code>src/content/authors/</code></td></tr>
+              <tr><td><code>categories</code></td><td>string[]</td><td><code>[]</code></td><td>Category slug(s) from <code>src/content/categories/</code></td></tr>
+              <tr><td><code>tags</code></td><td>string[]</td><td><code>[]</code></td><td>Tag slug(s) from <code>src/content/tags/</code></td></tr>
+              <tr><td><code>keywords</code></td><td>string[]</td><td><code>[]</code></td><td>SEO keywords for search indexing</td></tr>
+              <tr><td><code>thumbnail</code></td><td>string</td><td>—</td><td>Thumbnail image path or URL</td></tr>
+              <tr><td><code>heroImage</code></td><td>string</td><td>—</td><td>Hero banner image path or URL</td></tr>
+              <tr><td><code>customOgImage</code></td><td>string</td><td>—</td><td>Custom Open Graph image for social sharing</td></tr>
+              <tr><td><code>featured</code></td><td>boolean</td><td><code>false</code></td><td>Show in featured section</td></tr>
+              <tr><td><code>draft</code></td><td>boolean</td><td><code>true</code></td><td>Keep as draft until ready</td></tr>
+              <tr><td><code>difficulty</code></td><td>enum</td><td>—</td><td><code>beginner</code>, <code>intermediate</code>, <code>advanced</code>, or <code>expert</code></td></tr>
+              <tr><td><code>links</code></td><td>object</td><td>—</td><td>External links (see below)</td></tr>
+              <tr><td><code>references</code></td><td>string[]</td><td><code>[]</code></td><td>Reference URLs cited in the post</td></tr>
+              <tr><td><code>license</code></td><td>string</td><td>—</td><td>License identifier (e.g. MIT, Apache-2.0)</td></tr>
+              <tr><td><code>language</code></td><td>string</td><td><code>English</code></td><td>Content language</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Links Object</h3>
+        <div class="overflow-x-auto -mx-6 px-6">
+          <table>
+            <thead>
+              <tr><th>Key</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>website</code></td><td>string</td><td>Official website URL</td></tr>
+              <tr><td><code>github</code></td><td>string</td><td>GitHub repository URL</td></tr>
+              <tr><td><code>documentation</code></td><td>string</td><td>Documentation URL</td></tr>
+              <tr><td><code>demo</code></td><td>string</td><td>Live demo URL</td></tr>
+              <tr><td><code>npm</code></td><td>string</td><td>npm package URL</td></tr>
+              <tr><td><code>crate</code></td><td>string</td><td>Rust crate URL</td></tr>
+              <tr><td><code>youtube</code></td><td>string</td><td>YouTube video URL</td></tr>
+              <tr><td><code>discord</code></td><td>string</td><td>Discord invite URL</td></tr>
+              <tr><td><code>downloadUrl</code></td><td>string</td><td>Download URL (file or page)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="content-structure">Content Structure</h2>
+        <pre><code>src/content/
+├── posts/
+│   ├── react/
+│   │   └── learn-react.md
+│   ├── rust/
+│   │   └── getting-started-with-rust.md
+│   └── astro/
+│       └── build-your-first-astro-site.md
+├── authors/
+│   └── muhammad-fiaz.md
+├── categories/
+│   ├── react.md
+│   ├── rust.md
+│   └── astro.md
+├── tags/
+│   ├── javascript.md
+│   ├── frontend.md
+│   └── systems-programming.md
+└── legal/
+    ├── privacy-policy.md
+    └── terms-of-service.md</code></pre>
+
+        <h2 id="tips">Tips &amp; Best Practices</h2>
+        <ul>
+          <li><strong>Write clear titles:</strong> Make your title descriptive and specific</li>
+          <li><strong>Add a good description:</strong> This appears in search results and social shares</li>
+          <li><strong>Use relevant tags:</strong> Help readers find your content through multiple paths</li>
+          <li><strong>Set difficulty level:</strong> Helps readers find content appropriate for their skill level</li>
+          <li><strong>Add thumbnails:</strong> Visual content gets more engagement</li>
+          <li><strong>Start with drafts:</strong> Keep <code>draft: true</code> until your post is polished</li>
+          <li><strong>Link to sources:</strong> Reference official documentation and original projects</li>
+          <li><strong>Add download links:</strong> If your resource has releases, add a <code>downloadUrl</code> pointing to the file or page</li>
+          <li><strong>Use Markdown features:</strong> Code blocks, tables, and lists make content scannable</li>
+        </ul>
+
+        <h3>Need Help?</h3>
+        <p>
+          If you have questions about publishing, reach out via:
+        </p>
+        <ul>
+          <li><a href={`${OWNER.github}`} target="_blank" rel="noopener noreferrer">GitHub Issues</a></li>
+          <li><a href={`mailto:${OWNER.email}`}>{OWNER.email}</a></li>
+        </ul>
+      </Prose>
+    </div>
+  </div>
+</PostLayout>

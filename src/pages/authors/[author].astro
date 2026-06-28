@@ -1,0 +1,250 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import Prose from '@/components/common/Prose.astro';
+import { Icon } from 'astro-icon/components';
+import { render } from 'astro:content';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+import {
+  getAllAuthors,
+  getPostReadingTime,
+  getPostsByAuthor,
+} from '@/lib/posts';
+
+export async function getStaticPaths() {
+  const authors = await getAllAuthors();
+  return authors.map((author) => ({
+    params: { author: author.id.replace(/\.md$/, '') },
+    props: { author },
+  }));
+}
+
+const { author } = Astro.props;
+const slug = author.id.replace(/\.md$/, '');
+const posts = await getPostsByAuthor(slug);
+const { Content } = await render(author);
+
+const postItems = posts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+interface Social {
+  key: string;
+  icon: string;
+  href: string | undefined;
+  label: string;
+}
+
+const socials: Social[] = [
+  {
+    key: 'github',
+    icon: 'mdi:github',
+    href: author.data.github,
+    label: 'GitHub',
+  },
+  {
+    key: 'twitter',
+    icon: 'mdi:twitter',
+    href: author.data.twitter,
+    label: 'Twitter / X',
+  },
+  {
+    key: 'linkedin',
+    icon: 'mdi:linkedin',
+    href: author.data.linkedin,
+    label: 'LinkedIn',
+  },
+  {
+    key: 'website',
+    icon: 'mdi:earth',
+    href: author.data.website,
+    label: 'Website',
+  },
+  {
+    key: 'sponsor',
+    icon: 'mdi:heart',
+    href: author.data.sponsor,
+    label: 'Sponsor',
+  },
+].filter(
+  (s): s is Social & { href: string } =>
+    typeof s.href === 'string' && s.href.trim().length > 0,
+);
+
+const authorJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: author.data.name,
+  description: author.data.bio,
+  image: author.data.avatar,
+  url: author.data.website || author.data.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${slug}/`,
+  jobTitle: author.data.title,
+  address: author.data.location ? {
+    '@type': 'PostalAddress',
+    addressLocality: author.data.location,
+  } : undefined,
+  sameAs: [
+    author.data.github,
+    author.data.twitter,
+    author.data.linkedin,
+    author.data.website,
+    author.data.portfolio,
+  ].filter(Boolean),
+  worksFor: {
+    '@type': 'Organization',
+    name: SITE_CONFIG.name,
+  },
+};
+---
+
+<AppShell
+  title={author.data.name}
+  description={author.data.bio ?? `Posts by ${author.data.name}`}
+  ogImage={author.data.avatar}
+  keywords={`${author.data.name}, ${author.data.title ?? 'author'}, developer, contributor`}
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(authorJsonLd)} />
+  </Fragment>
+  <div class="px-4 md:px-6 pb-16">
+      <div class="max-w-320 mx-auto">
+
+      <!-- Back link -->
+      <a href={`${BASE_PATH}/authors/`} class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface mb-6 pt-4">
+        <Icon name="mdi:arrow-left" class="w-4 h-4" />
+        All Authors
+      </a>
+
+      <!-- Author Hero Card -->
+      <div class="card-ds p-6 md:p-8 mb-10">
+        <div class="flex flex-col sm:flex-row items-start gap-6">
+
+          <!-- Avatar -->
+          <div class="shrink-0">
+            {author.data.avatar ? (
+              <img
+                src={author.data.avatar}
+                alt={author.data.name}
+                class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card"
+                crossorigin="anonymous"
+              />
+            ) : (
+              <div class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-3xl font-bold ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card">
+                {author.data.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-ds-on-surface leading-tight">
+                  {author.data.name}
+                </h1>
+                {author.data.title && (
+                  <p class="text-ds-secondary font-medium mt-0.5 text-base">
+                    {author.data.title}
+                  </p>
+                )}
+                {author.data.location && (
+                  <p class="text-sm text-ds-text-muted mt-1 flex items-center gap-1">
+                    <Icon name="mdi:map-marker-outline" class="w-3.5 h-3.5" />
+                    {author.data.location}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {author.data.bio && (
+              <p class="text-sm md:text-base text-ds-on-surface-variant mt-4 max-w-2xl leading-relaxed">
+                {author.data.bio}
+              </p>
+            )}
+
+            <!-- Socials -->
+            {socials.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-5">
+                {socials.map((social) => (
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={social.label}
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm border border-ds-outline-variant text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-on-surface hover:bg-ds-surface-high transition-all duration-150"
+                  >
+                    <Icon name={social.icon} class="w-4 h-4" aria-hidden="true" />
+                    <span class="hidden sm:inline">{social.label}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Posts feed -->
+        <div class="lg:col-span-2 space-y-6">
+          {/* Author bio content if any */}
+          {author.body && author.body.trim() && (
+            <div class="card-ds p-6">
+              <h2 class="text-lg font-semibold text-ds-on-surface mb-4 flex items-center gap-2">
+                <Icon name="mdi:check-circle" class="w-4.5 h-4.5 text-ds-primary" />
+                About
+              </h2>
+              <Prose>
+                <Content />
+              </Prose>
+            </div>
+          )}
+
+          <div>
+            <h2 class="text-xl font-semibold text-ds-on-surface mb-5 flex items-center gap-2">
+              <Icon name="mdi:file-document-outline" class="w-5 h-5 text-ds-secondary" />
+              Posts by {author.data.name}
+            </h2>
+
+            {postItems.length === 0 ? (
+              <div class="card-ds p-10 text-center text-ds-text-muted">
+                <Icon name="mdi:file-document-outline" class="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <p>No posts yet by this author.</p>
+              </div>
+            ) : (
+              <PostsFeed client:load posts={postItems} />
+            )}
+          </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div class="space-y-6">
+          <!-- Categories covered -->
+          {[...new Set(postItems.flatMap(p => p.categories))].length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Categories</h3>
+              <div class="flex flex-wrap gap-2">
+                {[...new Set(postItems.flatMap(p => p.categories))].map(cat => (
+                  <a
+                    href={`${BASE_PATH}/categories/${cat}/`}
+                    class="tag-ds"
+                  >
+                    {cat}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>

@@ -1,0 +1,145 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { HeroStats } from '@/components/home/HeroStats';
+import { FeaturedBento } from '@/components/home/FeaturedBento';
+import { TrendingFeed } from '@/components/home/TrendingFeed';
+import { CategoryCloud } from '@/components/home/CategoryCloud';
+import { TagCloud } from '@/components/home/TagCloud';
+import { AuthorList } from '@/components/home/AuthorList';
+import { SponsorBanner } from '@/components/home/SponsorBanner';
+import {
+  getAllAuthors,
+  getAllCategories,
+  getAllPosts,
+  getAllTags,
+  getFeaturedPosts,
+  getPostReadingTime,
+  getPostStats,
+} from '@/lib/posts';
+import { SITE_CONFIG, BASE_PATH } from '@/config/site';
+
+// Fetch all data
+const [featuredPosts, allPosts, categories, tags, authors, stats] =
+  await Promise.all([
+    getFeaturedPosts(),
+    getAllPosts(),
+    getAllCategories(),
+    getAllTags(),
+    getAllAuthors(),
+    getPostStats(),
+  ]);
+
+// Map to component-friendly shapes
+const featuredForBento = featuredPosts.slice(0, 3).map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const trendingPosts = allPosts.slice(0, 6).map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const categoryItems = categories
+  .map((c) => ({
+    slug: c.id.replace(/\.md$/, ''),
+    title: c.data.title,
+    count: allPosts.filter((p) =>
+      p.data.categories.includes(c.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .filter((c) => c.count > 0)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+const tagItems = tags
+  .map((t) => ({
+    slug: t.id.replace(/\.md$/, ''),
+    title: t.data.title,
+    count: allPosts.filter((p) =>
+      p.data.tags.includes(t.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .filter((t) => t.count > 0)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+// Top 5 authors by post count (not just featured)
+const authorItems = authors
+  .map((a) => ({
+    slug: a.id.replace(/\.md$/, ''),
+    name: a.data.name,
+    title: a.data.title,
+    avatar: a.data.avatar,
+    postCount: allPosts.filter((p) =>
+      p.data.authors.includes(a.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .sort((a, b) => b.postCount - a.postCount)
+  .slice(0, 5);
+---
+
+<AppShell
+  title="Curated Developer Resources and Tools"
+  description={SITE_CONFIG.description}
+>
+  <!-- Hero Stats -->
+  <HeroStats client:load stats={stats} />
+
+  <!-- Featured Bento -->
+  {featuredForBento.length > 0 && (
+    <FeaturedBento client:load posts={featuredForBento} />
+  )}
+
+  <!-- Main content + Right sidebar area -->
+  <div class="px-6 pb-12">
+    <div class="max-w-320 mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <!-- Trending Feed -->
+        <div class="lg:col-span-2 space-y-10">
+          <TrendingFeed
+            client:load
+            posts={trendingPosts}
+            title="Latest Posts"
+            icon="schedule"
+            viewAllHref={`${BASE_PATH}/posts/`}
+          />
+        </div>
+
+        <!-- Sidebar content -->
+        <div class="space-y-10">
+          <div>
+            <CategoryCloud client:load categories={categoryItems} />
+          </div>
+          <div>
+            <AuthorList client:load authors={authorItems} />
+          </div>
+          <div>
+            <SponsorBanner client:load />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tag cloud -->
+      <div class="mt-12 pt-8 border-t border-ds-outline-variant">
+        <TagCloud client:load tags={tagItems} />
+      </div>
+    </div>
+  </div>
+</AppShell>

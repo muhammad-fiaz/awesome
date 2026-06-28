@@ -1,0 +1,70 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SITE_CONFIG, OWNER, BASE_PATH } from '@/config/site';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
+import { SidebarToggle } from '@/components/layout/SidebarToggle';
+import { SearchTrigger } from '@/components/layout/SearchTrigger';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '' } = Astro.props;
+---
+
+<header
+  id="top-navbar"
+  class="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-4 md:px-6 bg-ds-surface-low/95 border-b border-ds-outline-variant backdrop-blur-md"
+>
+  <div class="flex items-center gap-2">
+    <SidebarToggle client:load mobile={true} />
+    <a
+      href={`${BASE_PATH}/`}
+      class="flex items-center gap-2.5 group"
+      aria-label={SITE_CONFIG.name}
+    >
+      <img
+        src="/awesome/logo.png"
+        alt={SITE_CONFIG.name}
+        width={28}
+        height={28}
+        class="rounded-md"
+        loading="eager"
+      />
+      <span class="font-bold text-xl text-ds-on-surface tracking-tight group-hover:text-ds-primary transition-colors">
+        {SITE_CONFIG.name}
+      </span>
+    </a>
+  </div>
+
+  <div class="hidden md:flex flex-1 max-w-sm mx-6">
+    <SearchTrigger client:load />
+  </div>
+
+  <div class="flex items-center gap-1">
+    <SearchTrigger client:load mobile={true} />
+
+    <ThemeToggle client:load />
+
+    <a
+      href={OWNER.github}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="GitHub"
+      class="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-ds-outline-variant text-ds-on-surface-variant hover:bg-ds-surface-high transition-colors"
+    >
+      <Icon name="mdi:github" class="w-4 h-4" />
+      <span>GitHub</span>
+    </a>
+
+    <a
+      href={OWNER.sponsor}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Sponsor"
+      class="px-3 py-1.5 text-sm font-bold rounded-lg bg-ds-primary-container text-ds-on-primary-container hover:opacity-90 transition-opacity"
+    >
+      Sponsor
+    </a>
+  </div>
+</header>

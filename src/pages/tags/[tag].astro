@@ -1,0 +1,87 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import { Icon } from 'astro-icon/components';
+import { getAllTags, getPostReadingTime, getPostsByTag } from '@/lib/posts';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({
+    params: { tag: tag.id.replace(/\.md$/, '') },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const slug = tag.id.replace(/\.md$/, '');
+const posts = await getPostsByTag(slug);
+
+const postItems = posts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `#${tag.data.title}`,
+  description: tag.data.description ?? `Resources tagged with ${tag.data.title}`,
+  url: `${Astro.url.origin}${BASE_PATH}/tags/${slug}/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${BASE_PATH}/` },
+      { '@type': 'ListItem', position: 2, name: 'Tags', item: `${Astro.url.origin}${BASE_PATH}/tags/` },
+      { '@type': 'ListItem', position: 3, name: tag.data.title },
+    ],
+  },
+};
+---
+
+<AppShell
+  title={`${tag.data.title} Tag`}
+  description={tag.data.description ?? `Resources tagged with ${tag.data.title}`}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      <a href={`${BASE_PATH}/tags/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface mb-4 flex items-center gap-1">
+        <Icon name="mdi:arrow-left" class="w-4 h-4" />
+        All Tags
+      </a>
+
+      <div class="mb-8">
+        <span class="inline-block font-mono text-3xl font-bold text-ds-primary mb-2">
+          #{tag.data.title}
+        </span>
+        {tag.data.description && (
+          <p class="text-ds-on-surface-variant">{tag.data.description}</p>
+        )}
+      </div>
+
+      {postItems.length === 0 ? (
+        <div class="text-center py-16 text-ds-text-muted">
+          <Icon name="mdi:tag-outline" class="w-12 h-12 mx-auto mb-3 opacity-50" />
+          <p class="text-base font-semibold text-ds-on-surface mb-1">No posts yet</p>
+          <p class="text-sm">No posts with this tag yet. Check back later.</p>
+        </div>
+      ) : (
+        <PostsFeed client:load posts={postItems} />
+      )}
+    </div>
+  </div>
+</AppShell>

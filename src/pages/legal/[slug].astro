@@ -1,0 +1,70 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import Prose from '@/components/common/Prose.astro';
+import { getCollection, render } from 'astro:content';
+import { BASE_PATH } from '@/config/site';
+
+export async function getStaticPaths() {
+  const legalPages = await getCollection('legal');
+  return legalPages.map((page) => ({
+    params: { slug: page.id.replace(/\.md$/, '') },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const { Content, headings } = await render(page);
+
+const allLegal = await getCollection('legal');
+const legalLinks = allLegal.map((p) => ({
+  slug: p.id.replace(/\.md$/, ''),
+  title: p.data.title,
+}));
+---
+
+<AppShell
+  title={page.data.title}
+  description={page.data.description ?? page.data.title}
+  keywords="privacy policy, terms of service, cookie policy, refund policy, legal"
+>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: page.data.title,
+      description: page.data.description ?? page.data.title,
+      url: `https://muhammad-fiaz.github.io/awesome/legal/${page.id.replace(/\.md$/, '')}/`,
+    })} />
+  </Fragment>
+  <div class="px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      <div class="flex flex-col lg:flex-row gap-10">
+
+        <!-- Sidebar: legal page links -->
+        <aside class="lg:w-52 shrink-0">
+          <h2 class="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">Legal</h2>
+          <nav class="space-y-1">
+            {legalLinks.map((link) => (
+              <a
+                href={`${BASE_PATH}/legal/${link.slug}/`}
+                class={`block px-3 py-2 rounded-lg text-sm transition-colors ${page.id.replace(/\.md$/, '') === link.slug ? 'bg-ds-primary-container text-ds-on-primary-container font-medium' : 'text-ds-on-surface-variant hover:bg-ds-surface-high hover:text-ds-on-surface'}`}
+              >
+                {link.title}
+              </a>
+            ))}
+          </nav>
+        </aside>
+
+        <!-- Content -->
+        <article class="flex-1 min-w-0">
+          <h1 class="text-3xl font-bold text-ds-on-surface mb-6">{page.data.title}</h1>
+          <Prose>
+            <Content />
+          </Prose>
+        </article>
+      </div>
+    </div>
+  </div>
+</AppShell>

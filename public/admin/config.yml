@@ -1,0 +1,288 @@
+backend:
+  name: github
+  repo: muhammad-fiaz/awesome
+  branch: main
+  base_url: https://decap-oauth.netlify.app
+  auth_type: pkce
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+site_url: https://muhammad-fiaz.github.io/awesome/
+display_url: https://muhammad-fiaz.github.io/awesome/
+base: /awesome/
+
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "_"
+
+collections:
+  - name: "posts"
+    label: "Posts"
+    label_singular: "Post"
+    folder: "src/content/posts"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        pattern: ['.{5,}', "Must have at least 5 characters"]
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        pattern: ['.{20,}', "Must have at least 20 characters"]
+      - label: "Summary"
+        name: "summary"
+        widget: "text"
+        required: false
+        hint: "Short summary for cards and previews"
+      - label: "Thumbnail"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+        media_folder: "public/images/posts"
+        public_folder: "/images/posts"
+      - label: "Hero Image"
+        name: "heroImage"
+        widget: "image"
+        required: false
+        media_folder: "public/images/posts"
+        public_folder: "/images/posts"
+      - label: "Custom OG Image"
+        name: "customOgImage"
+        widget: "image"
+        required: false
+        media_folder: "public/images/posts"
+        public_folder: "/images/posts"
+      - label: "Featured"
+        name: "featured"
+        widget: "boolean"
+        default: false
+      - label: "Draft"
+        name: "draft"
+        widget: "boolean"
+        default: true
+      - label: "Difficulty"
+        name: "difficulty"
+        widget: "select"
+        required: false
+        options:
+          - { label: "Beginner", value: "beginner" }
+          - { label: "Intermediate", value: "intermediate" }
+          - { label: "Advanced", value: "advanced" }
+          - { label: "Expert", value: "expert" }
+      - label: "Categories"
+        name: "categories"
+        widget: "list"
+        allow_add: true
+        hint: "Add one or more categories. Must match existing category file names."
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        allow_add: true
+        hint: "Add one or more tags. Must match existing tag file names."
+      - label: "Authors"
+        name: "authors"
+        widget: "list"
+        allow_add: true
+        hint: "Add one or more author slugs. Must match existing author file names."
+      - label: "Keywords"
+        name: "keywords"
+        widget: "list"
+        required: false
+        hint: "SEO keywords for search indexing"
+      - label: "Links"
+        name: "links"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Website", name: "website", widget: "string", required: false }
+          - { label: "GitHub", name: "github", widget: "string", required: false }
+          - { label: "Documentation", name: "documentation", widget: "string", required: false }
+          - { label: "Demo", name: "demo", widget: "string", required: false }
+          - { label: "NPM", name: "npm", widget: "string", required: false }
+          - { label: "Crate", name: "crate", widget: "string", required: false }
+          - { label: "YouTube", name: "youtube", widget: "string", required: false }
+          - { label: "Discord", name: "discord", widget: "string", required: false }
+          - { label: "Download URL", name: "downloadUrl", widget: "string", required: false, hint: "Direct file download or download page URL" }
+      - label: "References"
+        name: "references"
+        widget: "list"
+        required: false
+        hint: "Reference URLs cited in the post"
+      - label: "License"
+        name: "license"
+        widget: "string"
+        required: false
+        hint: "e.g. MIT, Apache-2.0"
+      - label: "Language"
+        name: "language"
+        widget: "select"
+        default: "English"
+        options:
+          - { label: "English", value: "English" }
+          - { label: "Spanish", value: "Spanish" }
+          - { label: "French", value: "French" }
+          - { label: "German", value: "German" }
+          - { label: "Japanese", value: "Japanese" }
+          - { label: "Chinese", value: "Chinese" }
+          - { label: "Other", value: "Other" }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+
+  - name: "authors"
+    label: "Authors"
+    label_singular: "Author"
+    folder: "src/content/authors"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{name}}"
+    fields:
+      - label: "Name"
+        name: "name"
+        widget: "string"
+      - label: "Avatar"
+        name: "avatar"
+        widget: "image"
+        required: false
+        media_folder: "public/images/authors"
+        public_folder: "/images/authors"
+      - label: "Bio"
+        name: "bio"
+        widget: "text"
+        required: false
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        required: false
+      - label: "Location"
+        name: "location"
+        widget: "string"
+        required: false
+      - label: "Website"
+        name: "website"
+        widget: "string"
+        required: false
+      - label: "GitHub"
+        name: "github"
+        widget: "string"
+        required: false
+      - label: "Twitter"
+        name: "twitter"
+        widget: "string"
+        required: false
+      - label: "LinkedIn"
+        name: "linkedin"
+        widget: "string"
+        required: false
+      - label: "Portfolio"
+        name: "portfolio"
+        widget: "string"
+        required: false
+      - label: "Sponsor"
+        name: "sponsor"
+        widget: "string"
+        required: false
+      - label: "Support"
+        name: "support"
+        widget: "string"
+        required: false
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        required: false
+
+  - name: "categories"
+    label: "Categories"
+    label_singular: "Category"
+    folder: "src/content/categories"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        required: false
+      - label: "Thumbnail"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+        media_folder: "public/images/categories"
+        public_folder: "/images/categories"
+      - label: "Hero Image"
+        name: "heroImage"
+        widget: "image"
+        required: false
+        media_folder: "public/images/categories"
+        public_folder: "/images/categories"
+      - label: "Custom OG Image"
+        name: "customOgImage"
+        widget: "image"
+        required: false
+        media_folder: "public/images/categories"
+        public_folder: "/images/categories"
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        required: false
+
+  - name: "tags"
+    label: "Tags"
+    label_singular: "Tag"
+    folder: "src/content/tags"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        required: false
+      - label: "Thumbnail"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+        media_folder: "public/images/tags"
+        public_folder: "/images/tags"
+      - label: "Custom OG Image"
+        name: "customOgImage"
+        widget: "image"
+        required: false
+        media_folder: "public/images/tags"
+        public_folder: "/images/tags"
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        required: false
+
+  - name: "legal"
+    label: "Legal Pages"
+    label_singular: "Legal Page"
+    folder: "src/content/legal"
+    create: false
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        required: false
+      - label: "Body"
+        name: "body"
+        widget: "markdown"

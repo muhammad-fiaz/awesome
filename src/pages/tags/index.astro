@@ -1,0 +1,56 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { TagsFeed } from '@/components/listing/TagsFeed';
+import { getAllPosts, getAllTags } from '@/lib/posts';
+import { SITE_CONFIG } from '@/config/site';
+
+const tags = await getAllTags();
+const allPosts = await getAllPosts();
+
+const tagItems = tags.map((t) => ({
+  slug: t.id.replace(/\.md$/, ''),
+  title: t.data.title,
+  count: allPosts.filter((p) => p.data.tags.includes(t.id.replace(/\.md$/, '')))
+    .length,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Browse Tags',
+  description: 'Browse all tags across developer resources, tutorials, and tools.',
+  url: `${Astro.url.origin}${SITE_CONFIG.basePath}/tags/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${SITE_CONFIG.basePath}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${SITE_CONFIG.basePath}/` },
+      { '@type': 'ListItem', position: 2, name: 'Tags' },
+    ],
+  },
+};
+---
+
+<AppShell title="Browse Tags" description="Browse all tags across developer resources, tutorials, and tools." keywords="developer tags, programming topics, technology categories, filter by tag">
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      <div class="mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-ds-on-surface mb-2">Tags</h1>
+        <p class="text-ds-on-surface-variant text-lg">
+          Browse all tags across developer resources.
+        </p>
+      </div>
+
+      <TagsFeed client:load tags={tagItems} />
+    </div>
+  </div>
+</AppShell>

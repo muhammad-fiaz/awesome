@@ -1,0 +1,97 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import { Icon } from 'astro-icon/components';
+import {
+  getAllCategories,
+  getPostReadingTime,
+  getPostsByCategory,
+} from '@/lib/posts';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+  return categories.map((cat) => ({
+    params: { category: cat.id.replace(/\.md$/, '') },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const slug = category.id.replace(/\.md$/, '');
+const posts = await getPostsByCategory(slug);
+
+const postItems = posts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: category.data.title,
+  description: category.data.description ?? `Resources in ${category.data.title}`,
+  url: `${Astro.url.origin}${BASE_PATH}/categories/${slug}/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${BASE_PATH}/` },
+      { '@type': 'ListItem', position: 2, name: 'Categories', item: `${Astro.url.origin}${BASE_PATH}/categories/` },
+      { '@type': 'ListItem', position: 3, name: category.data.title },
+    ],
+  },
+};
+---
+
+<AppShell
+  title={category.data.title}
+  description={category.data.description ?? `Resources in ${category.data.title}`}
+  ogImage={category.data.customOgImage}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      <!-- Hero -->
+      {category.data.heroImage && (
+        <div class="relative h-40 rounded-xl overflow-hidden mb-6">
+          <img src={category.data.heroImage} alt={category.data.title} class="w-full h-full object-cover opacity-60" />
+          <div class="absolute inset-0 bg-linear-to-t from-background to-transparent" />
+        </div>
+      )}
+
+      <div class="mb-8">
+        <a href={`${BASE_PATH}/categories/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface mb-3 flex items-center gap-1">
+          <Icon name="mdi:arrow-left" class="w-4 h-4" />
+          Categories
+        </a>
+        <h1 class="text-3xl font-bold text-ds-on-surface mb-2">{category.data.title}</h1>
+        {category.data.description && (
+          <p class="text-ds-on-surface-variant">{category.data.description}</p>
+        )}
+      </div>
+
+      {postItems.length === 0 ? (
+        <div class="text-center py-16 text-ds-text-muted">
+          <Icon name="mdi:folder-open-outline" class="w-12 h-12 mx-auto mb-3 opacity-50" />
+          <p class="text-base font-semibold text-ds-on-surface mb-1">No posts yet</p>
+          <p class="text-sm">No posts in this category yet. Check back later.</p>
+        </div>
+      ) : (
+        <PostsFeed client:load posts={postItems} />
+      )}
+    </div>
+  </div>
+</AppShell>

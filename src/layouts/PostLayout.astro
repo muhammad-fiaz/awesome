@@ -1,0 +1,49 @@
+---
+import AppShell from './AppShell.astro';
+import { RightSidebar } from '@/components/layout/RightSidebar';
+import { buildToc } from '@/lib/toc';
+import type { TocItem } from '@/types';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  headings?: Array<{ depth: number; slug: string; text: string }>;
+  postLinks?: Record<string, string | undefined>;
+  relatedLinks?: Array<{ label: string; href: string; external?: boolean }>;
+  keywords?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  headings = [],
+  postLinks = {},
+  relatedLinks = [],
+  keywords,
+} = Astro.props;
+
+const toc: TocItem[] = buildToc(headings);
+---
+
+<AppShell title={title} description={description} ogImage={ogImage} keywords={keywords}>
+  <Fragment slot="head">
+    <meta property="og:type" content="article" />
+    <slot name="head" />
+  </Fragment>
+  <div class="flex">
+    <!-- Post body -->
+    <article class="flex-1 min-w-0">
+      <slot />
+    </article>
+
+    <!-- Right sidebar: TOC + links -->
+    <RightSidebar
+      client:load
+      toc={toc}
+      postLinks={postLinks}
+      relatedLinks={relatedLinks}
+    />
+  </div>
+</AppShell>

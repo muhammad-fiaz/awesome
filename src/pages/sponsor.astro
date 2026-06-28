@@ -1,0 +1,56 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { SponsorBanner } from '@/components/home/SponsorBanner';
+import { OWNER } from '@/config/site';
+import { Icon } from 'astro-icon/components';
+---
+
+<AppShell title="Sponsor Awesome | Support Open Source" description="Support the Awesome Dev Platform and keep it free for everyone." keywords="sponsor, support open source, donate, GitHub Sponsors, funding">
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Sponsor Awesome',
+      description: 'Support the Awesome Dev Platform and keep it free for everyone.',
+      url: 'https://muhammad-fiaz.github.io/awesome/sponsor/',
+    })} />
+  </Fragment>
+  <div class="px-6 py-12">
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-10">
+        <Icon name="mdi:heart" class="text-5xl text-ds-primary mb-4 block" />
+        <h1 class="text-3xl font-bold text-ds-on-surface mb-3">Support Awesome</h1>
+        <p class="text-ds-on-surface-variant text-lg">
+          Awesome is a free, open-source platform. Your sponsorship helps keep it running and growing for the developer community.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 mb-10">
+        <a
+          href={OWNER.sponsor}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-ds p-6 text-center hover:no-underline group"
+        >
+          <Icon name="mdi:code-tags" class="text-3xl text-ds-primary mb-2 block" />
+          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">GitHub Sponsors</h2>
+          <p class="text-sm text-ds-on-surface-variant">Support monthly via GitHub Sponsors</p>
+        </a>
+        <a
+          href={OWNER.support}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-ds p-6 text-center hover:no-underline group"
+        >
+          <span class="text-3xl mb-2 block">☕</span>
+          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">Buy Me a Coffee</h2>
+          <p class="text-sm text-ds-on-surface-variant">One-time support on the support page</p>
+        </a>
+      </div>
+
+      <SponsorBanner client:load />
+    </div>
+  </div>
+</AppShell>

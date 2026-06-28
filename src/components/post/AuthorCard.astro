@@ -1,0 +1,113 @@
+---
+import { Icon } from 'astro-icon/components';
+import { BASE_PATH } from '@/config/site';
+import { getInitials } from '@/lib/utils';
+
+export interface AuthorInfo {
+  slug: string;
+  name: string;
+  title?: string;
+  avatar?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  github?: string;
+  twitter?: string;
+  linkedin?: string;
+  portfolio?: string;
+  sponsor?: string;
+  support?: string;
+}
+
+interface Props {
+  authors: AuthorInfo[];
+}
+
+const { authors } = Astro.props;
+
+function getSocialLinks(author: AuthorInfo) {
+  const links: { key: string; icon: string; href: string; label: string }[] = [];
+  if (author.website) links.push({ key: 'website', icon: 'mdi:earth', href: author.website, label: 'Website' });
+  if (author.github) links.push({ key: 'github', icon: 'mdi:github', href: author.github, label: 'GitHub' });
+  if (author.twitter) links.push({ key: 'twitter', icon: 'mdi:twitter', href: author.twitter, label: 'Twitter / X' });
+  if (author.linkedin) links.push({ key: 'linkedin', icon: 'mdi:linkedin', href: author.linkedin, label: 'LinkedIn' });
+  if (author.sponsor) links.push({ key: 'sponsor', icon: 'mdi:heart', href: author.sponsor, label: 'Sponsor' });
+  if (author.support) links.push({ key: 'support', icon: 'mdi:hand-heart', href: author.support, label: 'Support' });
+  return links;
+}
+---
+
+{authors.length > 0 && (
+  <div class="mt-10 pt-6 border-t border-ds-outline-variant">
+    <h2 class="text-lg font-semibold text-ds-on-surface mb-4">
+      {authors.length === 1 ? 'About the Author' : 'About the Authors'}
+    </h2>
+    <div class="space-y-4">
+      {authors.map((author) => {
+        const socialLinks = getSocialLinks(author);
+        return (
+          <div class="card-ds p-5">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
+              {/* Avatar */}
+              <a href={`${BASE_PATH}/authors/${author.slug}/`} class="shrink-0">
+                {author.avatar ? (
+                  <img
+                    src={author.avatar}
+                    alt={author.name}
+                    class="w-16 h-16 rounded-full object-cover ring-2 ring-ds-outline-variant hover:ring-ds-primary transition-all"
+                    loading="lazy"
+                    crossorigin="anonymous"
+                  />
+                ) : (
+                  <div class="w-16 h-16 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-lg font-bold ring-2 ring-ds-outline-variant">
+                    {getInitials(author.name)}
+                  </div>
+                )}
+              </a>
+
+              {/* Info */}
+              <div class="flex-1 min-w-0">
+                <a
+                  href={`${BASE_PATH}/authors/${author.slug}/`}
+                  class="group"
+                >
+                  <h3 class="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
+                    {author.name}
+                  </h3>
+                </a>
+                {author.title && (
+                  <p class="text-xs text-ds-on-surface-variant mt-0.5">
+                    {author.title}
+                  </p>
+                )}
+                {author.bio && (
+                  <p class="text-sm text-ds-text-muted mt-2 leading-relaxed line-clamp-3">
+                    {author.bio}
+                  </p>
+                )}
+
+                {/* Social links */}
+                {socialLinks.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mt-3">
+                    {socialLinks.map((link) => (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={link.label}
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-ds-outline-variant text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-on-surface hover:bg-ds-surface-high transition-all duration-150"
+                      >
+                        <Icon name={link.icon} class="w-3.5 h-3.5" />
+                        <span class="hidden sm:inline">{link.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}

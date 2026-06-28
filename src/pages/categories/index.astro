@@ -1,0 +1,54 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { CategoriesFeed } from '@/components/listing/CategoriesFeed';
+import { getAllCategories } from '@/lib/posts';
+import { SITE_CONFIG } from '@/config/site';
+
+const categories = await getAllCategories();
+
+const categoryItems = categories.map((c) => ({
+  slug: c.id.replace(/\.md$/, ''),
+  title: c.data.title,
+  description: c.data.description,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Browse Categories',
+  description: 'Browse all categories of developer resources, tutorials, and tools.',
+  url: `${Astro.url.origin}${SITE_CONFIG.basePath}/categories/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${SITE_CONFIG.basePath}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${SITE_CONFIG.basePath}/` },
+      { '@type': 'ListItem', position: 2, name: 'Categories' },
+    ],
+  },
+};
+---
+
+<AppShell title="Browse Categories" description="Browse all categories of developer resources, tutorials, and tools." keywords="developer categories, programming topics, technology topics, browse by category">
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      <div class="mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-ds-on-surface mb-2">Categories</h1>
+        <p class="text-ds-on-surface-variant text-lg">
+          Browse all categories of developer resources.
+        </p>
+      </div>
+
+      <CategoriesFeed client:load categories={categoryItems} />
+    </div>
+  </div>
+</AppShell>

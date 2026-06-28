@@ -1,0 +1,159 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { PostsFeed } from '@/components/post/PostsFeed';
+import { Icon } from 'astro-icon/components';
+import { getAllCategories, getAllPosts, getPostReadingTime } from '@/lib/posts';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+
+const allPosts = await getAllPosts();
+const categories = await getAllCategories();
+
+const posts = allPosts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const categoryItems = categories
+  .map((c) => ({
+    slug: c.id.replace(/\.md$/, ''),
+    title: c.data.title,
+    count: allPosts.filter((p) =>
+      p.data.categories.includes(c.id.replace(/\.md$/, '')),
+    ).length,
+  }))
+  .filter((c) => c.count > 0)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 8);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Latest Posts',
+  description: 'Browse all the latest developer resources, tutorials, and guides.',
+  url: `${Astro.url.origin}${BASE_PATH}/latest/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${BASE_PATH}/` },
+      { '@type': 'ListItem', position: 2, name: 'Latest' },
+    ],
+  },
+};
+---
+
+<AppShell
+  title="Latest Posts"
+  description="Browse all the latest developer resources, tutorials, and guides."
+  keywords="latest developer posts, new tutorials, recent guides, fresh programming content"
+>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+
+      <!-- Page Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="p-2 rounded-xl bg-ds-secondary-container/30">
+            <Icon name="mdi:clock-outline" class="w-5.5 h-5.5 text-ds-secondary" />
+          </div>
+          <h1 class="text-3xl md:text-4xl font-bold text-ds-on-surface tracking-tight">
+            Latest Posts
+          </h1>
+        </div>
+        <p class="text-ds-on-surface-variant text-lg max-w-2xl">
+          The freshest developer resources, tutorials, and guides, stay up to date.
+        </p>
+        <div class="flex items-center gap-2 mt-4">
+          <a
+            href={`${BASE_PATH}/posts/`}
+            class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+          >
+            <Icon name="mdi:arrow-left" class="w-4 h-4" />
+            All Posts
+          </a>
+          <span class="text-ds-outline-variant">·</span>
+          <span class="text-sm text-ds-text-muted">
+            Recently published
+          </span>
+        </div>
+      </div>
+
+      <!-- Grid/List Feed -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="lg:col-span-2">
+          {posts.length === 0 ? (
+            <div class="card-ds p-16 text-center">
+              <Icon name="mdi:file-document-outline" class="w-14 h-14 mx-auto mb-4 text-ds-text-muted opacity-30" />
+              <p class="text-ds-text-muted text-lg">No posts yet.</p>
+            </div>
+          ) : (
+            <PostsFeed client:load posts={posts} />
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <div class="card-ds p-5 sticky top-20">
+            <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Explore</h3>
+            <div class="space-y-1">
+              <a
+                href={`${BASE_PATH}/featured/`}
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
+              >
+                <Icon name="mdi:star" class="w-4 h-4" />
+                Featured Posts
+              </a>
+              <a
+                href={`${BASE_PATH}/categories/`}
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
+              >
+                <Icon name="mdi:tag-outline" class="w-4 h-4" />
+                Categories
+              </a>
+              <a
+                href={`${BASE_PATH}/tags/`}
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
+              >
+                <Icon name="mdi:tag-outline" class="w-4 h-4" />
+                Tags
+              </a>
+            </div>
+
+            {categoryItems.length > 0 && (
+              <div class="mt-5 pt-5 border-t border-ds-outline-variant">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">Categories</h4>
+                <div class="space-y-1">
+                  {categoryItems.map(cat => (
+                    <a
+                      href={`${BASE_PATH}/categories/${cat.slug}/`}
+                      class="flex items-center px-3 py-1.5 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
+                    >
+                      <span class="capitalize">{cat.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>

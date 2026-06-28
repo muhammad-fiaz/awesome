@@ -1,0 +1,62 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { AuthorsFeed } from '@/components/listing/AuthorsFeed';
+import { getAllAuthors } from '@/lib/posts';
+import { SITE_CONFIG } from '@/config/site';
+
+const authors = await getAllAuthors();
+
+const authorItems = authors
+  .map((a) => ({
+    slug: a.id.replace(/\.md$/, ''),
+    name: a.data.name,
+    title: a.data.title,
+    avatar: a.data.avatar,
+    bio: a.data.bio,
+    location: a.data.location,
+  }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Authors and Contributors',
+  description: 'Meet the contributors and authors of the Awesome Dev Platform.',
+  url: `${Astro.url.origin}${SITE_CONFIG.basePath}/authors/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${SITE_CONFIG.basePath}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${SITE_CONFIG.basePath}/` },
+      { '@type': 'ListItem', position: 2, name: 'Authors' },
+    ],
+  },
+};
+---
+
+<AppShell title="Authors and Contributors" description="Meet the contributors and authors of the Awesome Dev Platform." keywords="authors, contributors, developer community, writers, content creators">
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+
+      <!-- Page header -->
+      <div class="mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-ds-on-surface mb-2">
+          Our Authors
+        </h1>
+        <p class="text-ds-on-surface-variant text-lg">
+          Meet the contributors sharing knowledge with the community
+        </p>
+      </div>
+
+      <AuthorsFeed client:load authors={authorItems} />
+    </div>
+  </div>
+</AppShell>

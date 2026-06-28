@@ -1,0 +1,124 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { BASE_PATH } from '@/config/site';
+---
+
+<AppShell
+  title="404 - Page Not Found"
+  description="The page you are looking for does not exist or has been moved."
+  noindex={true}
+>
+  <div class="px-6 py-12 flex flex-col items-center justify-center min-h-screen text-center">
+    <div class="max-w-lg mx-auto space-y-8">
+
+      {/* Animated 404 illustration */}
+      <div class="relative mx-auto w-64 h-64">
+        {/* Glowing background circle */}
+        <div class="absolute inset-0 rounded-full bg-linear-to-br from-ds-primary/20 via-ds-secondary/10 to-ds-tertiary/20 blur-3xl animate-pulse" />
+
+        {/* Main circle */}
+        <div class="absolute inset-4 rounded-full bg-ds-surface-high border-2 border-ds-outline-variant flex items-center justify-center">
+          {/* Big 404 text */}
+          <span class="text-7xl font-extrabold text-ds-primary/80 tracking-tighter select-none">
+            4
+            <span class="text-ds-secondary/60">0</span>
+            4
+          </span>
+        </div>
+
+        {/* Floating icons */}
+        <svg class="absolute top-0 left-8 w-10 h-10 text-ds-primary/40 animate-bounce" style="animation-delay: 0s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+
+        <svg class="absolute top-4 right-2 w-8 h-8 text-ds-secondary/40 animate-bounce" style="animation-delay: 0.3s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+
+        <svg class="absolute bottom-6 left-0 w-8 h-8 text-ds-tertiary/40 animate-bounce" style="animation-delay: 0.6s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+
+        <svg class="absolute bottom-2 right-6 w-9 h-9 text-ds-primary/30 animate-bounce" style="animation-delay: 0.9s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      </div>
+
+      {/* Text content */}
+      <div class="space-y-3">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-ds-on-surface tracking-tight">
+          Page Not Found
+        </h1>
+        <p class="text-ds-on-surface-variant text-base sm:text-lg leading-relaxed max-w-md mx-auto">
+          Oops! The page you're looking for seems to have wandered off into the digital void.
+        </p>
+      </div>
+
+      {/* Action buttons */}
+      <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+        <a
+          href={`${BASE_PATH}/`}
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-ds-primary text-ds-on-primary hover:opacity-90 transition-opacity"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9,22 9,12 15,12 15,22" />
+          </svg>
+          Go back home
+        </a>
+        <a
+          href={`${BASE_PATH}/search/`}
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold border border-ds-outline-variant text-ds-on-surface hover:bg-ds-surface-high transition-colors"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          Search resources
+        </a>
+      </div>
+
+      {/* Helpful links */}
+      <div class="pt-6 border-t border-ds-outline-variant">
+        <p class="text-xs text-ds-text-muted mb-3 uppercase tracking-widest font-semibold">Popular pages</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <a href={`${BASE_PATH}/posts/`} class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-ds-surface-high text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-highest transition-colors">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14,2 14,8 20,8" />
+            </svg>
+            All Posts
+          </a>
+          <a href={`${BASE_PATH}/categories/`} class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-ds-surface-high text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-highest transition-colors">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            Categories
+          </a>
+          <a href={`${BASE_PATH}/tags/`} class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-ds-surface-high text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-highest transition-colors">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+              <path d="M7 7h.01" />
+            </svg>
+            Tags
+          </a>
+          <a href={`${BASE_PATH}/guide/`} class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-ds-surface-high text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-highest transition-colors">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+            Guide
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</AppShell>

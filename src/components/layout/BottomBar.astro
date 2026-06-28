@@ -1,0 +1,76 @@
+---
+import { SITE_CONFIG, OWNER, BASE_PATH } from '@/config/site';
+const year = new Date().getFullYear();
+---
+
+<footer
+  id="bottom-bar"
+  class="w-full mt-auto border-t border-ds-outline-variant bg-ds-surface-lowest px-6 py-4 xl:pr-72"
+>
+  <div class="max-w-320 mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+    <p class="text-sm text-ds-text-muted">
+      &copy; {year}{' '}
+      <a
+        href={OWNER.portfolio}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-ds-secondary hover:underline"
+      >
+        {OWNER.name}
+      </a>
+      {' · '}
+      <span class="font-mono text-xs">{SITE_CONFIG.version}</span>
+    </p>
+
+    <div class="flex flex-wrap items-center gap-4 justify-center sm:justify-end">
+      <a
+        href={OWNER.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        GitHub
+      </a>
+      <a
+        href={`${BASE_PATH}/rss.xml`}
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        RSS
+      </a>
+      <a
+        href={OWNER.sponsor}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        Sponsor
+      </a>
+      <a
+        href={OWNER.support}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        Support
+      </a>
+      <a
+        href={`${BASE_PATH}/legal/privacy-policy/`}
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        Privacy
+      </a>
+      <a
+        href={`${BASE_PATH}/legal/terms-of-service/`}
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        Terms
+      </a>
+      <a
+        href={`${BASE_PATH}/legal/cookie-policy/`}
+        class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+      >
+        Cookies
+      </a>
+    </div>
+  </div>
+</footer>

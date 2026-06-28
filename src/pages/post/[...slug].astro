@@ -1,0 +1,228 @@
+---
+import PostLayout from '@/layouts/PostLayout.astro';
+import { PostHero } from '@/components/post/PostHero';
+import { GiscusComments } from '@/components/post/GiscusComments';
+import { RelatedPosts } from '@/components/post/RelatedPosts';
+import { Recommendations } from '@/components/post/Recommendations';
+import AuthorCard from '@/components/post/AuthorCard.astro';
+import Prose from '@/components/common/Prose.astro';
+import { render } from 'astro:content';
+import { BASE_PATH, SITE_CONFIG, OWNER } from '@/config/site';
+import {
+  getAllPosts,
+  getAuthorsBySlugs,
+  getPostReadingTime,
+  getRecommendationPosts,
+  getRelatedPosts,
+} from '@/lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: {
+      slug: post.id.replace(/\.(md|mdx)$/, ''),
+    },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+
+if (!post) {
+  return Astro.redirect(`${BASE_PATH}/posts/`);
+}
+
+const [relatedPosts, recommendationPosts, postAuthors] = await Promise.all([
+  getRelatedPosts(post, 2),
+  getRecommendationPosts(post, 2),
+  getAuthorsBySlugs(post.data.authors),
+]);
+
+const relatedForComponent = relatedPosts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const recommendationsForComponent = recommendationPosts.map((p) => ({
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+}));
+
+const authorInfoList = postAuthors.map((a) => ({
+  slug: a.id.replace(/\.md$/, ''),
+  name: a.data.name,
+  title: a.data.title,
+  avatar: a.data.avatar,
+  bio: a.data.bio,
+  location: a.data.location,
+  website: a.data.website,
+  github: a.data.github,
+  twitter: a.data.twitter,
+  linkedin: a.data.linkedin,
+  portfolio: a.data.portfolio,
+  sponsor: a.data.sponsor,
+  support: a.data.support,
+}));
+
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+const readingTime =
+  remarkPluginFrontmatter.minutesRead ?? `${getPostReadingTime(post)} min read`;
+
+const postKeywords = post.data.keywords?.join(', ');
+
+const primaryAuthor = authorInfoList[0];
+
+const postJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: post.data.description,
+  author: authorInfoList.map((a) => ({
+    '@type': 'Person',
+    name: a.name,
+    url: a.website || a.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${a.slug}/`,
+    image: a.avatar,
+    sameAs: [
+      a.github,
+      a.twitter,
+      a.linkedin,
+      a.website,
+      a.portfolio,
+    ].filter(Boolean),
+  })),
+  publisher: {
+    '@type': 'Person',
+    name: OWNER.name,
+    url: OWNER.portfolio,
+    image: primaryAuthor?.avatar,
+    sameAs: [
+      OWNER.github,
+      OWNER.twitter,
+      OWNER.linkedin,
+      OWNER.portfolio,
+    ],
+  },
+  image: post.data.thumbnail ?? post.data.customOgImage,
+  datePublished: new Date().toISOString(),
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `${SITE_CONFIG.url}${BASE_PATH}/post/${post.id.replace(/\.(md|mdx)$/, '')}/`,
+  },
+  keywords: post.data.keywords?.join(', '),
+  inLanguage: post.data.language || 'en',
+};
+
+const postLinks: Record<string, string | undefined> = {};
+if (post.data.links) {
+  for (const [k, v] of Object.entries(post.data.links)) {
+    if (v && typeof v === 'string' && v.trim()) {
+      postLinks[k] = v;
+    }
+  }
+}
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  ogImage={post.data.customOgImage ?? post.data.thumbnail ?? `https://placehold.co/1200x630/0f172a/f8fafc/png?text=${encodeURIComponent(post.data.title)}`}
+  headings={headings}
+  postLinks={postLinks}
+  keywords={postKeywords}
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(postJsonLd)} />
+    <meta property="article:author" content={authorInfoList.map(a => a.name).join(', ')} />
+    <meta property="article:published_time" content={new Date().toISOString()} />
+    {post.data.language && <meta property="article:language" content={post.data.language} />}
+    {post.data.categories.length > 0 && <meta property="article:section" content={post.data.categories[0]} />}
+    {post.data.tags.length > 0 && post.data.tags.map((tag: string) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+  </Fragment>
+  <PostHero
+    client:load
+    title={post.data.title}
+    description={post.data.description}
+    heroImage={post.data.heroImage}
+    thumbnail={post.data.thumbnail}
+    categories={post.data.categories}
+    tags={post.data.tags}
+    authors={post.data.authors}
+    readingTime={readingTime}
+    license={post.data.license}
+    difficulty={post.data.difficulty}
+  />
+
+  <div class="px-4 md:px-6 pb-8">
+    <div class="max-w-3xl mx-auto">
+      <Prose>
+        <Content />
+      </Prose>
+
+      {post.data.references && post.data.references.length > 0 && (
+        <div class="mt-10 pt-6 border-t border-ds-outline-variant">
+          <h2 class="text-lg font-semibold text-ds-on-surface mb-3">References</h2>
+          <ul class="space-y-1.5">
+            {post.data.references.map((ref: string) => (
+              <li>
+                <a
+                  href={ref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm text-ds-primary hover:underline break-all"
+                >
+                  {ref}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div class="mt-10 pt-6 border-t border-ds-outline-variant">
+          <h2 class="text-lg font-semibold text-ds-on-surface mb-3">Tags</h2>
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map((tag: string) => (
+              <a
+                href={`${BASE_PATH}/tags/${tag}/`}
+                class="tag-ds"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {relatedForComponent.length > 0 && (
+        <RelatedPosts client:load posts={relatedForComponent} />
+      )}
+
+      {recommendationsForComponent.length > 0 && (
+        <Recommendations client:load posts={recommendationsForComponent} />
+      )}
+
+      <AuthorCard authors={authorInfoList} />
+
+      <GiscusComments client:load term={post.id.replace(/\.(md|mdx)$/, '')} />
+    </div>
+  </div>
+</PostLayout>

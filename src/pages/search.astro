@@ -1,0 +1,82 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { SearchFeed } from '@/components/search/SearchFeed';
+import {
+  getAllAuthors,
+  getAllCategories,
+  getAllPosts,
+  getAllTags,
+} from '@/lib/posts';
+import { SITE_CONFIG, BASE_PATH, OWNER } from '@/config/site';
+
+const [categories, tags, authors, allPosts] = await Promise.all([
+  getAllCategories(),
+  getAllTags(),
+  getAllAuthors(),
+  getAllPosts(),
+]);
+
+const categoryItems = categories.map((c) => ({
+  slug: c.id.replace(/\.md$/, ''),
+  title: c.data.title,
+}));
+
+const tagItems = tags.map((t) => ({
+  slug: t.id.replace(/\.md$/, ''),
+  title: t.data.title,
+}));
+
+const authorItems = authors
+  .map((a) => ({
+    slug: a.id.replace(/\.md$/, ''),
+    name: a.data.name,
+  }))
+  .filter((a) => allPosts.some((p) => p.data.authors.includes(a.slug)));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SearchResultsPage',
+  name: 'Search',
+  description: 'Search developer tools and curated collections of resources, tutorials, frameworks, and articles on Awesome.',
+  url: `${Astro.url.origin}${BASE_PATH}/search/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${BASE_PATH}/` },
+      { '@type': 'ListItem', position: 2, name: 'Search' },
+    ],
+  },
+};
+---
+
+<AppShell
+  title="Search | Awesome"
+  description="Search developer tools and curated collections of resources, tutorials, frameworks, and articles on Awesome."
+>
+  <Fragment slot="head">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="keywords" content="search developer resources, find tutorials, search programming articles, filter by category, filter by tag, developer tools, curated collections" />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={`${Astro.url.origin}${BASE_PATH}/search/`} />
+  </Fragment>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <div class="px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-ds-on-surface mb-2">Search Developer Tools and Curated Collections</h1>
+        <p class="text-ds-on-surface-variant text-sm">
+          Discover curated resources across categories, tags, and authors. Filter and refine your search to find exactly what you need.
+        </p>
+      </div>
+
+      <SearchFeed client:load categories={categoryItems} tags={tagItems} authors={authorItems} />
+    </div>
+  </div>
+</AppShell>

@@ -1,0 +1,183 @@
+---
+import '../styles/global.css';
+import { SITE_CONFIG, BASE_PATH, OWNER, GA_ID, GTM_ID, ADSENSE_CLIENT_ID } from '@/config/site';
+import { CookieBanner } from '@/components/common/CookieBanner';
+import { NewsletterPopup } from '@/components/common/NewsletterPopup';
+import { ClientRouter } from 'astro:transitions';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  keywords?: string;
+}
+
+const {
+  title,
+  description = SITE_CONFIG.description,
+  ogImage,
+  noindex = false,
+  keywords = 'developer resources, tutorials, tools, programming, web development',
+} = Astro.props;
+
+const pageTitle = title
+  ? `${title} | ${SITE_CONFIG.name}`
+  : `${SITE_CONFIG.name} | Curated Developer Resources`;
+const canonicalUrl = new URL(Astro.url.pathname, SITE_CONFIG.url).toString();
+const ogImageUrl = ogImage ?? `https://placehold.co/1200x630/0d1117/3fb950/png?text=${encodeURIComponent(SITE_CONFIG.name)}`;
+
+const webSiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_CONFIG.name,
+  alternateName: SITE_CONFIG.tagline,
+  url: SITE_CONFIG.url,
+  description: SITE_CONFIG.description,
+  publisher: {
+    '@type': 'Person',
+    name: OWNER.name,
+    url: OWNER.portfolio,
+    image: undefined,
+    sameAs: [
+      OWNER.github,
+      OWNER.twitter,
+      OWNER.linkedin,
+      OWNER.portfolio,
+    ],
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${SITE_CONFIG.url}/search/?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: SITE_CONFIG.name,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  url: SITE_CONFIG.url,
+  description: SITE_CONFIG.description,
+  creator: {
+    '@type': 'Person',
+    name: OWNER.name,
+    url: OWNER.portfolio,
+    sameAs: [
+      OWNER.github,
+      OWNER.twitter,
+      OWNER.linkedin,
+      OWNER.portfolio,
+    ],
+  },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+};
+---
+
+<!doctype html>
+<html lang={SITE_CONFIG.defaultLocale} class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="application-name" content={SITE_CONFIG.name} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content={OWNER.name} />
+    <meta name="publisher" content={OWNER.name} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <meta name="robots" content="index, follow" />}
+    {!noindex && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content={SITE_CONFIG.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={OWNER.twitter.replace('https://x.com/', '@').replace('https://twitter.com/', '@')} />
+    <meta name="twitter:creator" content={OWNER.twitter.replace('https://x.com/', '@').replace('https://twitter.com/', '@')} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+    <link rel="icon" type="image/svg+xml" href={`${BASE_PATH}/favicon.svg`} />
+    <link rel="icon" href={`${BASE_PATH}/favicon.ico`} sizes="any" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={SITE_CONFIG.name}
+      href={`${BASE_PATH}/rss.xml`}
+    />
+    <ClientRouter />
+    <slot name="head" />
+
+    <!-- Google Analytics -->
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-6BVYCRK57P');
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-P4M9T8ZR');
+    </script>
+
+    <!-- Google AdSense -->
+    <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`} crossorigin="anonymous"></script>
+
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('awesome-theme');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            theme = parsed?.state?.theme ?? 'dark';
+          } catch {}
+        }
+        const resolved =
+          theme === 'system'
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+            : theme;
+        document.documentElement.classList.remove('dark', 'light');
+        document.documentElement.classList.add(resolved);
+
+        const sidebarOpen = localStorage.getItem('sidebar-open');
+        if (sidebarOpen === 'false') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-background text-foreground font-sans antialiased overflow-x-hidden" data-pagefind-body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P4M9T8ZR" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <slot />
+    <CookieBanner client:load />
+    <NewsletterPopup client:load />
+  </body>
+</html>

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Sponsor
+    url: https://github.com/sponsors/muhammad-fiaz
+    about: Support the project via GitHub Sponsors
+  - name: Support
+    url: https://pay.muhammadfiaz.com
+    about: Support the project via other methods

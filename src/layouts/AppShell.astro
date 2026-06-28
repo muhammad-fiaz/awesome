@@ -1,0 +1,45 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TopNavbar from '@/components/layout/TopNavbar.astro';
+import LeftSidebar from '@/components/layout/LeftSidebar.astro';
+import BottomBar from '@/components/layout/BottomBar.astro';
+import { SearchModal } from '@/components/layout/SearchModal';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  keywords?: string;
+}
+
+const { title, description, ogImage, noindex, keywords } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title={title} description={description} ogImage={ogImage} noindex={noindex} keywords={keywords}>
+  <Fragment slot="head">
+    <slot name="head" />
+  </Fragment>
+  <!-- Top Navbar (static Astro) -->
+  <TopNavbar currentPath={currentPath} />
+
+  <!-- Left Sidebar (static Astro shell + React islands for interactivity) -->
+  <LeftSidebar currentPath={currentPath} />
+
+  <!-- Main content area: offset left by sidebar width on md+ -->
+  <div class="flex flex-col min-h-screen pt-16 md:pl-(--sidebar-width) transition-[padding] duration-200 ease-in-out">
+    <main
+      id="main-content"
+      class="flex-1 overflow-y-auto"
+    >
+      <slot />
+    </main>
+
+    <!-- Bottom bar (static Astro) -->
+    <BottomBar />
+  </div>
+
+  <!-- Search modal (React island, needs state + keyboard shortcuts) -->
+  <SearchModal client:load />
+</BaseLayout>
