@@ -1,9 +1,9 @@
 # Awesome
 
-> **[!NOTE]**
+> [!NOTE]
 > This project is currently in active development. Some content and features are placeholders that will be replaced with real posts and functionality as we approach launch.
 
-A curated collection of awesome developer resources, tutorials, and tools, hand-picked by Muhammad Fiaz.
+A curated collection of developer resources, tutorials, tools, and open-source projects.
 
 ## Features
 
