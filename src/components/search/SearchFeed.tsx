@@ -672,7 +672,7 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
                 className="text-ds-text-muted"
               />
               <Select value={sortBy} onValueChange={(v) => setSortBy(v ?? 'latest')}>
-                <SelectTrigger className="w-auto min-w-35 h-8 rounded-xl text-xs">
+                <SelectTrigger className="w-auto min-w-36 sm:min-w-40 h-8 rounded-xl text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
