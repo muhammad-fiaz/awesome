@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://muhammad-fiaz.github.io/awesome/sitemap-index.xml
+
+# Disallow admin and draft pages
+Disallow: /awesome/admin/
+Disallow: /awesome/draft/
+
+# Allow all other paths
+Allow: /awesome/posts/
+Allow: /awesome/categories/
+Allow: /awesome/tags/
+Allow: /awesome/authors/
+Allow: /awesome/search/
+Allow: /awesome/sponsor/
+Allow: /awesome/support/
+Allow: /awesome/guide/
+Allow: /awesome/legal/

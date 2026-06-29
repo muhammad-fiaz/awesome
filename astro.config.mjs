@@ -1,7 +1,7 @@
 // @ts-check
 
 import react from '@astrojs/react';
-import sitemap from '@astrojs/sitemap';
+import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, svgoOptimizer } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
@@ -16,7 +16,7 @@ const SITE_URL = 'https://muhammad-fiaz.github.io';
 const BASE_PATH = '/awesome';
 
 function remarkReadingTime() {
-  return (/** @type {import('mdast').Root} */ tree, /** @type {import('vfile').VFile & { data: { astro: { frontmatter: Record<string, unknown> } } }} */ file) => {
+  return (tree, file) => {
     const textOnPage = toString(tree);
     const readingTime = getReadingTime(textOnPage);
     file.data.astro.frontmatter.minutesRead = readingTime.text;
@@ -43,7 +43,19 @@ export default defineConfig({
 
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/draft/'),
+      filter: (page) => !page.includes('/draft/') && !page.includes('/admin/'),
+      changefreq: ChangeFreqEnum.WEEKLY,
+      priority: 0.7,
+      lastmod: new Date(),
+      serialize(item) {
+        if (item.url.endsWith('/')) {
+          item.priority = 1.0;
+        } else if (/\/posts\/|\/categories\/|\/tags\/|\/authors\//.test(item.url)) {
+          item.changefreq = ChangeFreqEnum.WEEKLY;
+          item.priority = 0.9;
+        }
+        return item;
+      },
     }),
     react(),
     icon({
