@@ -1,0 +1,10 @@
+{
+  "name": "awesome-oauth",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun run wrangler dev",
+    "deploy": "bun run wrangler deploy",
+    "login": "bun run wrangler login"
+  }
+}

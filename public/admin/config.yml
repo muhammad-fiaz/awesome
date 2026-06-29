@@ -2,7 +2,7 @@ backend:
   name: github
   repo: muhammad-fiaz/awesome
   branch: main
-  base_url: https://decap-oauth.netlify.app
+  base_url: https://awesome-oauth.muhammad-fiaz.workers.dev
   auth_type: pkce
   client_id: Ov23liGjRB8w4lOwpAR3
 
