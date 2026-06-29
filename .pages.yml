@@ -1,6 +1,10 @@
 media:
-  input: public/images
-  output: /images
+  - name: images
+    label: Images
+    input: public/images
+    output: /images
+    extensions: [jpg, jpeg, png, webp, gif, svg]
+    categories: [image]
 
 content:
   - name: posts
@@ -41,14 +45,23 @@ content:
         type: image
         options:
           media: images
+          path: posts
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: heroImage
         type: image
         options:
           media: images
+          path: posts
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: customOgImage
         type: image
         options:
           media: images
+          path: posts
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: featured
         type: boolean
       - name: draft
@@ -111,10 +124,13 @@ content:
               label: Other
       - name: body
         type: rich-text
+        options:
+          media: images
+          path: posts
     view:
       fields: [title, description, categories, tags, difficulty, draft]
       primary: title
-      sort: [title]
+      sort: [title, description]
       default:
         sort: title
         order: asc
@@ -129,16 +145,27 @@ content:
       - name: name
         type: string
         required: true
+        options:
+          maxlength: 100
       - name: avatar
         type: image
         options:
           media: images
+          path: authors
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: bio
         type: text
+        options:
+          maxlength: 500
       - name: title
         type: string
+        options:
+          maxlength: 150
       - name: location
         type: string
+        options:
+          maxlength: 100
       - name: website
         type: string
       - name: github
@@ -158,6 +185,10 @@ content:
     view:
       fields: [name, title, location]
       primary: name
+      sort: [name]
+      default:
+        sort: name
+        order: asc
 
   - name: categories
     label: Categories
@@ -169,25 +200,42 @@ content:
       - name: title
         type: string
         required: true
+        options:
+          maxlength: 100
       - name: description
         type: text
+        options:
+          maxlength: 300
       - name: thumbnail
         type: image
         options:
           media: images
+          path: categories
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: heroImage
         type: image
         options:
           media: images
+          path: categories
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: customOgImage
         type: image
         options:
           media: images
+          path: categories
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: body
         type: rich-text
     view:
       fields: [title, description]
       primary: title
+      sort: [title]
+      default:
+        sort: title
+        order: asc
 
   - name: tags
     label: Tags
@@ -199,21 +247,35 @@ content:
       - name: title
         type: string
         required: true
+        options:
+          maxlength: 100
       - name: description
         type: text
+        options:
+          maxlength: 300
       - name: thumbnail
         type: image
         options:
           media: images
+          path: tags
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: customOgImage
         type: image
         options:
           media: images
+          path: tags
+          extensions: [jpg, jpeg, png, webp]
+          rename: true
       - name: body
         type: rich-text
     view:
       fields: [title, description]
       primary: title
+      sort: [title]
+      default:
+        sort: title
+        order: asc
 
   - name: legal
     label: Legal Pages
@@ -225,12 +287,20 @@ content:
       - name: title
         type: string
         required: true
+        options:
+          maxlength: 100
       - name: description
         type: text
+        options:
+          maxlength: 300
       - name: body
         type: rich-text
     view:
       fields: [title, description]
       primary: title
+      sort: [title]
+      default:
+        sort: title
+        order: asc
     operations:
       rename: false
