@@ -14,6 +14,15 @@ src/content/posts/react/learn-react.md
 src/content/posts/rust/getting-started-with-rust.md
 ```
 
+## How to Create a Post
+
+1. Fork the [repository](https://github.com/muhammad-fiaz/awesome)
+2. Create a new `.md` file in `src/content/posts/your-category/`
+3. Add front matter and content (see template below)
+4. Submit a Pull Request
+
+See the [How to Publish](/awesome/guide/) guide for detailed instructions.
+
 ## Front Matter Fields
 
 ### Required Fields
@@ -40,7 +49,7 @@ src/content/posts/rust/getting-started-with-rust.md
 | `keywords` | string[] | `[]` | Additional SEO keywords |
 | `license` | string | — | Content license info |
 | `language` | string | `"English"` | Content language |
-| `links` | object | — | External links (website, github, documentation, demo, npm, crate, youtube, discord, downloadUrl) |
+| `links` | object | — | External links (see below) |
 | `references` | string[] | `[]` | Reference URLs |
 
 ## Example Post
@@ -56,7 +65,6 @@ thumbnail: "/images/posts/react-hooks-thumb.jpg"
 featured: true
 draft: false
 difficulty: "intermediate"
-date: 2025-01-15
 links:
   website: "https://react.dev"
   github: "https://github.com/facebook/react"
@@ -71,16 +79,26 @@ references:
 Your post content here...
 ```
 
-## Creating via Pages CMS
+## File Naming Rules
 
-1. Go to [app.pagescms.org](https://app.pagescms.org)
-2. Sign in with your GitHub account
-3. Install the Pages CMS GitHub App on your account
-4. Select the `muhammad-fiaz/awesome` repository
-5. Click "Posts" in the sidebar
-6. Click "New"
-7. Fill in the required fields
-8. Save
+- Use lowercase letters, numbers, and hyphens only
+- Example: `react-hooks-guide.md`, `getting-started-with-rust.md`
+- Do NOT use spaces, underscores, or special characters
+- The filename becomes the URL slug
+
+## Links Object
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `website` | string | Official website URL |
+| `github` | string | GitHub repository URL |
+| `documentation` | string | Documentation URL |
+| `demo` | string | Live demo URL |
+| `npm` | string | npm package URL |
+| `crate` | string | Rust crate URL |
+| `youtube` | string | YouTube video URL |
+| `discord` | string | Discord invite URL |
+| `downloadUrl` | string | Download URL (file or page) |
 
 ## Tips
 

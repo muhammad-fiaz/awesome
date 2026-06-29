@@ -4,26 +4,16 @@ Thank you for your interest in contributing to Awesome! This guide will help you
 
 ## Ways to Contribute
 
-### 1. Submit a Developer Resource (Easiest)
+### 1. Submit a Developer Resource
 
-Use [Pages CMS](https://app.pagescms.org) to submit a new post:
-
-1. Go to [app.pagescms.org](https://app.pagescms.org)
-2. Sign in with GitHub
-3. Select the `muhammad-fiaz/awesome` repository
-4. Click "Posts" → "New"
-5. Fill in the details and save
-
-See [docs/posts.md](./docs/posts.md) for the full field reference.
-
-### 2. Submit via Pull Request
-
-1. Fork the repository
+1. Fork the [repository](https://github.com/muhammad-fiaz/awesome)
 2. Create a new branch: `git checkout -b add-my-resource`
 3. Add your post in `src/content/posts/<category>/`
 4. Submit a Pull Request
 
-### 3. Fix Errors or Improve Content
+See [docs/posts.md](./docs/posts.md) for the full field reference and the [How to Publish](https://muhammad-fiaz.github.io/awesome/guide/) guide for step-by-step instructions.
+
+### 2. Fix Errors or Improve Content
 
 1. Fork the repository
 2. Make your changes

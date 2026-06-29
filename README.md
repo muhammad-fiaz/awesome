@@ -13,7 +13,7 @@ A curated collection of developer resources, tutorials, tools, and open-source p
 
 - Modern Astro 7 + React stack with Tailwind CSS v4
 - Full-text search powered by Pagefind
-- Pages CMS for visual content editing
+- GitHub-based content management via Pull Requests
 - Dark/Light theme with daily.dev-style green brand
 - SEO optimized with JSON-LD schemas, Open Graph, and Twitter Cards
 - Responsive design with collapsible sidebar
@@ -63,7 +63,6 @@ bun run dev
 | [React 19](https://react.dev) | Interactive UI components |
 | [Tailwind CSS v4](https://tailwindcss.com) | Utility-first styling |
 | [Pagefind](https://pagefind.app) | Static full-text search |
-| [Pages CMS](https://pagescms.org) | Visual content management |
 | [Giscus](https://giscus.app) | GitHub-powered comments |
 | [Biome](https://biomejs.dev) | Linting and formatting |
 | [Zustand](https://zustand-demo.pmnd.rs) | State management |
@@ -95,22 +94,52 @@ awesome/
 │   ├── types/           # TypeScript types
 │   └── styles/          # Global CSS
 ├── docs/                # Project documentation
-└── .pages.yml           # Pages CMS configuration
+└── .pages.yml           # Content management configuration
 ```
 
 ## Content Management
 
-### Using Pages CMS (Recommended)
+All content is managed through GitHub. To add or edit content, fork the repository and submit a Pull Request.
 
-1. Go to [app.pagescms.org](https://app.pagescms.org)
-2. Sign in with your GitHub account
-3. Install the Pages CMS GitHub App on your account
-4. Select the `muhammad-fiaz/awesome` repository
-5. Start editing content through the visual editor
+### Add a Resource
 
-### Manual Editing
+1. Fork the [repository](https://github.com/muhammad-fiaz/awesome)
+2. Create a new `.md` file in `src/content/posts/your-category/`
+3. Add front matter and your content
+4. Submit a Pull Request
 
-Create Markdown files directly in `src/content/`. See the [docs/](./docs/) folder for detailed documentation on each content type.
+See the **[How to Publish](https://muhammad-fiaz.github.io/awesome/guide/)** guide for step-by-step instructions.
+
+### Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [Posts](./docs/posts.md) | How to create developer resource posts |
+| [Authors](./docs/authors.md) | How to create author profiles |
+| [Categories](./docs/categories.md) | How to create categories |
+| [Tags](./docs/tags.md) | How to create tags |
+| [Content Structure](./docs/content-structure.md) | Directory layout and file naming rules |
+
+### Quick Template
+
+```markdown
+---
+title: "Your Resource Title"
+description: "A clear description of what this resource covers."
+authors: ["your-author-slug"]
+categories: ["your-category"]
+tags: ["tag1", "tag2"]
+thumbnail: "/images/posts/your-thumb.jpg"
+difficulty: "intermediate"
+links:
+  website: "https://example.com"
+  github: "https://github.com/org/repo"
+---
+
+# Your Resource Title
+
+Write your content here...
+```
 
 ## Contributing
 

@@ -14,29 +14,47 @@ src/content/
 └── README.md       # This file
 ```
 
-## Creating Content
+## How to Create Content
 
-You can create content in two ways:
+All content is created by forking the repository and submitting a Pull Request:
 
-1. **Via Pages CMS (Recommended):** Go to [app.pagescms.org](https://app.pagescms.org), sign in with GitHub, and use the visual editor to create and edit content. No server setup required.
+1. **Fork** the [repository](https://github.com/muhammad-fiaz/awesome)
+2. **Create** a Markdown (.md) file in the appropriate folder
+3. **Add** front matter and content following the guidelines below
+4. **Submit** a Pull Request
 
-2. **Manually:** Create Markdown files directly in the appropriate folder following the structure documented in each folder's README.
+See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 
 ## Content Types Overview
 
 | Type | Folder | File Format | Key Fields |
 |------|--------|-------------|------------|
-| Posts | `posts/` | `.md` or `.mdx` | title, description, authors, categories, tags |
+| Posts | `posts/<category>/` | `.md` or `.mdx` | title, description, authors, categories, tags |
 | Authors | `authors/` | `.md` | name, avatar, bio |
 | Categories | `categories/` | `.md` | title, description |
 | Tags | `tags/` | `.md` | title, description |
 | Legal | `legal/` | `.md` | title, description |
 
+## File Naming Rules
+
+- Use lowercase letters, numbers, and hyphens only
+- Do NOT use spaces, underscores, or special characters
+- Examples: `react-hooks.md`, `john-doe.md`, `javascript.md`
+
 ## Publishing Workflow
 
-1. Create content via Pages CMS or manually
-2. Commit and push to the `main` branch
-3. GitHub Actions automatically builds and deploys the site
-4. Content appears on the live site within minutes
+1. Fork the repository
+2. Create or edit Markdown files
+3. Commit and push to your fork
+4. Open a Pull Request to the main repository
+5. Wait for review and merge
+6. GitHub Actions automatically builds and deploys the site
+7. Content appears on the live site within minutes
 
-See the [How to Publish](/awesome/guide/) page for detailed instructions.
+## Related Documentation
+
+- [Posts](./posts.md) — How to create developer resource posts
+- [Authors](./authors.md) — How to create author profiles
+- [Categories](./categories.md) — How to create categories
+- [Tags](./tags.md) — How to create tags
+- [How to Publish](/awesome/guide/) — Complete step-by-step guide

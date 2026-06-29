@@ -15,6 +15,15 @@ Example:
 src/content/authors/muhammad-fiaz.md
 ```
 
+## How to Create an Author
+
+1. Fork the [repository](https://github.com/muhammad-fiaz/awesome)
+2. Create a new `.md` file in `src/content/authors/`
+3. Add front matter and optional body content (see template below)
+4. Submit a Pull Request
+
+See the [How to Publish](/awesome/guide/) guide for detailed instructions.
+
 ## Front Matter Fields
 
 ### Required Fields
@@ -60,20 +69,16 @@ support: "https://pay.muhammadfiaz.com"
 Optional markdown body content for extended author bio.
 ```
 
-## Creating via Pages CMS
+## File Naming Rules
 
-1. Go to [app.pagescms.org](https://app.pagescms.org)
-2. Sign in with your GitHub account
-3. Install the Pages CMS GitHub App on your account
-4. Select the `muhammad-fiaz/awesome` repository
-5. Click "Authors" in the sidebar
-6. Click "New"
-7. Fill in the required fields
-8. Save
+- Use lowercase letters, numbers, and hyphens only
+- Example: `muhammad-fiaz.md`, `john-doe.md`
+- Do NOT use spaces, underscores, or special characters
+- The filename becomes the author slug used in posts: `authors: ["muhammad-fiaz"]`
 
 ## Tips
 
-- Use the author slug in post front matter: `authors: ["your-slug"]`
 - Add a clear avatar image for recognition
 - Include social links for discoverability
 - All social links will appear on your author page
+- Use the author slug in post front matter: `authors: ["your-slug"]`

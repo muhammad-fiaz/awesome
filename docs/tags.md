@@ -16,6 +16,15 @@ src/content/tags/javascript.md
 src/content/tags/frontend.md
 ```
 
+## How to Create a Tag
+
+1. Fork the [repository](https://github.com/muhammad-fiaz/awesome)
+2. Create a new `.md` file in `src/content/tags/`
+3. Add front matter and optional body content (see template below)
+4. Submit a Pull Request
+
+See the [How to Publish](/awesome/guide/) guide for detailed instructions.
+
 ## Front Matter Fields
 
 ### Required Fields
@@ -41,20 +50,16 @@ description: "JavaScript programming language and its ecosystem."
 ---
 ```
 
-## Creating via Pages CMS
+## File Naming Rules
 
-1. Go to [app.pagescms.org](https://app.pagescms.org)
-2. Sign in with your GitHub account
-3. Install the Pages CMS GitHub App on your account
-4. Select the `muhammad-fiaz/awesome` repository
-5. Click "Tags" in the sidebar
-6. Click "New"
-7. Fill in the required fields
-8. Save
+- Use lowercase letters, numbers, and hyphens only
+- Example: `javascript.md`, `hooks.md`, `api-design.md`
+- Do NOT use spaces, underscores, or special characters
+- The filename becomes the tag slug used in posts: `tags: ["javascript"]`
 
 ## Tips
 
-- Use lowercase slug names (e.g., `javascript`, `hooks`, `api`)
 - Tags are more specific than categories
 - Reference tags in posts: `tags: ["javascript", "hooks"]`
 - Keep tag names short and recognizable
+- Use tags for specific technologies, concepts, or patterns

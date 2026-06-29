@@ -16,6 +16,15 @@ src/content/categories/react.md
 src/content/categories/rust.md
 ```
 
+## How to Create a Category
+
+1. Fork the [repository](https://github.com/muhammad-fiaz/awesome)
+2. Create a new `.md` file in `src/content/categories/`
+3. Add front matter and optional body content (see template below)
+4. Submit a Pull Request
+
+See the [How to Publish](/awesome/guide/) guide for detailed instructions.
+
 ## Front Matter Fields
 
 ### Required Fields
@@ -45,19 +54,15 @@ thumbnail: "/images/categories/react.jpg"
 Optional markdown body for extended category description.
 ```
 
-## Creating via Pages CMS
+## File Naming Rules
 
-1. Go to [app.pagescms.org](https://app.pagescms.org)
-2. Sign in with your GitHub account
-3. Install the Pages CMS GitHub App on your account
-4. Select the `muhammad-fiaz/awesome` repository
-5. Click "Categories" in the sidebar
-6. Click "New"
-7. Fill in the required fields
-8. Save
+- Use lowercase letters, numbers, and hyphens only
+- Example: `react.md`, `web-development.md`, `systems-programming.md`
+- Do NOT use spaces, underscores, or special characters
+- The filename becomes the category slug used in posts: `categories: ["react"]`
 
 ## Tips
 
-- Use lowercase slug names (e.g., `react`, `javascript`, `devops`)
 - Keep category names clear and descriptive
 - Reference categories in posts: `categories: ["react"]`
+- Categories should be broad enough to group multiple posts
