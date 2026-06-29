@@ -3,8 +3,7 @@ Allow: /
 
 Sitemap: https://muhammad-fiaz.github.io/awesome/sitemap-index.xml
 
-# Disallow admin and draft pages
-Disallow: /awesome/admin/
+# Disallow draft pages
 Disallow: /awesome/draft/
 
 # Allow all other paths
