@@ -1,0 +1,236 @@
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: posts
+    label: Posts
+    type: collection
+    path: src/content/posts
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+        options:
+          maxlength: 200
+      - name: description
+        type: text
+        required: true
+        options:
+          minlength: 20
+          maxlength: 500
+      - name: summary
+        type: text
+        options:
+          maxlength: 300
+      - name: authors
+        type: string
+        list: true
+      - name: categories
+        type: string
+        list: true
+      - name: tags
+        type: string
+        list: true
+      - name: keywords
+        type: string
+        list: true
+      - name: thumbnail
+        type: image
+        options:
+          media: images
+      - name: heroImage
+        type: image
+        options:
+          media: images
+      - name: customOgImage
+        type: image
+        options:
+          media: images
+      - name: featured
+        type: boolean
+      - name: draft
+        type: boolean
+      - name: difficulty
+        type: select
+        options:
+          values:
+            - name: beginner
+              label: Beginner
+            - name: intermediate
+              label: Intermediate
+            - name: advanced
+              label: Advanced
+            - name: expert
+              label: Expert
+      - name: links
+        type: object
+        fields:
+          - name: website
+            type: string
+          - name: github
+            type: string
+          - name: documentation
+            type: string
+          - name: demo
+            type: string
+          - name: npm
+            type: string
+          - name: crate
+            type: string
+          - name: youtube
+            type: string
+          - name: discord
+            type: string
+          - name: downloadUrl
+            type: string
+      - name: references
+        type: string
+        list: true
+      - name: license
+        type: string
+      - name: language
+        type: select
+        options:
+          values:
+            - name: English
+              label: English
+            - name: Spanish
+              label: Spanish
+            - name: French
+              label: French
+            - name: German
+              label: German
+            - name: Japanese
+              label: Japanese
+            - name: Chinese
+              label: Chinese
+            - name: Other
+              label: Other
+      - name: body
+        type: rich-text
+    view:
+      fields: [title, description, categories, tags, difficulty, draft]
+      primary: title
+      sort: [title]
+      default:
+        sort: title
+        order: asc
+
+  - name: authors
+    label: Authors
+    type: collection
+    path: src/content/authors
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    fields:
+      - name: name
+        type: string
+        required: true
+      - name: avatar
+        type: image
+        options:
+          media: images
+      - name: bio
+        type: text
+      - name: title
+        type: string
+      - name: location
+        type: string
+      - name: website
+        type: string
+      - name: github
+        type: string
+      - name: twitter
+        type: string
+      - name: linkedin
+        type: string
+      - name: portfolio
+        type: string
+      - name: sponsor
+        type: string
+      - name: support
+        type: string
+      - name: body
+        type: rich-text
+    view:
+      fields: [name, title, location]
+      primary: name
+
+  - name: categories
+    label: Categories
+    type: collection
+    path: src/content/categories
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+      - name: description
+        type: text
+      - name: thumbnail
+        type: image
+        options:
+          media: images
+      - name: heroImage
+        type: image
+        options:
+          media: images
+      - name: customOgImage
+        type: image
+        options:
+          media: images
+      - name: body
+        type: rich-text
+    view:
+      fields: [title, description]
+      primary: title
+
+  - name: tags
+    label: Tags
+    type: collection
+    path: src/content/tags
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+      - name: description
+        type: text
+      - name: thumbnail
+        type: image
+        options:
+          media: images
+      - name: customOgImage
+        type: image
+        options:
+          media: images
+      - name: body
+        type: rich-text
+    view:
+      fields: [title, description]
+      primary: title
+
+  - name: legal
+    label: Legal Pages
+    type: collection
+    path: src/content/legal
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+      - name: description
+        type: text
+      - name: body
+        type: rich-text
+    view:
+      fields: [title, description]
+      primary: title
+    operations:
+      rename: false

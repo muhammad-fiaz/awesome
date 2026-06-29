@@ -18,7 +18,7 @@ src/content/
 
 You can create content in two ways:
 
-1. **Via Decap CMS (Recommended):** Visit `/admin/` on the deployed site to create and edit content through a visual editor. Sign in with your GitHub account.
+1. **Via Pages CMS (Recommended):** Go to [app.pagescms.org](https://app.pagescms.org), sign in with GitHub, and use the visual editor to create and edit content. No server setup required.
 
 2. **Manually:** Create Markdown files directly in the appropriate folder following the structure documented in each folder's README.
 
@@ -34,7 +34,7 @@ You can create content in two ways:
 
 ## Publishing Workflow
 
-1. Create content via Decap CMS or manually
+1. Create content via Pages CMS or manually
 2. Commit and push to the `main` branch
 3. GitHub Actions automatically builds and deploys the site
 4. Content appears on the live site within minutes

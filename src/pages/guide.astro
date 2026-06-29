@@ -6,10 +6,10 @@ import { BASE_PATH, OWNER, SITE_CONFIG } from '@/config/site';
 
 const headings = [
   { depth: 2, slug: 'overview', text: 'Overview' },
-  { depth: 2, slug: 'decap-cms', text: 'Using Decap CMS' },
-  { depth: 3, slug: 'decap-step-1', text: 'Step 1: Access the CMS' },
-  { depth: 3, slug: 'decap-step-2', text: 'Step 2: Create a New Post' },
-  { depth: 3, slug: 'decap-step-3', text: 'Step 3: What Happens Next' },
+  { depth: 2, slug: 'pages-cms', text: 'Using Pages CMS' },
+  { depth: 3, slug: 'pages-step-1', text: 'Step 1: Access the CMS' },
+  { depth: 3, slug: 'pages-step-2', text: 'Step 2: Create a New Post' },
+  { depth: 3, slug: 'pages-step-3', text: 'Step 3: What Happens Next' },
   { depth: 2, slug: 'manual', text: 'Manual Submission via GitHub' },
   { depth: 3, slug: 'manual-step-1', text: 'Step 1: Fork the Repository' },
   { depth: 3, slug: 'manual-step-2', text: 'Step 2: Create Your Post' },
@@ -26,7 +26,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
   headline: 'How to Publish a Post on Awesome',
-  description: 'Step-by-step guide to publishing developer resources on the Awesome platform using Decap CMS or manual submission.',
+  description: 'Step-by-step guide to publishing developer resources on the Awesome platform using Pages CMS or manual submission.',
   author: {
     '@type': 'Person',
     name: OWNER.name,
@@ -50,15 +50,15 @@ const jsonLd = {
   datePublished: '2025-01-01',
   dateModified: new Date().toISOString().split('T')[0],
   inLanguage: 'en',
-  keywords: 'developer resources, publishing guide, Decap CMS, GitHub, content management',
+  keywords: 'developer resources, publishing guide, Pages CMS, GitHub, content management',
 };
 ---
 
 <PostLayout
   title="How to Publish a Post"
-  description="Step-by-step guide to publishing developer resources on the Awesome platform using Decap CMS or manual submission."
+  description="Step-by-step guide to publishing developer resources on the Awesome platform using Pages CMS or manual submission."
   headings={headings}
-  keywords="publishing guide, Decap CMS, GitHub submission, developer resources, content management"
+  keywords="publishing guide, Pages CMS, GitHub submission, developer resources, content management"
 >
   <Fragment slot="head">
     <meta property="article:author" content={OWNER.name} />
@@ -81,7 +81,7 @@ const jsonLd = {
       </h1>
       <p class="text-ds-on-surface-variant text-lg leading-relaxed max-w-2xl">
         This guide walks you through publishing developer resources on the Awesome platform.
-        You can use the visual editor (Decap CMS) or submit content manually via GitHub.
+        You can use Pages CMS or submit content manually via GitHub.
       </p>
       <div class="flex flex-wrap items-center gap-3 mt-4 text-sm text-ds-text-muted">
         <span class="flex items-center gap-1.5">
@@ -100,23 +100,24 @@ const jsonLd = {
         <h2 id="overview">Overview</h2>
         <p>
           This guide walks you through publishing developer resources on the Awesome platform.
-          You can use the visual editor (Decap CMS) or submit content manually via GitHub.
+          You can use Pages CMS or submit content manually via GitHub.
         </p>
 
-        <h2 id="decap-cms">Method 1: Using Decap CMS (Recommended)</h2>
-        <p>Decap CMS provides a visual editor for creating and managing content without touching code.</p>
+        <h2 id="pages-cms">Method 1: Using Pages CMS (Recommended)</h2>
+        <p>Pages CMS provides a visual editor for creating and managing content without touching code. It connects directly to your GitHub repository.</p>
 
-        <h3 id="decap-step-1">Step 1: Access the CMS</h3>
+        <h3 id="pages-step-1">Step 1: Access the CMS</h3>
         <ol>
-          <li>Navigate to <a href={`${BASE_PATH}/admin/`}>{BASE_PATH}/admin/</a></li>
-          <li>Click "Login with GitHub"</li>
-          <li>Authorize the application</li>
+          <li>Go to <a href="https://app.pagescms.org" target="_blank" rel="noopener noreferrer">app.pagescms.org</a></li>
+          <li>Sign in with your GitHub account</li>
+          <li>Install the Pages CMS GitHub App on your account</li>
+          <li>Select the <code>muhammad-fiaz/awesome</code> repository</li>
         </ol>
 
-        <h3 id="decap-step-2">Step 2: Create a New Post</h3>
+        <h3 id="pages-step-2">Step 2: Create a New Post</h3>
         <ol>
           <li>Click "Posts" in the left sidebar</li>
-          <li>Click "New Post" button</li>
+          <li>Click "New" button</li>
           <li>Fill in the required fields:
             <ul>
               <li><strong>Title</strong> - Your post title (minimum 5 characters)</li>
@@ -125,13 +126,13 @@ const jsonLd = {
           </li>
           <li>Fill in optional fields as needed</li>
           <li>Write your content in the Markdown editor</li>
-          <li>Click "Publish" when ready</li>
+          <li>Click "Save" when ready</li>
         </ol>
 
-        <h3 id="decap-step-3">Step 3: What Happens Next</h3>
+        <h3 id="pages-step-3">Step 3: What Happens Next</h3>
         <p>
-          When you publish, Decap CMS creates a pull request on GitHub. Once merged to the main branch,
-          GitHub Actions automatically builds and deploys the site. Your post will be live within minutes.
+          When you save, Pages CMS commits directly to your GitHub repository. GitHub Actions
+          automatically builds and deploys the site. Your post will be live within minutes.
         </p>
 
         <h2 id="manual">Method 2: Manual Submission via GitHub</h2>

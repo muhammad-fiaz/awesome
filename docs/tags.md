@@ -41,14 +41,16 @@ description: "JavaScript programming language and its ecosystem."
 ---
 ```
 
-## Creating via Decap CMS
+## Creating via Pages CMS
 
-1. Navigate to `/admin/`
-2. Sign in with GitHub
-3. Click "Tags" in the sidebar
-4. Click "New Tag"
-5. Fill in the required fields
-6. Save and publish
+1. Go to [app.pagescms.org](https://app.pagescms.org)
+2. Sign in with your GitHub account
+3. Install the Pages CMS GitHub App on your account
+4. Select the `muhammad-fiaz/awesome` repository
+5. Click "Tags" in the sidebar
+6. Click "New"
+7. Fill in the required fields
+8. Save
 
 ## Tips
 

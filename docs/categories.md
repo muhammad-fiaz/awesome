@@ -32,7 +32,6 @@ src/content/categories/rust.md
 | `thumbnail` | string | — | Category thumbnail image |
 | `heroImage` | string | — | Category hero/banner image |
 | `customOgImage` | string | — | Custom Open Graph image |
-| `featured` | boolean | `false` | Feature this category on the homepage |
 
 ## Example Category
 
@@ -41,24 +40,24 @@ src/content/categories/rust.md
 title: "React"
 description: "Modern React development with hooks, components, and the React ecosystem."
 thumbnail: "/images/categories/react.jpg"
-featured: true
 ---
 
 Optional markdown body for extended category description.
 ```
 
-## Creating via Decap CMS
+## Creating via Pages CMS
 
-1. Navigate to `/admin/`
-2. Sign in with GitHub
-3. Click "Categories" in the sidebar
-4. Click "New Category"
-5. Fill in the required fields
-6. Save and publish
+1. Go to [app.pagescms.org](https://app.pagescms.org)
+2. Sign in with your GitHub account
+3. Install the Pages CMS GitHub App on your account
+4. Select the `muhammad-fiaz/awesome` repository
+5. Click "Categories" in the sidebar
+6. Click "New"
+7. Fill in the required fields
+8. Save
 
 ## Tips
 
 - Use lowercase slug names (e.g., `react`, `javascript`, `devops`)
 - Keep category names clear and descriptive
 - Reference categories in posts: `categories: ["react"]`
-- Set `featured: true` for main categories shown on the homepage

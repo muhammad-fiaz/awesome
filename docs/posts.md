@@ -32,14 +32,15 @@ src/content/posts/rust/getting-started-with-rust.md
 | `tags` | string[] | `[]` | Tag slug(s) matching filenames in `src/content/tags/` |
 | `thumbnail` | string | — | Path to thumbnail image (relative to `public/` or full URL) |
 | `heroImage` | string | — | Path to hero/banner image |
+| `customOgImage` | string | — | Custom Open Graph image |
 | `featured` | boolean | `false` | Show in featured section |
-| `draft` | boolean | `true` | Exclude from production builds when `true` |
+| `draft` | boolean | `false` | Exclude from production builds when `true` |
 | `difficulty` | enum | — | One of: `beginner`, `intermediate`, `advanced`, `expert` |
 | `summary` | string | — | Custom summary text |
 | `keywords` | string[] | `[]` | Additional SEO keywords |
 | `license` | string | — | Content license info |
 | `language` | string | `"English"` | Content language |
-| `links` | object | — | External links (website, github, documentation, demo, npm, crate, youtube, discord) |
+| `links` | object | — | External links (website, github, documentation, demo, npm, crate, youtube, discord, downloadUrl) |
 | `references` | string[] | `[]` | Reference URLs |
 
 ## Example Post
@@ -60,6 +61,9 @@ links:
   website: "https://react.dev"
   github: "https://github.com/facebook/react"
   documentation: "https://react.dev/learn"
+  downloadUrl: "https://example.com/download"
+references:
+  - "https://react.dev/reference"
 ---
 
 # Getting Started with React Hooks
@@ -67,14 +71,16 @@ links:
 Your post content here...
 ```
 
-## Creating via Decap CMS
+## Creating via Pages CMS
 
-1. Navigate to `/admin/`
-2. Sign in with GitHub
-3. Click "Posts" in the sidebar
-4. Click "New Post"
-5. Fill in the required fields
-6. Save and publish
+1. Go to [app.pagescms.org](https://app.pagescms.org)
+2. Sign in with your GitHub account
+3. Install the Pages CMS GitHub App on your account
+4. Select the `muhammad-fiaz/awesome` repository
+5. Click "Posts" in the sidebar
+6. Click "New"
+7. Fill in the required fields
+8. Save
 
 ## Tips
 
@@ -83,3 +89,4 @@ Your post content here...
 - Set `featured: true` for your best content
 - Keep `draft: true` until the post is ready for publication
 - Use `difficulty` to help readers find appropriate content
+- Add `downloadUrl` if the resource has releases or downloads
