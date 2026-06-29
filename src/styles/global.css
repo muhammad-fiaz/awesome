@@ -356,16 +356,21 @@
     color: var(--ds-on-surface-variant);
   }
 
-  .prose-awesome a {
+  .prose-awesome a,
+  .prose-awesome :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
     color: var(--ds-primary);
     text-decoration: underline;
     text-decoration-color: transparent;
+    text-underline-offset: 2px;
     transition:
       text-decoration-color 0.2s,
       color 0.15s;
   }
 
-  .prose-awesome a:hover {
+  .prose-awesome a:hover,
+  .prose-awesome a:focus-visible,
+  .prose-awesome :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover,
+  .prose-awesome :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):focus-visible {
     color: var(--ds-primary);
     text-decoration-color: var(--ds-primary);
   }
