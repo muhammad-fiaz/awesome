@@ -1,5 +1,13 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Globe02Icon,
+  GithubIcon,
+  NewTwitterIcon,
+  LinkedinIcon,
+  FavouriteIcon,
+  HandHeartIcon,
+} from '@hugeicons/core-free-icons';
 import { BASE_PATH } from '@/config/site';
 import { getInitials } from '@/lib/utils';
 
@@ -26,13 +34,13 @@ interface Props {
 const { authors } = Astro.props;
 
 function getSocialLinks(author: AuthorInfo) {
-  const links: { key: string; icon: string; href: string; label: string }[] = [];
-  if (author.website) links.push({ key: 'website', icon: 'mdi:earth', href: author.website, label: 'Website' });
-  if (author.github) links.push({ key: 'github', icon: 'mdi:github', href: author.github, label: 'GitHub' });
-  if (author.twitter) links.push({ key: 'twitter', icon: 'mdi:twitter', href: author.twitter, label: 'Twitter / X' });
-  if (author.linkedin) links.push({ key: 'linkedin', icon: 'mdi:linkedin', href: author.linkedin, label: 'LinkedIn' });
-  if (author.sponsor) links.push({ key: 'sponsor', icon: 'mdi:heart', href: author.sponsor, label: 'Sponsor' });
-  if (author.support) links.push({ key: 'support', icon: 'mdi:hand-heart', href: author.support, label: 'Support' });
+  const links: { key: string; icon: any; href: string; label: string }[] = [];
+  if (author.website) links.push({ key: 'website', icon: Globe02Icon, href: author.website, label: 'Website' });
+  if (author.github) links.push({ key: 'github', icon: GithubIcon, href: author.github, label: 'GitHub' });
+  if (author.twitter) links.push({ key: 'twitter', icon: NewTwitterIcon, href: author.twitter, label: 'Twitter / X' });
+  if (author.linkedin) links.push({ key: 'linkedin', icon: LinkedinIcon, href: author.linkedin, label: 'LinkedIn' });
+  if (author.sponsor) links.push({ key: 'sponsor', icon: FavouriteIcon, href: author.sponsor, label: 'Sponsor' });
+  if (author.support) links.push({ key: 'support', icon: HandHeartIcon, href: author.support, label: 'Support' });
   return links;
 }
 ---
@@ -97,7 +105,7 @@ function getSocialLinks(author: AuthorInfo) {
                         title={link.label}
                         class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-ds-outline-variant text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-on-surface hover:bg-ds-surface-high transition-all duration-150"
                       >
-                        <Icon name={link.icon} class="w-3.5 h-3.5" />
+                        <HugeiconsIcon icon={link.icon} className="w-3.5 h-3.5" size={14} />
                         <span class="hidden sm:inline">{link.label}</span>
                       </a>
                     ))}

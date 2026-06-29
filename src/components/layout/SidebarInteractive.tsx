@@ -15,7 +15,6 @@ import {
   UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -197,22 +196,15 @@ export function SidebarInteractive({
     );
 
     return (
-      <AnimatePresence>
+      <>
         {isMobileOpen && (
           <>
-            <motion.div
-              className="fixed inset-0 z-60 bg-black/60 md:hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div
+              className="fixed inset-0 z-60 bg-black/60 md:hidden transition-opacity duration-200"
               onClick={closeMobileSidebar}
             />
-            <motion.aside
-              className="fixed left-0 top-0 bottom-0 w-70 z-61 bg-ds-surface-low border-r border-ds-outline-variant flex flex-col md:hidden"
-              initial={{ x: -280 }}
-              animate={{ x: 0 }}
-              exit={{ x: -280 }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            <aside
+              className="fixed left-0 top-0 bottom-0 w-70 z-61 bg-ds-surface-low border-r border-ds-outline-variant flex flex-col md:hidden transition-transform duration-200"
             >
               <div className="flex items-center justify-between px-4 h-16 border-b border-ds-outline-variant">
                 <span className="font-bold text-lg text-ds-on-surface">
@@ -233,10 +225,10 @@ export function SidebarInteractive({
                 </Button>
               </div>
               {navContent}
-            </motion.aside>
+            </aside>
           </>
         )}
-      </AnimatePresence>
+      </>
     );
   }
 

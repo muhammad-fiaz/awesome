@@ -1,7 +1,6 @@
 'use client';
 import { Clock01Icon, File02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { motion } from 'framer-motion';
 import { BASE_PATH } from '@/config/site';
 import { cn, resolveImageUrl } from '@/lib/utils';
 import { difficultyColors } from '@/lib/difficulty';
@@ -50,13 +49,9 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
 
   if (view === 'grid') {
     return (
-      <motion.a
+      <a
         href={`${BASE_PATH}/post/${post.slug}/`}
-        className="card-ds group overflow-hidden flex flex-col"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.06, duration: 0.35 }}
-        whileHover={{ scale: 1.02, y: -2 }}
+        className="card-ds group overflow-hidden flex flex-col transition-transform duration-200 hover:scale-[1.02] hover:-translate-y-0.5"
       >
         {/* Thumbnail */}
         <div className="relative w-full aspect-video overflow-hidden bg-ds-surface-high shrink-0">
@@ -137,19 +132,15 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
             )}
           </div>
         </div>
-      </motion.a>
+      </a>
     );
   }
 
   // List view
   return (
-    <motion.a
+    <a
       href={`${BASE_PATH}/post/${post.slug}/`}
-      className="card-ds group flex gap-4 p-4 md:p-5 overflow-hidden"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.35 }}
-      whileHover={{ scale: 1.005 }}
+      className="card-ds group flex gap-4 p-4 md:p-5 overflow-hidden transition-transform duration-200 hover:scale-[1.005]"
     >
       {/* Thumbnail */}
       <div className="shrink-0 w-28 md:w-36 h-20 md:h-24 rounded-lg overflow-hidden bg-ds-surface-high self-start">
@@ -240,6 +231,6 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
           ))}
         </div>
       </div>
-    </motion.a>
+    </a>
   );
 }

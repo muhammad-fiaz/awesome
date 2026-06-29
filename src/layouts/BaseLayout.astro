@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import { SITE_CONFIG, BASE_PATH, OWNER, GA_ID, GTM_ID, ADSENSE_CLIENT_ID } from '@/config/site';
 import { CookieBanner } from '@/components/common/CookieBanner';
-import { NewsletterPopup } from '@/components/common/NewsletterPopup';
+import { Popup } from '@/components/common/Popup';
 import { ClientRouter } from 'astro:transitions';
 
 export interface Props {
@@ -145,28 +145,38 @@ const webAppSchema = {
     </script>
 
     <!-- Google AdSense -->
-    <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`} crossorigin="anonymous"></script>
+    <script is:inline define:vars={{ ADSENSE_CLIENT_ID }}>
+      (function () {
+        if (document.querySelector('script[data-awesome-adsense]')) return;
+        var script = document.createElement('script');
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        script.dataset.awesomeAdsense = 'true';
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ADSENSE_CLIENT_ID;
+        document.head.appendChild(script);
+      })();
+    </script>
 
     <script is:inline>
       (function () {
-        const stored = localStorage.getItem('awesome-theme');
-        let theme = 'dark';
+        var stored = localStorage.getItem('awesome-theme');
+        var theme = 'dark';
         if (stored) {
           try {
-            const parsed = JSON.parse(stored);
-            theme = parsed?.state?.theme ?? 'dark';
-          } catch {}
+            var parsed = JSON.parse(stored);
+            var t = parsed && parsed.state && parsed.state.theme;
+            if (t === 'dark' || t === 'light') theme = t;
+            else theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          } catch (e) {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+        } else {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
-        const resolved =
-          theme === 'system'
-            ? window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light'
-            : theme;
         document.documentElement.classList.remove('dark', 'light');
-        document.documentElement.classList.add(resolved);
+        document.documentElement.classList.add(theme);
 
-        const sidebarOpen = localStorage.getItem('sidebar-open');
+        var sidebarOpen = localStorage.getItem('sidebar-open');
         if (sidebarOpen === 'false') {
           document.documentElement.classList.add('sidebar-collapsed');
         }
@@ -174,12 +184,74 @@ const webAppSchema = {
     </script>
   </head>
   <body class="bg-background text-foreground font-sans antialiased overflow-x-hidden" data-pagefind-body>
+    <div id="nprogress-bar" aria-hidden="true"></div>
+    <script is:inline>
+      (function () {
+        if (window.__awesomeProgressInitialized) return;
+        window.__awesomeProgressInitialized = true;
+
+        var pending = 0;
+        var trickleTimer = null;
+        var hideTimer = null;
+
+        function getBar() {
+          var bar = document.getElementById('nprogress-bar');
+          if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'nprogress-bar';
+            bar.setAttribute('aria-hidden', 'true');
+            document.body.prepend(bar);
+          }
+          return bar;
+        }
+
+        function setProgress(value) {
+          getBar().style.transform = 'scaleX(' + Math.min(value, 0.96) + ')';
+        }
+
+        function start() {
+          pending += 1;
+          var bar = getBar();
+          if (hideTimer) clearTimeout(hideTimer);
+          bar.classList.add('is-visible');
+          setProgress(0.08);
+
+          if (trickleTimer) clearInterval(trickleTimer);
+          trickleTimer = setInterval(function () {
+            var current = Number(bar.dataset.progress || '0.08');
+            var next = current + (1 - current) * 0.18;
+            bar.dataset.progress = String(next);
+            setProgress(next);
+          }, 220);
+        }
+
+        function done() {
+          pending = Math.max(0, pending - 1);
+          if (pending > 0) return;
+          var bar = getBar();
+          if (trickleTimer) clearInterval(trickleTimer);
+          bar.dataset.progress = '1';
+          bar.style.transform = 'scaleX(1)';
+          hideTimer = setTimeout(function () {
+            bar.classList.remove('is-visible');
+            bar.dataset.progress = '0';
+            bar.style.transform = 'scaleX(0)';
+          }, 180);
+        }
+
+        start();
+        window.addEventListener('load', done, { once: true });
+        document.addEventListener('astro:before-preparation', start);
+        document.addEventListener('astro:after-swap', done);
+        document.addEventListener('astro:page-load', done);
+      })();
+    </script>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P4M9T8ZR" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <slot />
     <CookieBanner client:load />
-    <NewsletterPopup client:load />
+    <Popup client:load />
   </body>
 </html>

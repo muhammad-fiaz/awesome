@@ -1,7 +1,6 @@
 'use client';
 import { Moon01Icon, Sun01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -13,19 +12,32 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ size = 'md', className }: ThemeToggleProps) {
-  const { resolvedTheme, setTheme } = useThemeStore();
-  const [isDark, setIsDark] = useState(true);
+  const { theme, setTheme } = useThemeStore();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsDark(resolvedTheme === 'dark');
-  }, [resolvedTheme]);
+    setMounted(true);
+  }, []);
 
   const toggle = () => {
-    const next = isDark ? 'light' : 'dark';
-    setTheme(next);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const iconSize = size === 'sm' ? 20 : 22;
+
+  if (!mounted) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className={cn('relative', className)}
+        aria-label="Toggle theme"
+      >
+        <HugeiconsIcon icon={Moon01Icon} size={iconSize} strokeWidth={1.5} />
+      </Button>
+    );
+  }
 
   return (
     <Button
@@ -33,36 +45,14 @@ export function ThemeToggle({ size = 'md', className }: ThemeToggleProps) {
       variant="ghost"
       size="icon"
       onClick={toggle}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       className={cn('relative', className)}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {isDark ? (
-          <motion.div
-            key="sun"
-            initial={{ rotate: -90, opacity: 0, scale: 0.7 }}
-            animate={{ rotate: 0, opacity: 1, scale: 1 }}
-            exit={{ rotate: 90, opacity: 0, scale: 0.7 }}
-            transition={{ duration: 0.18 }}
-          >
-            <HugeiconsIcon icon={Sun01Icon} size={iconSize} strokeWidth={1.5} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="moon"
-            initial={{ rotate: 90, opacity: 0, scale: 0.7 }}
-            animate={{ rotate: 0, opacity: 1, scale: 1 }}
-            exit={{ rotate: -90, opacity: 0, scale: 0.7 }}
-            transition={{ duration: 0.18 }}
-          >
-            <HugeiconsIcon
-              icon={Moon01Icon}
-              size={iconSize}
-              strokeWidth={1.5}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <HugeiconsIcon
+        icon={theme === 'dark' ? Sun01Icon : Moon01Icon}
+        size={iconSize}
+        strokeWidth={1.5}
+      />
     </Button>
   );
 }

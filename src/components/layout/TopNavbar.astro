@@ -1,5 +1,6 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { GithubIcon } from '@hugeicons/core-free-icons';
 import { SITE_CONFIG, OWNER, BASE_PATH } from '@/config/site';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { SidebarToggle } from '@/components/layout/SidebarToggle';
@@ -53,7 +54,7 @@ const { currentPath = '' } = Astro.props;
       aria-label="GitHub"
       class="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-ds-outline-variant text-ds-on-surface-variant hover:bg-ds-surface-high transition-colors"
     >
-      <Icon name="mdi:github" class="w-4 h-4" />
+      <HugeiconsIcon icon={GithubIcon} className="w-4 h-4" size={16} />
       <span>GitHub</span>
     </a>
 

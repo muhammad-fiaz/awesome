@@ -1,7 +1,8 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft01Icon, TagsIcon } from '@hugeicons/core-free-icons';
 import { getAllTags, getPostReadingTime, getPostsByTag } from '@/lib/posts';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 
@@ -57,10 +58,10 @@ const jsonLd = {
   description={tag.data.description ?? `Resources tagged with ${tag.data.title}`}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <div class="px-6 py-8">
+  <div class="px-4 md:px-6 py-8">
     <div class="max-w-320 mx-auto">
       <a href={`${BASE_PATH}/tags/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface mb-4 flex items-center gap-1">
-        <Icon name="mdi:arrow-left" class="w-4 h-4" />
+        <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
         All Tags
       </a>
 
@@ -75,7 +76,7 @@ const jsonLd = {
 
       {postItems.length === 0 ? (
         <div class="text-center py-16 text-ds-text-muted">
-          <Icon name="mdi:tag-outline" class="w-12 h-12 mx-auto mb-3 opacity-50" />
+          <HugeiconsIcon icon={TagsIcon} className="w-12 h-12 mx-auto mb-3 opacity-50" size={48} />
           <p class="text-base font-semibold text-ds-on-surface mb-1">No posts yet</p>
           <p class="text-sm">No posts with this tag yet. Check back later.</p>
         </div>

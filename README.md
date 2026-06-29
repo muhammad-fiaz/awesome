@@ -9,19 +9,6 @@ A curated collection of developer resources, tutorials, tools, and open-source p
 
 **[muhammad-fiaz.github.io/awesome](https://muhammad-fiaz.github.io/awesome)**
 
-## Features
-
-- Modern Astro 7 + React stack with Tailwind CSS v4
-- Full-text search powered by Pagefind
-- GitHub-based content management via Pull Requests
-- Dark/Light theme with daily.dev-style green brand
-- SEO optimized with JSON-LD schemas, Open Graph, and Twitter Cards
-- Responsive design with collapsible sidebar
-- Giscus comments on posts
-- Google Analytics, GTM, and AdSense integration
-- RSS feed and sitemap
-- PWA manifest support
-
 ## Getting Started
 
 ### Prerequisites

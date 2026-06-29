@@ -6,7 +6,6 @@ import {
   UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +44,7 @@ export function AuthorsFeed({ authors }: AuthorsFeedProps) {
   return (
     <div>
       {/* Controls */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
         <div className="relative flex-1 max-w-md">
           <HugeiconsIcon
             icon={SearchIcon}
@@ -59,125 +58,115 @@ export function AuthorsFeed({ authors }: AuthorsFeedProps) {
             className="pl-9 h-10 rounded-xl"
           />
         </div>
-        <div className="flex items-center border border-ds-outline-variant rounded-xl overflow-hidden">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setView('grid')}
-            className={cn(
-              'h-10 w-10 rounded-none',
-              view === 'grid' && 'bg-ds-primary-container text-ds-on-primary-container',
-            )}
-          >
-            <HugeiconsIcon icon={GridViewIcon} size={16} />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setView('list')}
-            className={cn(
-              'h-10 w-10 rounded-none',
-              view === 'list' && 'bg-ds-primary-container text-ds-on-primary-container',
-            )}
-          >
-            <HugeiconsIcon icon={ListViewIcon} size={16} />
-          </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center border border-ds-outline-variant rounded-xl overflow-hidden">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setView('grid')}
+              className={cn(
+                'h-10 w-10 rounded-none',
+                view === 'grid' && 'bg-ds-primary-container text-ds-on-primary-container',
+              )}
+            >
+              <HugeiconsIcon icon={GridViewIcon} size={16} />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setView('list')}
+              className={cn(
+                'h-10 w-10 rounded-none',
+                view === 'list' && 'bg-ds-primary-container text-ds-on-primary-container',
+              )}
+            >
+              <HugeiconsIcon icon={ListViewIcon} size={16} />
+            </Button>
+          </div>
+          <span className="text-sm text-ds-text-muted whitespace-nowrap">
+            {filtered.length} author{filtered.length !== 1 ? 's' : ''}
+          </span>
         </div>
-        <span className="text-sm text-ds-text-muted">
-          {filtered.length} author{filtered.length !== 1 ? 's' : ''}
-        </span>
       </div>
 
       {/* Results */}
-      <AnimatePresence mode="popLayout">
-        {filtered.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl"
-          >
-            <HugeiconsIcon icon={UserIcon} size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="text-base font-semibold mb-1">No authors found</p>
-            <p className="text-sm">Try a different search term</p>
-          </motion.div>
-        ) : view === 'grid' ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((author, i) => (
-              <motion.a
-                key={author.slug}
-                href={`${BASE_PATH}/authors/${author.slug}/`}
-                className="card-ds p-6 flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-200"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04, duration: 0.3 }}
-              >
-                {author.avatar ? (
-                  <img
-                    src={author.avatar}
-                    alt={author.name}
-                    className="w-20 h-20 rounded-full object-cover ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200 mb-4"
-                    loading="lazy"
-                    crossOrigin="anonymous"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-2xl font-bold mb-4 ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200">
-                    {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-                  </div>
-                )}
-                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
+      {filtered.length === 0 ? (
+        <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
+          <HugeiconsIcon icon={UserIcon} size={48} className="mx-auto mb-3 opacity-30" />
+          <p className="text-base font-semibold mb-1">No authors found</p>
+          <p className="text-sm">Try a different search term</p>
+        </div>
+      ) : view === 'grid' ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filtered.map((author) => (
+            <a
+              key={author.slug}
+              href={`${BASE_PATH}/authors/${author.slug}/`}
+              className="card-ds p-6 flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-200"
+            >
+              {author.avatar ? (
+                <img
+                  src={author.avatar}
+                  alt={author.name}
+                  className="w-20 h-20 rounded-full object-cover ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200 mb-4"
+                  loading="lazy"
+                  crossOrigin="anonymous"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-2xl font-bold mb-4 ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200">
+                  {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
+                {author.name}
+              </h3>
+              {author.title && (
+                <p className="text-xs text-ds-on-surface-variant mt-1 line-clamp-1">{author.title}</p>
+              )}
+              {author.location && (
+                <p className="text-[10px] text-ds-text-muted mt-1">{author.location}</p>
+              )}
+              {author.bio && (
+                <p className="text-xs text-ds-text-muted mt-2 line-clamp-2 leading-relaxed">{author.bio}</p>
+              )}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((author) => (
+            <a
+              key={author.slug}
+              href={`${BASE_PATH}/authors/${author.slug}/`}
+              className="card-ds flex items-center gap-4 p-4 group hover:scale-[1.01] transition-transform duration-200"
+            >
+              {author.avatar ? (
+                <img
+                  src={author.avatar}
+                  alt={author.name}
+                  className="w-12 h-12 rounded-full object-cover ring-2 ring-ds-outline-variant shrink-0"
+                  loading="lazy"
+                  crossOrigin="anonymous"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-sm font-bold shrink-0">
+                  {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
                   {author.name}
                 </h3>
                 {author.title && (
-                  <p className="text-xs text-ds-on-surface-variant mt-1 line-clamp-1">{author.title}</p>
+                  <p className="text-xs text-ds-on-surface-variant line-clamp-1">{author.title}</p>
                 )}
-                {author.location && (
-                  <p className="text-[10px] text-ds-text-muted mt-1">{author.location}</p>
-                )}
-                {author.bio && (
-                  <p className="text-xs text-ds-text-muted mt-2 line-clamp-2 leading-relaxed">{author.bio}</p>
-                )}
-              </motion.a>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filtered.map((author, i) => (
-              <motion.a
-                key={author.slug}
-                href={`${BASE_PATH}/authors/${author.slug}/`}
-                className="card-ds flex items-center gap-4 p-4 group hover:scale-[1.01] transition-transform duration-200"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.03, duration: 0.25 }}
-              >
-                {author.avatar ? (
-                  <img
-                    src={author.avatar}
-                    alt={author.name}
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-ds-outline-variant shrink-0"
-                    loading="lazy"
-                    crossOrigin="anonymous"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-sm font-bold shrink-0">
-                    {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
-                    {author.name}
-                  </h3>
-                  {author.title && (
-                    <p className="text-xs text-ds-on-surface-variant line-clamp-1">{author.title}</p>
-                  )}
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        )}
-      </AnimatePresence>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

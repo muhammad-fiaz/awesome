@@ -143,7 +143,7 @@
   --ds-surface-bright: #ffffff;
   --ds-surface-card: #ffffff;
   --ds-surface-lowest: #ffffff;
-  --ds-surface-low: #f6f8fa;
+  --ds-surface-low: #ffffff;
   --ds-surface-container: #f6f8fa;
   --ds-surface-high: #eaeef2;
   --ds-surface-highest: #d0d7de;
@@ -154,13 +154,13 @@
   --ds-border-subtle: #d0d7de;
   --ds-text-muted: #656d76;
   --ds-primary: #1a7f37;
-  --ds-primary-container: #1a7f37;
+  --ds-primary-container: #dafbe1;
   --ds-on-primary: #ffffff;
-  --ds-on-primary-container: #dafbe1;
+  --ds-on-primary-container: #0d4119;
   --ds-secondary: #0969da;
-  --ds-secondary-container: #0969da;
+  --ds-secondary-container: #ddf4ff;
   --ds-on-secondary: #ffffff;
-  --ds-on-secondary-container: #ddf4ff;
+  --ds-on-secondary-container: #002d5c;
   --ds-tertiary: #bf8700;
   --ds-tertiary-container: #9a6700;
   --ds-on-tertiary: #ffffff;
@@ -283,6 +283,28 @@
     outline: 2px solid var(--ds-primary);
     outline-offset: 2px;
     border-radius: var(--radius);
+  }
+
+  #nprogress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 3px;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--ds-primary), var(--ds-secondary));
+    box-shadow: 0 0 18px color-mix(in srgb, var(--ds-primary) 55%, transparent);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition:
+      transform 220ms ease,
+      opacity 180ms ease;
+  }
+
+  #nprogress-bar.is-visible {
+    opacity: 1;
   }
 }
 

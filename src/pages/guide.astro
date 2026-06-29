@@ -1,8 +1,12 @@
 ---
 import PostLayout from '@/layouts/PostLayout.astro';
 import Prose from '@/components/common/Prose.astro';
-import { Icon } from 'astro-icon/components';
+import { CodeCopyButtons } from '@/components/common/CodeCopy';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Clock01Icon } from '@hugeicons/core-free-icons';
 import { BASE_PATH, OWNER, SITE_CONFIG } from '@/config/site';
+import { getAuthorsBySlugs } from '@/lib/posts';
+import { getInitials } from '@/lib/utils';
 
 const headings = [
   { depth: 2, slug: 'overview', text: 'Overview' },
@@ -43,7 +47,7 @@ const jsonLd = {
     url: OWNER.portfolio,
   },
   mainEntityOfPage: {
-    '@type': 'WebPage',
+    '@type': 'WebSite',
     '@id': `${SITE_CONFIG.url}${BASE_PATH}/guide/`,
   },
   datePublished: '2025-01-01',
@@ -51,6 +55,14 @@ const jsonLd = {
   inLanguage: 'en',
   keywords: 'developer resources, publishing guide, GitHub, content management, pull request',
 };
+
+// Fetch the guide author's info
+const authorList = await getAuthorsBySlugs(['muhammad-fiaz']);
+const author = authorList[0];
+const authorData = author?.data;
+const authorSlug = author?.id.replace(/\.md$/, '') || 'muhammad-fiaz';
+
+const heroImage = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&h=420&q=80";
 ---
 
 <PostLayout
@@ -58,6 +70,7 @@ const jsonLd = {
   description="Step-by-step guide to publishing developer resources on the Awesome platform by creating a Markdown file and submitting a Pull Request."
   headings={headings}
   keywords="publishing guide, GitHub submission, pull request, developer resources, content management"
+  ogImage={heroImage}
 >
   <Fragment slot="head">
     <meta property="article:author" content={OWNER.name} />
@@ -67,34 +80,72 @@ const jsonLd = {
 
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <!-- Hero Header -->
-  <div class="px-6 pt-8 pb-6">
-    <div class="max-w-3xl mx-auto">
-      <div class="flex items-center gap-2 mb-4">
-        <a href={`${BASE_PATH}/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
-        <span class="text-sm text-ds-on-surface font-medium">Guide</span>
+  <!-- Hero Banner & Header -->
+  <div class="relative">
+    {heroImage && (
+      <div class="relative h-48 md:h-80 overflow-hidden rounded-2xl mb-6">
+        <img
+          src={heroImage}
+          alt="How to Publish a Post"
+          class="w-full h-full object-cover opacity-80 dark:opacity-60"
+        />
+        <div
+          class="absolute inset-0"
+          style="background: linear-gradient(to bottom, transparent 30%, var(--background) 100%)"
+        />
       </div>
-      <h1 class="text-3xl md:text-4xl font-extrabold text-ds-on-surface tracking-tight mb-3">
-        How to Publish a Post
-      </h1>
-      <p class="text-ds-on-surface-variant text-lg leading-relaxed max-w-2xl">
-        This guide walks you through publishing developer resources on the Awesome platform.
-        Create a Markdown file and submit a Pull Request on GitHub.
-      </p>
-      <div class="flex flex-wrap items-center gap-3 mt-4 text-sm text-ds-text-muted">
-        <span class="flex items-center gap-1.5">
-          <Icon name="mdi:account-outline" class="w-4 h-4" />
-          {OWNER.name}
-        </span>
-        <span>·</span>
-        <span>10 min read</span>
+    )}
+
+    <div class="px-4 md:px-6 pb-6">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-2 mb-4">
+          <a href={`${BASE_PATH}/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+          <span class="text-ds-outline-variant">/</span>
+          <span class="text-sm text-ds-on-surface font-medium">Guide</span>
+        </div>
+        <h1 class="text-2xl md:text-4xl font-extrabold text-ds-on-surface tracking-tight mb-3">
+          How to Publish a Post
+        </h1>
+        <p class="text-ds-on-surface-variant text-base md:text-lg leading-relaxed max-w-2xl">
+          This guide walks you through publishing developer resources on the Awesome platform.
+          Create a Markdown file and submit a Pull Request on GitHub.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 text-sm mt-6">
+          <div class="flex items-center gap-2">
+            <a
+              href={`${BASE_PATH}/authors/${authorSlug}/`}
+              class="flex items-center gap-2 text-ds-on-surface-variant hover:text-ds-on-surface transition-colors"
+            >
+              {authorData?.avatar ? (
+                <img
+                  src={authorData.avatar}
+                  alt={authorData.name}
+                  class="w-7 h-7 rounded-full object-cover ring-1 ring-ds-outline-variant"
+                  loading="lazy"
+                  crossorigin="anonymous"
+                />
+              ) : (
+                <div class="w-7 h-7 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-[10px] font-bold">
+                  {getInitials(authorData?.name || OWNER.name)}
+                </div>
+              )}
+              <span class="font-medium">{authorData?.name || OWNER.name}</span>
+            </a>
+          </div>
+
+          <span class="text-ds-outline">·</span>
+
+          <span class="flex items-center gap-1 text-ds-text-muted">
+            <HugeiconsIcon icon={Clock01Icon} className="w-4 h-4 shrink-0" size={14} strokeWidth={1.5} />
+            <span>10 min read</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="px-6 pb-8">
-    <div class="max-w-3xl mx-auto">
+  <div class="py-4">
+    <div class="w-full">
       <Prose>
         <h2 id="overview">Overview</h2>
         <p>
@@ -314,6 +365,8 @@ git commit -m "add: Your Post Title"</code></pre>
           <li><a href={`mailto:${OWNER.email}`}>{OWNER.email}</a></li>
         </ul>
       </Prose>
+
+      <CodeCopyButtons client:load />
     </div>
   </div>
 </PostLayout>

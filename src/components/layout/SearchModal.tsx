@@ -12,7 +12,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { BASE_PATH } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -41,6 +41,7 @@ export function SearchModal() {
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const [pagefindResults, setPagefindResults] = useState<any[] | null>(null);
 
   useHotkey({ key: 'k', mod: true }, () => {
     if (isOpen) {
@@ -80,33 +81,78 @@ export function SearchModal() {
     return () => document.removeEventListener('keydown', handler);
   }, [closeSearch]);
 
+  useEffect(() => {
+    if (!query.trim()) {
+      setPagefindResults(null);
+      return;
+    }
+
+    const performSearch = async () => {
+      try {
+        // @ts-ignore
+        const pagefind = await import(/* @vite-ignore */ `${import.meta.env.BASE_URL}pagefind/pagefind.js`);
+        await pagefind.init();
+        const search = await pagefind.search(query);
+        const results = await Promise.all(search.results.slice(0, 8).map((r: any) => r.data()));
+        setPagefindResults(results);
+      } catch (e) {
+        setPagefindResults(null);
+      }
+    };
+
+    const debounceTimer = setTimeout(performSearch, 150);
+    return () => clearTimeout(debounceTimer);
+  }, [query]);
+
   const queryWords = query
     .trim()
     .toLowerCase()
     .split(/\s+/)
     .filter((w) => w.length > 0);
 
-  const filtered =
-    queryWords.length > 0
-      ? posts
-          .filter(
-            (p) =>
-              queryWords.every(
-                (w) =>
-                  p.title.toLowerCase().includes(w) ||
-                  p.description.toLowerCase().includes(w) ||
-                  p.tags.some((t) => t.toLowerCase().includes(w)) ||
-                  p.categories.some((c) => c.toLowerCase().includes(w)),
-              ),
-          )
-          .slice(0, 8)
-          .map((p) => ({
-            label: p.title,
-            href: `${BASE_PATH}/post/${p.slug}/`,
-            sub: p.categories[0] ?? '',
-            icon: File02Icon,
-          }))
-      : DEFAULT_ITEMS.map((i) => ({ ...i, sub: '' }));
+  const filtered = useMemo(() => {
+    if (queryWords.length === 0) {
+      return DEFAULT_ITEMS.map((i) => ({ ...i, sub: '' }));
+    }
+
+    if (pagefindResults !== null) {
+      const pagefindSlugs = pagefindResults
+        .map((res: any) => {
+          const cleanUrl = res.url.endsWith('/') ? res.url.slice(0, -1) : res.url;
+          const match = cleanUrl.match(/\/post\/([^/]+)$/);
+          return match ? match[1] : null;
+        })
+        .filter(Boolean) as string[];
+
+      return pagefindSlugs
+        .map((slug) => posts.find((p) => p.slug === slug))
+        .filter((p): p is SearchIndexItem => !!p)
+        .map((p) => ({
+          label: p.title,
+          href: `${BASE_PATH}/post/${p.slug}/`,
+          sub: p.categories[0] ?? '',
+          icon: File02Icon,
+        }));
+    }
+
+    return posts
+      .filter((p) =>
+        queryWords.every(
+          (w) =>
+            p.title.toLowerCase().includes(w) ||
+            p.description.toLowerCase().includes(w) ||
+            p.tags.some((t) => t.toLowerCase().includes(w)) ||
+            p.categories.some((c) => c.toLowerCase().includes(w)),
+        ),
+      )
+      .slice(0, 8)
+      .map((p) => ({
+        label: p.title,
+        href: `${BASE_PATH}/post/${p.slug}/`,
+        sub: p.categories[0] ?? '',
+        icon: File02Icon,
+      }));
+  }, [queryWords, pagefindResults, posts]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {

@@ -1,5 +1,4 @@
 'use client';
-import { motion } from 'framer-motion';
 
 interface HeroStatsProps {
   stats: {
@@ -10,41 +9,60 @@ interface HeroStatsProps {
   };
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-};
-
-export function HeroStats(_props: HeroStatsProps) {
+export function HeroStats({ stats }: HeroStatsProps) {
   return (
-    <section className="px-6 py-8">
+    <section className="px-4 md:px-6 py-6 md:py-8">
       <div className="max-w-320 mx-auto">
-        <motion.div
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={itemVariants}>
-            <h1 className="text-2xl md:text-4xl font-bold text-ds-on-surface mb-2 tracking-tight">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-5 border-b border-ds-outline-variant">
+          <div className="space-y-1">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-ds-on-surface tracking-tight leading-tight">
               Developer Resources,{' '}
               <span className="text-ds-primary">Curated.</span>
             </h1>
-            <p className="text-ds-on-surface-variant text-base md:text-lg max-w-xl">
+            <p className="text-ds-on-surface-variant text-sm md:text-base max-w-xl leading-relaxed">
               Hand-picked tutorials, tools, and references for the modern
               developer ecosystem.
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+          {stats && (
+            <div className="grid grid-cols-4 gap-2 w-full lg:w-auto lg:flex lg:items-center lg:gap-3 shrink-0">
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-primary/30">
+                <span className="block text-lg lg:text-xl font-extrabold text-ds-primary tracking-tight">
+                  {stats.posts}
+                </span>
+                <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
+                  Posts
+                </span>
+              </div>
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-secondary/30">
+                <span className="block text-lg lg:text-xl font-extrabold text-ds-secondary tracking-tight">
+                  {stats.categories}
+                </span>
+                <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
+                  Categories
+                </span>
+              </div>
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-tertiary/30">
+                <span className="block text-lg lg:text-xl font-extrabold text-ds-tertiary tracking-tight">
+                  {stats.tags}
+                </span>
+                <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
+                  Tags
+                </span>
+              </div>
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-on-surface/30">
+                <span className="block text-lg lg:text-xl font-extrabold text-ds-on-surface tracking-tight">
+                  {stats.authors}
+                </span>
+                <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
+                  Authors
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
 }
+

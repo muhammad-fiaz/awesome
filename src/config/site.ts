@@ -120,7 +120,7 @@ const rawCommunityLinks = [
   {
     label: 'Guide',
     href: `${BASE_PATH}/guide/`,
-    icon: 'policy',
+    icon: 'guide',
   },
   {
     label: 'RSS',

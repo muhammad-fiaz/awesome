@@ -6,6 +6,7 @@ import { RelatedPosts } from '@/components/post/RelatedPosts';
 import { Recommendations } from '@/components/post/Recommendations';
 import AuthorCard from '@/components/post/AuthorCard.astro';
 import Prose from '@/components/common/Prose.astro';
+import { CodeCopyButtons } from '@/components/common/CodeCopy';
 import { render } from 'astro:content';
 import { BASE_PATH, SITE_CONFIG, OWNER } from '@/config/site';
 import {
@@ -64,7 +65,23 @@ const recommendationsForComponent = recommendationPosts.map((p) => ({
   difficulty: p.data.difficulty,
 }));
 
-const authorInfoList = postAuthors.map((a) => ({
+import fs from 'node:fs';
+import path from 'node:path';
+
+const postFilePath = path.join(process.cwd(), 'src/content/posts', post.id);
+let datePublished = new Date().toISOString();
+let dateModified = new Date().toISOString();
+try {
+  if (fs.existsSync(postFilePath)) {
+    const stats = fs.statSync(postFilePath);
+    datePublished = stats.birthtime.toISOString();
+    dateModified = stats.mtime.toISOString();
+  }
+} catch (e) {
+  // Fallback
+}
+
+const authorInfoList = postAuthors.length > 0 ? postAuthors.map((a) => ({
   slug: a.id.replace(/\.md$/, ''),
   name: a.data.name,
   title: a.data.title,
@@ -78,7 +95,21 @@ const authorInfoList = postAuthors.map((a) => ({
   portfolio: a.data.portfolio,
   sponsor: a.data.sponsor,
   support: a.data.support,
-}));
+})) : [{
+  slug: 'muhammad-fiaz',
+  name: OWNER.name,
+  title: 'Founder & Site Owner',
+  avatar: 'https://avatars.githubusercontent.com/u/75434191?v=4',
+  bio: 'Software Engineer & Open Source Enthusiast',
+  location: 'India',
+  website: OWNER.portfolio,
+  github: OWNER.github,
+  twitter: OWNER.twitter,
+  linkedin: OWNER.linkedin,
+  portfolio: OWNER.portfolio,
+  sponsor: OWNER.sponsor,
+  support: OWNER.support,
+}];
 
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const readingTime =
@@ -110,7 +141,7 @@ const postJsonLd = {
     '@type': 'Person',
     name: OWNER.name,
     url: OWNER.portfolio,
-    image: primaryAuthor?.avatar,
+    image: primaryAuthor?.avatar || 'https://avatars.githubusercontent.com/u/75434191?v=4',
     sameAs: [
       OWNER.github,
       OWNER.twitter,
@@ -119,7 +150,8 @@ const postJsonLd = {
     ],
   },
   image: post.data.thumbnail ?? post.data.customOgImage,
-  datePublished: new Date().toISOString(),
+  datePublished,
+  dateModified,
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': `${SITE_CONFIG.url}${BASE_PATH}/post/${post.id.replace(/\.(md|mdx)$/, '')}/`,
@@ -170,11 +202,13 @@ if (post.data.links) {
     difficulty={post.data.difficulty}
   />
 
-  <div class="px-4 md:px-6 pb-8">
-    <div class="max-w-3xl mx-auto">
+  <div class="py-4">
+    <div class="w-full">
       <Prose>
         <Content />
       </Prose>
+
+      <CodeCopyButtons client:load />
 
       {post.data.references && post.data.references.length > 0 && (
         <div class="mt-10 pt-6 border-t border-ds-outline-variant">
@@ -212,6 +246,8 @@ if (post.data.links) {
         </div>
       )}
 
+      <AuthorCard authors={authorInfoList} />
+
       {relatedForComponent.length > 0 && (
         <RelatedPosts client:load posts={relatedForComponent} />
       )}
@@ -219,8 +255,6 @@ if (post.data.links) {
       {recommendationsForComponent.length > 0 && (
         <Recommendations client:load posts={recommendationsForComponent} />
       )}
-
-      <AuthorCard authors={authorInfoList} />
 
       <GiscusComments client:load term={post.id.replace(/\.(md|mdx)$/, '')} />
     </div>

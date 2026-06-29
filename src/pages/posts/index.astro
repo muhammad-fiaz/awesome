@@ -2,7 +2,8 @@
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
 import { TagCloud } from '@/components/home/TagCloud';
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { StarIcon, Clock01Icon, Search01Icon } from '@hugeicons/core-free-icons';
 import {
   getAllCategories,
   getAllPosts,
@@ -87,10 +88,10 @@ const jsonLd = {
 
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-ds-on-surface tracking-tight mb-2">
+        <h1 class="text-2xl md:text-4xl font-bold text-ds-on-surface tracking-tight mb-2">
           Developer Resources
         </h1>
-        <p class="text-ds-on-surface-variant text-lg max-w-2xl">
+        <p class="text-ds-on-surface-variant text-base md:text-lg max-w-2xl">
           Discover curated developer resources, tutorials, tools, frameworks, and learning materials hand-picked for the community.
         </p>
         <div class="flex flex-wrap items-center gap-4 mt-4">
@@ -98,14 +99,14 @@ const jsonLd = {
             href={`${BASE_PATH}/featured/`}
             class="inline-flex items-center gap-1.5 text-sm text-ds-primary hover:underline font-medium"
           >
-            <Icon name="mdi:star" class="w-3.5 h-3.5" />
+            <HugeiconsIcon icon={StarIcon} className="w-3.5 h-3.5" size={14} />
             Featured
           </a>
           <a
             href={`${BASE_PATH}/latest/`}
             class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
           >
-            <Icon name="mdi:clock-outline" class="w-3.5 h-3.5" />
+            <HugeiconsIcon icon={Clock01Icon} className="w-3.5 h-3.5" size={14} />
             Latest
           </a>
         </div>
@@ -116,7 +117,7 @@ const jsonLd = {
         <div class="lg:col-span-2">
           {posts.length === 0 ? (
             <div class="card-ds p-16 text-center">
-              <Icon name="mdi:magnify-close" class="w-14 h-14 mx-auto mb-4 text-ds-text-muted opacity-30" />
+              <HugeiconsIcon icon={Search01Icon} className="w-14 h-14 mx-auto mb-4 text-ds-text-muted opacity-30" size={56} />
               <p class="text-ds-text-muted text-lg">No posts found.</p>
             </div>
           ) : (
@@ -135,14 +136,14 @@ const jsonLd = {
                 href={`${BASE_PATH}/featured/`}
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
               >
-                <Icon name="mdi:star" class="w-4 h-4 text-ds-primary shrink-0" />
+                <HugeiconsIcon icon={StarIcon} className="w-4 h-4 text-ds-primary shrink-0" size={16} />
                 Featured Posts
               </a>
               <a
                 href={`${BASE_PATH}/latest/`}
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
               >
-                <Icon name="mdi:clock-outline" class="w-4 h-4 text-ds-secondary shrink-0" />
+                <HugeiconsIcon icon={Clock01Icon} className="w-4 h-4 text-ds-secondary shrink-0" size={16} />
                 Latest Posts
               </a>
             </div>
@@ -174,7 +175,7 @@ const jsonLd = {
           )}
 
           <!-- Tags -->
-          <TagCloud client:load tags={tagItems} title="Browse by Tag" />
+          <TagCloud tags={tagItems} title="Browse by Tag" />
         </div>
       </div>
     </div>

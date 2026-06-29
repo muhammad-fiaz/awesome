@@ -99,22 +99,21 @@ const authorItems = authors
   description={SITE_CONFIG.description}
 >
   <!-- Hero Stats -->
-  <HeroStats client:load stats={stats} />
+  <HeroStats stats={stats} />
 
   <!-- Featured Bento -->
   {featuredForBento.length > 0 && (
-    <FeaturedBento client:load posts={featuredForBento} />
+    <FeaturedBento posts={featuredForBento} />
   )}
 
   <!-- Main content + Right sidebar area -->
-  <div class="px-6 pb-12">
+  <div class="px-4 md:px-6 pb-12">
     <div class="max-w-320 mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
         <!-- Trending Feed -->
         <div class="lg:col-span-2 space-y-10">
           <TrendingFeed
-            client:load
             posts={trendingPosts}
             title="Latest Posts"
             icon="schedule"
@@ -125,20 +124,20 @@ const authorItems = authors
         <!-- Sidebar content -->
         <div class="space-y-10">
           <div>
-            <CategoryCloud client:load categories={categoryItems} />
+            <CategoryCloud categories={categoryItems} />
           </div>
           <div>
-            <AuthorList client:load authors={authorItems} />
+            <AuthorList authors={authorItems} />
           </div>
           <div>
-            <SponsorBanner client:load />
+            <SponsorBanner />
           </div>
         </div>
       </div>
 
       <!-- Tag cloud -->
       <div class="mt-12 pt-8 border-t border-ds-outline-variant">
-        <TagCloud client:load tags={tagItems} />
+        <TagCloud tags={tagItems} />
       </div>
     </div>
   </div>

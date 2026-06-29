@@ -2,7 +2,18 @@
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
 import Prose from '@/components/common/Prose.astro';
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  ArrowLeft01Icon,
+  Location01Icon,
+  CheckmarkCircle01Icon,
+  File02Icon,
+  GithubIcon,
+  NewTwitterIcon,
+  LinkedinIcon,
+  Globe02Icon,
+  FavouriteIcon,
+} from '@hugeicons/core-free-icons';
 import { render } from 'astro:content';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 import {
@@ -39,7 +50,7 @@ const postItems = posts.map((p) => ({
 
 interface Social {
   key: string;
-  icon: string;
+  icon: any;
   href: string | undefined;
   label: string;
 }
@@ -47,31 +58,31 @@ interface Social {
 const socials: Social[] = [
   {
     key: 'github',
-    icon: 'mdi:github',
+    icon: GithubIcon,
     href: author.data.github,
     label: 'GitHub',
   },
   {
     key: 'twitter',
-    icon: 'mdi:twitter',
+    icon: NewTwitterIcon,
     href: author.data.twitter,
     label: 'Twitter / X',
   },
   {
     key: 'linkedin',
-    icon: 'mdi:linkedin',
+    icon: LinkedinIcon,
     href: author.data.linkedin,
     label: 'LinkedIn',
   },
   {
     key: 'website',
-    icon: 'mdi:earth',
+    icon: Globe02Icon,
     href: author.data.website,
     label: 'Website',
   },
   {
     key: 'sponsor',
-    icon: 'mdi:heart',
+    icon: FavouriteIcon,
     href: author.data.sponsor,
     label: 'Sponsor',
   },
@@ -120,7 +131,7 @@ const authorJsonLd = {
 
       <!-- Back link -->
       <a href={`${BASE_PATH}/authors/`} class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface mb-6 pt-4">
-        <Icon name="mdi:arrow-left" class="w-4 h-4" />
+        <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
         All Authors
       </a>
 
@@ -158,7 +169,7 @@ const authorJsonLd = {
                 )}
                 {author.data.location && (
                   <p class="text-sm text-ds-text-muted mt-1 flex items-center gap-1">
-                    <Icon name="mdi:map-marker-outline" class="w-3.5 h-3.5" />
+                    <HugeiconsIcon icon={Location01Icon} className="w-3.5 h-3.5" size={14} />
                     {author.data.location}
                   </p>
                 )}
@@ -182,7 +193,7 @@ const authorJsonLd = {
                     title={social.label}
                     class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm border border-ds-outline-variant text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-on-surface hover:bg-ds-surface-high transition-all duration-150"
                   >
-                    <Icon name={social.icon} class="w-4 h-4" aria-hidden="true" />
+                    <HugeiconsIcon icon={social.icon} className="w-4 h-4" size={16} aria-hidden="true" />
                     <span class="hidden sm:inline">{social.label}</span>
                   </a>
                 ))}
@@ -199,7 +210,7 @@ const authorJsonLd = {
           {author.body && author.body.trim() && (
             <div class="card-ds p-6">
               <h2 class="text-lg font-semibold text-ds-on-surface mb-4 flex items-center gap-2">
-                <Icon name="mdi:check-circle" class="w-4.5 h-4.5 text-ds-primary" />
+                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="w-4.5 h-4.5 text-ds-primary" size={18} />
                 About
               </h2>
               <Prose>
@@ -210,13 +221,13 @@ const authorJsonLd = {
 
           <div>
             <h2 class="text-xl font-semibold text-ds-on-surface mb-5 flex items-center gap-2">
-              <Icon name="mdi:file-document-outline" class="w-5 h-5 text-ds-secondary" />
+              <HugeiconsIcon icon={File02Icon} className="w-5 h-5 text-ds-secondary" size={20} />
               Posts by {author.data.name}
             </h2>
 
             {postItems.length === 0 ? (
               <div class="card-ds p-10 text-center text-ds-text-muted">
-                <Icon name="mdi:file-document-outline" class="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <HugeiconsIcon icon={File02Icon} className="w-12 h-12 mx-auto mb-3 opacity-30" size={48} />
                 <p>No posts yet by this author.</p>
               </div>
             ) : (

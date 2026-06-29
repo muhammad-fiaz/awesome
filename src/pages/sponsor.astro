@@ -2,7 +2,8 @@
 import AppShell from '@/layouts/AppShell.astro';
 import { SponsorBanner } from '@/components/home/SponsorBanner';
 import { OWNER } from '@/config/site';
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { FavouriteIcon, CodeIcon } from '@hugeicons/core-free-icons';
 ---
 
 <AppShell title="Sponsor Awesome | Support Open Source" description="Support the Awesome Dev Platform and keep it free for everyone." keywords="sponsor, support open source, donate, GitHub Sponsors, funding">
@@ -20,7 +21,7 @@ import { Icon } from 'astro-icon/components';
   <div class="px-6 py-12">
     <div class="max-w-2xl mx-auto">
       <div class="text-center mb-10">
-        <Icon name="mdi:heart" class="text-5xl text-ds-primary mb-4 block" />
+        <HugeiconsIcon icon={FavouriteIcon} className="text-5xl text-ds-primary mb-4 mx-auto block" size={48} />
         <h1 class="text-3xl font-bold text-ds-on-surface mb-3">Support Awesome</h1>
         <p class="text-ds-on-surface-variant text-lg">
           Awesome is a free, open-source platform. Your sponsorship helps keep it running and growing for the developer community.
@@ -34,7 +35,7 @@ import { Icon } from 'astro-icon/components';
           rel="noopener noreferrer"
           class="card-ds p-6 text-center hover:no-underline group"
         >
-          <Icon name="mdi:code-tags" class="text-3xl text-ds-primary mb-2 block" />
+          <HugeiconsIcon icon={CodeIcon} className="text-3xl text-ds-primary mb-2 mx-auto block" size={32} />
           <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">GitHub Sponsors</h2>
           <p class="text-sm text-ds-on-surface-variant">Support monthly via GitHub Sponsors</p>
         </a>

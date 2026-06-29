@@ -1,6 +1,21 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { NAV_LINKS, DISCOVER_LINKS, COMMUNITY_LINKS, BASE_PATH, OWNER } from '@/config/site';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  BookOpen02Icon,
+  Home01Icon,
+  File02Icon,
+  GridIcon,
+  TagsIcon,
+  UserIcon,
+  StarIcon,
+  Clock01Icon,
+  RssIcon,
+  FavouriteIcon,
+  HelpCircleIcon,
+  ShieldIcon,
+  ExternalLinkIcon,
+} from '@hugeicons/core-free-icons';
+import { NAV_LINKS, DISCOVER_LINKS, COMMUNITY_LINKS, BASE_PATH } from '@/config/site';
 import { SidebarInteractive } from '@/components/layout/SidebarInteractive';
 
 interface Props {
@@ -14,18 +29,19 @@ function isActive(href: string): boolean {
   return currentPath.startsWith(href);
 }
 
-const ICON_MAP: Record<string, string> = {
-  home: 'mdi:home-outline',
-  article: 'mdi:file-document-outline',
-  category: 'mdi:shape-outline',
-  sell: 'mdi:tag-outline',
-  person: 'mdi:account-outline',
-  star: 'mdi:star-outline',
-  schedule: 'mdi:clock-outline',
-  rss_feed: 'mdi:rss',
-  favorite: 'mdi:heart-outline',
-  help: 'mdi:help-circle-outline',
-  policy: 'mdi:shield-check-outline',
+const ICON_MAP: Record<string, any> = {
+  home: Home01Icon,
+  article: File02Icon,
+  category: GridIcon,
+  sell: TagsIcon,
+  person: UserIcon,
+  star: StarIcon,
+  schedule: Clock01Icon,
+  rss_feed: RssIcon,
+  favorite: FavouriteIcon,
+  help: HelpCircleIcon,
+  policy: ShieldIcon,
+  guide: BookOpen02Icon,
 };
 ---
 
@@ -39,32 +55,25 @@ const ICON_MAP: Record<string, string> = {
       <SidebarInteractive client:load desktop={true} />
     </div>
 
-    <div class="px-2 py-1 new-post-wrapper">
-      <a
-        href={`${BASE_PATH}/guide/`}
-        class="new-post-btn flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-bold bg-ds-primary text-ds-on-primary hover:opacity-90 transition-opacity"
-      >
-        <Icon name="mdi:plus" class="w-4 h-4 shrink-0" />
-        <span class="sidebar-label">New Post</span>
-      </a>
-    </div>
-
     <div class="space-y-0.5">
-      {NAV_LINKS.map((link) => (
-        <a
-          href={link.href}
-          class:list={[
-            'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
-            isActive(link.href)
-              ? 'bg-ds-primary-container text-ds-on-primary-container'
-              : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
-          ]}
-          title={link.label}
-        >
-          <Icon name={ICON_MAP[link.icon] ?? `mdi:${link.icon}`} class="w-5 h-5 shrink-0" />
-          <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
-        </a>
-      ))}
+      {NAV_LINKS.map((link) => {
+        const icon = ICON_MAP[link.icon];
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
+              isActive(link.href)
+                ? 'bg-ds-primary-container text-ds-on-primary-container'
+                : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+            ]}
+            title={link.label}
+          >
+            {icon && <HugeiconsIcon icon={icon} className="w-5 h-5 shrink-0" size={18} />}
+            <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
+          </a>
+        );
+      })}
     </div>
 
     <div class="border-t border-ds-outline-variant my-2"></div>
@@ -72,21 +81,24 @@ const ICON_MAP: Record<string, string> = {
       <span class="text-[10px] font-bold tracking-widest uppercase text-ds-text-muted">Discover</span>
     </div>
     <div class="space-y-0.5">
-      {DISCOVER_LINKS.map((link) => (
-        <a
-          href={link.href}
-          class:list={[
-            'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
-            isActive(link.href)
-              ? 'bg-ds-primary-container text-ds-on-primary-container'
-              : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
-          ]}
-          title={link.label}
-        >
-          <Icon name={ICON_MAP[link.icon] ?? `mdi:${link.icon}`} class="w-5 h-5 shrink-0" />
-          <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
-        </a>
-      ))}
+      {DISCOVER_LINKS.map((link) => {
+        const icon = ICON_MAP[link.icon];
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
+              isActive(link.href)
+                ? 'bg-ds-primary-container text-ds-on-primary-container'
+                : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+            ]}
+            title={link.label}
+          >
+            {icon && <HugeiconsIcon icon={icon} className="w-5 h-5 shrink-0" size={18} />}
+            <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
+          </a>
+        );
+      })}
     </div>
 
     <div class="border-t border-ds-outline-variant my-2"></div>
@@ -94,24 +106,27 @@ const ICON_MAP: Record<string, string> = {
       <span class="text-[10px] font-bold tracking-widest uppercase text-ds-text-muted">Community</span>
     </div>
     <div class="space-y-0.5">
-      {COMMUNITY_LINKS.map((link) => (
-        <a
-          href={link.href}
-          target={link.external ? '_blank' : undefined}
-          rel={link.external ? 'noopener noreferrer' : undefined}
-          class:list={[
-            'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
-            isActive(link.href)
-              ? 'bg-ds-primary-container text-ds-on-primary-container'
-              : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
-          ]}
-          title={link.label}
-        >
-          <Icon name={ICON_MAP[link.icon] ?? `mdi:${link.icon}`} class="w-5 h-5 shrink-0" />
-          <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
-          {link.external && <Icon name="mdi:open-in-new" class="w-3 h-3 ml-auto opacity-40 sidebar-label" />}
-        </a>
-      ))}
+      {COMMUNITY_LINKS.map((link) => {
+        const icon = ICON_MAP[link.icon];
+        return (
+          <a
+            href={link.href}
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
+            class:list={[
+              'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
+              isActive(link.href)
+                ? 'bg-ds-primary-container text-ds-on-primary-container'
+                : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+            ]}
+            title={link.label}
+          >
+            {icon && <HugeiconsIcon icon={icon} className="w-5 h-5 shrink-0" size={18} />}
+            <span class="text-xs font-bold tracking-wide uppercase truncate sidebar-label">{link.label}</span>
+            {link.external && <HugeiconsIcon icon={ExternalLinkIcon} className="w-3.5 h-3.5 ml-auto opacity-40 sidebar-label" size={14} />}
+          </a>
+        );
+      })}
     </div>
   </nav>
 </aside>

@@ -1,5 +1,4 @@
 'use client';
-import { motion } from 'framer-motion';
 import { BASE_PATH } from '@/config/site';
 import { getInitials } from '@/lib/utils';
 
@@ -22,15 +21,11 @@ export function AuthorList({ authors }: AuthorListProps) {
         Top Authors
       </h2>
       <div className="space-y-3">
-        {authors.map((author, i) => (
-          <motion.a
+        {authors.map((author) => (
+          <a
             key={author.slug}
             href={`${BASE_PATH}/authors/${author.slug}/`}
-            className="flex items-center gap-3 group"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.07, duration: 0.3 }}
-            whileHover={{ x: 3 }}
+            className="flex items-center gap-3 group transition-transform duration-150 ease-out hover:translate-x-1"
           >
             {/* Avatar */}
             {author.avatar ? (
@@ -57,9 +52,10 @@ export function AuthorList({ authors }: AuthorListProps) {
                 </p>
               )}
             </div>
-          </motion.a>
+          </a>
         ))}
       </div>
     </section>
   );
 }
+

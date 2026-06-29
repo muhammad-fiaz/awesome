@@ -27,7 +27,7 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
   const secondary = rest.slice(0, 2);
 
   return (
-    <section className="px-6 pb-8">
+    <section className="px-4 md:px-6 pb-8">
       <div className="max-w-320 mx-auto">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xl font-semibold text-ds-on-surface flex items-center gap-2">
@@ -66,9 +66,9 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
                 <img
                   src={primary.thumbnail}
                   alt={primary.title}
-                  className="w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity"
+                  className="w-full h-full object-cover opacity-70 dark:opacity-40 group-hover:opacity-80 dark:group-hover:opacity-50 transition-opacity"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-ds-surface-lowest via-ds-surface-lowest/60 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-ds-surface-lowest via-ds-surface-lowest/80 to-transparent" />
               </div>
             ) : (
               <div className="absolute inset-0 bg-linear-to-br from-ds-primary-container/30 to-ds-secondary-container/20" />
@@ -108,9 +108,9 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
                     <img
                       src={post.thumbnail}
                       alt={post.title}
-                      className="w-full h-full object-cover opacity-25 group-hover:opacity-35 transition-opacity"
+                      className="w-full h-full object-cover opacity-60 dark:opacity-25 group-hover:opacity-75 dark:group-hover:opacity-35 transition-opacity"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-ds-surface-card via-ds-surface-card/80 to-ds-surface-card/40" />
+                    <div className="absolute inset-0 bg-linear-to-t from-ds-surface-card via-ds-surface-card/85 to-ds-surface-card/45" />
                   </div>
                 ) : (
                   <div className="absolute inset-0 bg-linear-to-br from-ds-primary-container/10 to-ds-secondary-container/5" />

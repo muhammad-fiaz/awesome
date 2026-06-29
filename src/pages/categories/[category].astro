@@ -1,7 +1,8 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft01Icon, FolderOpenIcon } from '@hugeicons/core-free-icons';
 import {
   getAllCategories,
   getPostReadingTime,
@@ -74,7 +75,7 @@ const jsonLd = {
 
       <div class="mb-8">
         <a href={`${BASE_PATH}/categories/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface mb-3 flex items-center gap-1">
-          <Icon name="mdi:arrow-left" class="w-4 h-4" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
           Categories
         </a>
         <h1 class="text-3xl font-bold text-ds-on-surface mb-2">{category.data.title}</h1>
@@ -85,7 +86,7 @@ const jsonLd = {
 
       {postItems.length === 0 ? (
         <div class="text-center py-16 text-ds-text-muted">
-          <Icon name="mdi:folder-open-outline" class="w-12 h-12 mx-auto mb-3 opacity-50" />
+          <HugeiconsIcon icon={FolderOpenIcon} className="w-12 h-12 mx-auto mb-3 opacity-50" size={48} />
           <p class="text-base font-semibold text-ds-on-surface mb-1">No posts yet</p>
           <p class="text-sm">No posts in this category yet. Check back later.</p>
         </div>

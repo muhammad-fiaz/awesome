@@ -1,7 +1,6 @@
 'use client';
-import { GridViewIcon, ListViewIcon } from '@hugeicons/core-free-icons';
+import { File02Icon, GridViewIcon, ListViewIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/store/layoutStore';
@@ -10,10 +9,21 @@ import { PostCard, type PostCardData } from './PostCard';
 interface PostsFeedProps {
   posts: PostCardData[];
   showViewToggle?: boolean;
+  emptyMessage?: string;
 }
 
-export function PostsFeed({ posts, showViewToggle = true }: PostsFeedProps) {
+export function PostsFeed({ posts, showViewToggle = true, emptyMessage }: PostsFeedProps) {
   const { viewMode, setViewMode } = useLayoutStore();
+
+  if (posts.length === 0) {
+    return (
+      <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
+        <HugeiconsIcon icon={File02Icon} size={48} className="mx-auto mb-3 opacity-30" />
+        <p className="text-base font-semibold mb-1">No posts found</p>
+        <p className="text-sm">{emptyMessage || 'Try a different filter or search term'}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-0">
@@ -66,35 +76,19 @@ export function PostsFeed({ posts, showViewToggle = true }: PostsFeedProps) {
       )}
 
       {/* Posts */}
-      <AnimatePresence mode="wait">
-        {viewMode === 'grid' ? (
-          <motion.div
-            key="grid"
-            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-          >
-            {posts.map((post, i) => (
-              <PostCard key={post.slug} post={post} index={i} view="grid" />
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="list"
-            className="space-y-3"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-          >
-            {posts.map((post, i) => (
-              <PostCard key={post.slug} post={post} index={i} view="list" />
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {posts.map((post, i) => (
+            <PostCard key={post.slug} post={post} index={i} view="grid" />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((post, i) => (
+            <PostCard key={post.slug} post={post} index={i} view="list" />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

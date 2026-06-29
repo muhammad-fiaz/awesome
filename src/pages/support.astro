@@ -1,7 +1,8 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { OWNER } from '@/config/site';
-import { Icon } from 'astro-icon/components';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { HelpCircleIcon, Bug01Icon, Chat01Icon, Mail01Icon, Coffee02Icon } from '@hugeicons/core-free-icons';
 ---
 
 <AppShell title="Support | Awesome Dev Platform" description="Get support or support the Awesome Dev Platform. Contact us for help." keywords="support, help, contact, bug report, discussions, community">
@@ -18,7 +19,7 @@ import { Icon } from 'astro-icon/components';
   </Fragment>
   <div class="px-6 py-12">
     <div class="max-w-2xl mx-auto text-center">
-      <Icon name="mdi:help-circle" class="text-5xl text-ds-tertiary mb-4 block" />
+      <HugeiconsIcon icon={HelpCircleIcon} className="text-5xl text-ds-tertiary mb-4 mx-auto block" size={48} />
       <h1 class="text-3xl font-bold text-ds-on-surface mb-3">Support</h1>
       <p class="text-ds-on-surface-variant text-lg mb-8">
         Need help? Have a question? Want to contribute? Here's how to reach us.
@@ -31,7 +32,7 @@ import { Icon } from 'astro-icon/components';
           rel="noopener noreferrer"
           class="card-ds p-5 group hover:no-underline"
         >
-          <Icon name="mdi:bug" class="text-2xl text-ds-primary mb-2 block" />
+          <HugeiconsIcon icon={Bug01Icon} className="text-2xl text-ds-primary mb-2 block" size={24} />
           <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Report an Issue</h2>
           <p class="text-sm text-ds-on-surface-variant mt-1">Found a bug? Open a GitHub issue.</p>
         </a>
@@ -41,7 +42,7 @@ import { Icon } from 'astro-icon/components';
           rel="noopener noreferrer"
           class="card-ds p-5 group hover:no-underline"
         >
-          <Icon name="mdi:forum" class="text-2xl text-ds-secondary mb-2 block" />
+          <HugeiconsIcon icon={Chat01Icon} className="text-2xl text-ds-secondary mb-2 block" size={24} />
           <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Discussions</h2>
           <p class="text-sm text-ds-on-surface-variant mt-1">Ask questions in GitHub Discussions.</p>
         </a>
@@ -51,7 +52,7 @@ import { Icon } from 'astro-icon/components';
           rel="noopener noreferrer"
           class="card-ds p-5 group hover:no-underline"
         >
-          <Icon name="mdi:email-outline" class="text-2xl text-ds-info mb-2 block" />
+          <HugeiconsIcon icon={Mail01Icon} className="text-2xl text-ds-info mb-2 block" size={24} />
           <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Twitter/X</h2>
           <p class="text-sm text-ds-on-surface-variant mt-1">Reach out on X (Twitter).</p>
         </a>
@@ -61,7 +62,7 @@ import { Icon } from 'astro-icon/components';
           rel="noopener noreferrer"
           class="card-ds p-5 group hover:no-underline"
         >
-          <span class="text-2xl mb-2 block">☕</span>
+          <HugeiconsIcon icon={Coffee02Icon} className="text-2xl text-ds-tertiary mb-2 block" size={24} />
           <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Financial Support</h2>
           <p class="text-sm text-ds-on-surface-variant mt-1">Support the project financially.</p>
         </a>

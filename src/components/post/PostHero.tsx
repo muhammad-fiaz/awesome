@@ -1,7 +1,6 @@
 'use client';
 import { Clock01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { motion } from 'framer-motion';
 import { difficultyColors } from '@/lib/difficulty';
 import { BASE_PATH } from '@/config/site';
 import { cn, getInitials } from '@/lib/utils';
@@ -35,12 +34,7 @@ export function PostHero({
   const image = heroImage ?? thumbnail;
 
   return (
-    <motion.div
-      className="relative"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
+    <div className="relative">
       {image && (
         <div className="relative h-48 md:h-80 overflow-hidden">
           <img
@@ -127,6 +121,6 @@ export function PostHero({
         </div>
 
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -5,7 +5,6 @@ import {
   SearchIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +38,7 @@ export function CategoriesFeed({ categories }: CategoriesFeedProps) {
   return (
     <div>
       {/* Controls */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
         <div className="relative flex-1 max-w-md">
           <HugeiconsIcon
             icon={SearchIcon}
@@ -53,93 +52,83 @@ export function CategoriesFeed({ categories }: CategoriesFeedProps) {
             className="pl-9 h-10 rounded-xl"
           />
         </div>
-        <div className="flex items-center border border-ds-outline-variant rounded-xl overflow-hidden">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setView('grid')}
-            className={cn(
-              'h-10 w-10 rounded-none',
-              view === 'grid' && 'bg-ds-primary-container text-ds-on-primary-container',
-            )}
-          >
-            <HugeiconsIcon icon={GridViewIcon} size={16} />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setView('list')}
-            className={cn(
-              'h-10 w-10 rounded-none',
-              view === 'list' && 'bg-ds-primary-container text-ds-on-primary-container',
-            )}
-          >
-            <HugeiconsIcon icon={ListViewIcon} size={16} />
-          </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center border border-ds-outline-variant rounded-xl overflow-hidden">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setView('grid')}
+              className={cn(
+                'h-10 w-10 rounded-none',
+                view === 'grid' && 'bg-ds-primary-container text-ds-on-primary-container',
+              )}
+            >
+              <HugeiconsIcon icon={GridViewIcon} size={16} />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setView('list')}
+              className={cn(
+                'h-10 w-10 rounded-none',
+                view === 'list' && 'bg-ds-primary-container text-ds-on-primary-container',
+              )}
+            >
+              <HugeiconsIcon icon={ListViewIcon} size={16} />
+            </Button>
+          </div>
+          <span className="text-sm text-ds-text-muted whitespace-nowrap">
+            {filtered.length} categor{filtered.length !== 1 ? 'ies' : 'y'}
+          </span>
         </div>
-        <span className="text-sm text-ds-text-muted">
-          {filtered.length} categor{filtered.length !== 1 ? 'ies' : 'y'}
-        </span>
       </div>
 
       {/* Results */}
-      <AnimatePresence mode="popLayout">
-        {filtered.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl"
-          >
-            <HugeiconsIcon icon={SearchIcon} size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="text-base font-semibold mb-1">No categories found</p>
-            <p className="text-sm">Try a different search term</p>
-          </motion.div>
-        ) : view === 'grid' ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((cat, i) => (
-              <motion.a
-                key={cat.slug}
-                href={`${BASE_PATH}/categories/${cat.slug}/`}
-                className="card-ds p-5 group hover:scale-[1.02] transition-transform duration-200"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04, duration: 0.3 }}
-              >
-                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base mb-1">
+      {filtered.length === 0 ? (
+        <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
+          <HugeiconsIcon icon={SearchIcon} size={48} className="mx-auto mb-3 opacity-30" />
+          <p className="text-base font-semibold mb-1">No categories found</p>
+          <p className="text-sm">Try a different search term</p>
+        </div>
+      ) : view === 'grid' ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((cat) => (
+            <a
+              key={cat.slug}
+              href={`${BASE_PATH}/categories/${cat.slug}/`}
+              className="card-ds p-5 group hover:scale-[1.02] transition-transform duration-200"
+            >
+              <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base mb-1">
+                {cat.title}
+              </h3>
+              {cat.description && (
+                <p className="text-xs text-ds-on-surface-variant line-clamp-2 mb-2">{cat.description}</p>
+              )}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((cat) => (
+            <a
+              key={cat.slug}
+              href={`${BASE_PATH}/categories/${cat.slug}/`}
+              className="card-ds flex items-center gap-4 p-4 group hover:scale-[1.01] transition-transform duration-200"
+            >
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
                   {cat.title}
                 </h3>
                 {cat.description && (
-                  <p className="text-xs text-ds-on-surface-variant line-clamp-2 mb-2">{cat.description}</p>
+                  <p className="text-xs text-ds-on-surface-variant line-clamp-1">{cat.description}</p>
                 )}
-              </motion.a>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filtered.map((cat, i) => (
-              <motion.a
-                key={cat.slug}
-                href={`${BASE_PATH}/categories/${cat.slug}/`}
-                className="card-ds flex items-center gap-4 p-4 group hover:scale-[1.01] transition-transform duration-200"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.03, duration: 0.25 }}
-              >
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
-                    {cat.title}
-                  </h3>
-                  {cat.description && (
-                    <p className="text-xs text-ds-on-surface-variant line-clamp-1">{cat.description}</p>
-                  )}
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        )}
-      </AnimatePresence>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,38 +1,32 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'dark' | 'light' | 'system';
+type Theme = 'dark' | 'light';
 
 interface ThemeState {
   theme: Theme;
-  resolvedTheme: 'dark' | 'light';
   setTheme: (theme: Theme) => void;
 }
 
-function getSystemTheme(): 'dark' | 'light' {
+function getSystemTheme(): Theme {
   if (typeof window === 'undefined') return 'dark';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-function applyTheme(theme: Theme): 'dark' | 'light' {
-  const resolved = theme === 'system' ? getSystemTheme() : theme;
+function applyTheme(theme: Theme) {
   if (typeof document !== 'undefined') {
     document.documentElement.classList.remove('dark', 'light');
-    document.documentElement.classList.add(resolved);
+    document.documentElement.classList.add(theme);
   }
-  return resolved;
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
-    (set, _get) => ({
+    (set) => ({
       theme: 'dark',
-      resolvedTheme: 'dark',
       setTheme: (theme) => {
-        const resolved = applyTheme(theme);
-        set({ theme, resolvedTheme: resolved });
+        applyTheme(theme);
+        set({ theme });
       },
     }),
     {
@@ -45,3 +39,15 @@ export const useThemeStore = create<ThemeState>()(
     },
   ),
 );
+
+// Resolve theme for new visitors: use system if no stored preference
+export function resolveTheme(stored: string | null): Theme {
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      const t = parsed?.state?.theme;
+      if (t === 'dark' || t === 'light') return t;
+    } catch {}
+  }
+  return getSystemTheme();
+}

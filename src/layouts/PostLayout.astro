@@ -32,13 +32,10 @@ const toc: TocItem[] = buildToc(headings);
     <meta property="og:type" content="article" />
     <slot name="head" />
   </Fragment>
-  <div class="flex">
-    <!-- Post body -->
-    <article class="flex-1 min-w-0">
+  <div class="w-full xl:pr-64">
+    <article class="w-full min-w-0 max-w-5xl mx-auto px-4 sm:px-6 md:px-8 xl:px-10">
       <slot />
     </article>
-
-    <!-- Right sidebar: TOC + links -->
     <RightSidebar
       client:load
       toc={toc}

@@ -74,6 +74,8 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
   const [tagSearch, setTagSearch] = useState('');
   const [authorSearch, setAuthorSearch] = useState('');
   const parentRef = useRef<HTMLDivElement>(null);
+  const [pagefindResults, setPagefindResults] = useState<any[] | null>(null);
+  const [pagefindLoading, setPagefindLoading] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -130,6 +132,33 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
     }
   }, [query]);
 
+  useEffect(() => {
+    if (!query.trim()) {
+      setPagefindResults(null);
+      return;
+    }
+
+    const performSearch = async () => {
+      setPagefindLoading(true);
+      try {
+        // @ts-ignore
+        const pagefind = await import(/* @vite-ignore */ `${import.meta.env.BASE_URL}pagefind/pagefind.js`);
+        await pagefind.init();
+        const search = await pagefind.search(query);
+        const results = await Promise.all(search.results.slice(0, 50).map((r: any) => r.data()));
+        setPagefindResults(results);
+      } catch (e) {
+        console.warn('Pagefind search not available or failed, using fallback client-side search', e);
+        setPagefindResults(null);
+      } finally {
+        setPagefindLoading(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(performSearch, 200);
+    return () => clearTimeout(debounceTimer);
+  }, [query]);
+
   const {
     data: posts = [],
     isLoading,
@@ -178,6 +207,32 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
   }, [selectedCategories, selectedTags, selectedAuthor]);
 
   const filteredPosts = useMemo(() => {
+    if (pagefindResults !== null) {
+      const pagefindSlugs = pagefindResults
+        .map((res: any) => {
+          const cleanUrl = res.url.endsWith('/') ? res.url.slice(0, -1) : res.url;
+          const match = cleanUrl.match(/\/post\/([^/]+)$/);
+          return match ? match[1] : null;
+        })
+        .filter(Boolean) as string[];
+
+      const matched = pagefindSlugs
+        .map((slug) => posts.find((p) => p.slug === slug))
+        .filter((p): p is PostCardData => !!p);
+
+      return matched.filter((post) => {
+        const matchesCategory =
+          selectedCategories.length === 0 ||
+          selectedCategories.some((c) => post.categories.includes(c));
+        const matchesTag =
+          selectedTags.length === 0 ||
+          selectedTags.some((t) => post.tags.includes(t));
+        const matchesAuthor =
+          selectedAuthor === 'all' || post.authors?.includes(selectedAuthor);
+        return matchesCategory && matchesTag && matchesAuthor;
+      });
+    }
+
     const queryWords = query
       .toLowerCase()
       .split(/\s+/)
@@ -199,7 +254,7 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
         selectedAuthor === 'all' || post.authors?.includes(selectedAuthor);
       return matchesQuery && matchesCategory && matchesTag && matchesAuthor;
     });
-  }, [posts, query, selectedCategories, selectedTags, selectedAuthor]);
+  }, [posts, query, pagefindResults, selectedCategories, selectedTags, selectedAuthor]);
 
   const sortedPosts = useMemo(() => {
     const arr = [...filteredPosts];
@@ -430,30 +485,33 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
                   />
                 </div>
               </div>
-              <ScrollArea className={hasScrollableTags ? 'max-h-64' : 'max-h-none'}>
-                <div className="p-2 flex flex-wrap gap-1.5">
+              <ScrollArea className="max-h-64">
+                <div className="p-2 space-y-0.5">
                   {filteredTags.length === 0 ? (
-                    <p className="text-xs text-ds-text-muted text-center py-3 w-full">No tags found</p>
+                    <p className="text-xs text-ds-text-muted text-center py-3">No tags found</p>
                   ) : (
-                    filteredTags.map((tag) => {
-                      const isActive = selectedTags.includes(tag.slug);
-                      return (
-                        <button
-                          key={tag.slug}
-                          type="button"
-                          onClick={() => toggleTag(tag.slug)}
-                          className={cn(
-                            'px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-150',
-                            'focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:ring-offset-1 focus:ring-offset-ds-surface-low',
-                            isActive
-                              ? 'bg-ds-primary text-ds-on-primary shadow-sm'
-                              : 'bg-ds-surface-high text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-highest',
-                          )}
-                        >
+                    filteredTags.map((tag) => (
+                      <button
+                        key={tag.slug}
+                        type="button"
+                        onClick={() => toggleTag(tag.slug)}
+                        className={cn(
+                          'flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-sm transition-colors',
+                          'hover:bg-ds-surface-high focus:bg-ds-surface-high focus:outline-none',
+                          selectedTags.includes(tag.slug) &&
+                            'bg-ds-primary-container/10',
+                        )}
+                      >
+                        <Checkbox
+                          checked={selectedTags.includes(tag.slug)}
+                          onCheckedChange={() => toggleTag(tag.slug)}
+                          className="pointer-events-none"
+                        />
+                        <span className="text-ds-on-surface-variant">
                           #{tag.slug}
-                        </button>
-                      );
-                    })
+                        </span>
+                      </button>
+                    ))
                   )}
                 </div>
               </ScrollArea>
@@ -575,7 +633,7 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
         {/* Sort + Result Count */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="text-sm text-ds-on-surface-variant">
-            {isLoading ? (
+            {isLoading || pagefindLoading ? (
               <span className="flex items-center gap-2">
                 <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-ds-primary border-t-transparent" />
                 Searching...
