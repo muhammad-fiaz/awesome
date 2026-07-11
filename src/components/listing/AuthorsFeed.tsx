@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BASE_PATH } from '@/config/site';
 import { cn } from '@/lib/utils';
+import { SafeImage } from '@/components/ui/SafeImage';
+import { MagicCard } from '@/components/ui/magic-card';
 
 export interface AuthorData {
   slug: string;
@@ -93,77 +95,97 @@ export function AuthorsFeed({ authors }: AuthorsFeedProps) {
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
-          <HugeiconsIcon icon={UserIcon} size={48} className="mx-auto mb-3 opacity-30" />
-          <p className="text-base font-semibold mb-1">No authors found</p>
-          <p className="text-sm">Try a different search term</p>
-        </div>
+        <MagicCard
+          className="rounded-xl border border-ds-outline-variant bg-ds-surface-card shadow-sm"
+          gradientSize={180}
+          gradientColor="var(--ds-magic-glow)"
+        >
+          <div className="text-center py-16 text-ds-text-muted w-full h-full bg-transparent border-0 flex flex-col items-center justify-center">
+            <HugeiconsIcon icon={UserIcon} size={48} className="mx-auto mb-3 opacity-30" />
+            <p className="text-base font-semibold mb-1">No authors found</p>
+            <p className="text-sm">Try a different search term</p>
+          </div>
+        </MagicCard>
       ) : view === 'grid' ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((author) => (
-            <a
+            <MagicCard
               key={author.slug}
-              href={`${BASE_PATH}/authors/${author.slug}/`}
-              className="card-ds p-6 flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-200"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.02] rounded-xl border border-ds-outline-variant bg-ds-surface-card shadow-sm"
+              gradientSize={150}
+              gradientColor="var(--ds-magic-glow)"
+              gradientFrom="var(--ds-primary)"
+              gradientTo="var(--ds-secondary)"
             >
-              {author.avatar ? (
-                <img
+              <a
+                href={`${BASE_PATH}/authors/${author.slug}/`}
+                className="group p-6 flex flex-col items-center text-center w-full h-full bg-transparent border-0"
+              >
+                <SafeImage
                   src={author.avatar}
                   alt={author.name}
                   className="w-20 h-20 rounded-full object-cover ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200 mb-4"
                   loading="lazy"
                   crossOrigin="anonymous"
+                  fallback={
+                    <div className="w-20 h-20 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-2xl font-bold mb-4 ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200">
+                      {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+                  }
                 />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-2xl font-bold mb-4 ring-4 ring-ds-outline-variant group-hover:ring-ds-primary transition-all duration-200">
-                  {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-                </div>
-              )}
-              <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
-                {author.name}
-              </h3>
-              {author.title && (
-                <p className="text-xs text-ds-on-surface-variant mt-1 line-clamp-1">{author.title}</p>
-              )}
-              {author.location && (
-                <p className="text-[10px] text-ds-text-muted mt-1">{author.location}</p>
-              )}
-              {author.bio && (
-                <p className="text-xs text-ds-text-muted mt-2 line-clamp-2 leading-relaxed">{author.bio}</p>
-              )}
-            </a>
+                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
+                  {author.name}
+                </h3>
+                {author.title && (
+                  <p className="text-xs text-ds-on-surface-variant mt-1 line-clamp-1">{author.title}</p>
+                )}
+                {author.location && (
+                  <p className="text-[10px] text-ds-text-muted mt-1">{author.location}</p>
+                )}
+                {author.bio && (
+                  <p className="text-xs text-ds-text-muted mt-2 line-clamp-2 leading-relaxed">{author.bio}</p>
+                )}
+              </a>
+            </MagicCard>
           ))}
         </div>
       ) : (
         <div className="space-y-3">
           {filtered.map((author) => (
-            <a
+            <MagicCard
               key={author.slug}
-              href={`${BASE_PATH}/authors/${author.slug}/`}
-              className="card-ds flex items-center gap-4 p-4 group hover:scale-[1.01] transition-transform duration-200"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl border border-ds-outline-variant bg-ds-surface-card shadow-sm"
+              gradientSize={150}
+              gradientColor="var(--ds-magic-glow)"
+              gradientFrom="var(--ds-primary)"
+              gradientTo="var(--ds-secondary)"
             >
-              {author.avatar ? (
-                <img
+              <a
+                href={`${BASE_PATH}/authors/${author.slug}/`}
+                className="group flex items-center gap-4 p-4 w-full h-full bg-transparent border-0"
+              >
+                <SafeImage
                   src={author.avatar}
                   alt={author.name}
                   className="w-12 h-12 rounded-full object-cover ring-2 ring-ds-outline-variant shrink-0"
                   loading="lazy"
                   crossOrigin="anonymous"
+                  fallback={
+                    <div className="w-12 h-12 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-sm font-bold shrink-0 animate-none">
+                      {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+                  }
                 />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-sm font-bold shrink-0">
-                  {author.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
+                    {author.name}
+                  </h3>
+                  {author.title && (
+                    <p className="text-xs text-ds-on-surface-variant line-clamp-1">{author.title}</p>
+                  )}
                 </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
-                  {author.name}
-                </h3>
-                {author.title && (
-                  <p className="text-xs text-ds-on-surface-variant line-clamp-1">{author.title}</p>
-                )}
-              </div>
-            </a>
+              </a>
+            </MagicCard>
           ))}
         </div>
       )}

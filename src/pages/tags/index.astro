@@ -2,7 +2,7 @@
 import AppShell from '@/layouts/AppShell.astro';
 import { TagsFeed } from '@/components/listing/TagsFeed';
 import { getAllPosts, getAllTags } from '@/lib/posts';
-import { SITE_CONFIG } from '@/config/site';
+import { SITE_CONFIG, BASE_PATH } from '@/config/site';
 
 const tags = await getAllTags();
 const allPosts = await getAllPosts();
@@ -36,6 +36,7 @@ const jsonLd = {
 ---
 
 <AppShell title="Browse Tags" description="Browse all tags across developer resources, tutorials, and tools." keywords="developer tags, programming topics, technology categories, filter by tag">
+
   <Fragment slot="head">
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
@@ -43,6 +44,12 @@ const jsonLd = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="px-4 md:px-6 py-8">
     <div class="max-w-320 mx-auto">
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Tags</span>
+      </div>
       <div class="mb-10">
         <h1 class="text-2xl md:text-4xl font-bold text-ds-on-surface mb-2">Tags</h1>
         <p class="text-ds-on-surface-variant text-base md:text-lg">

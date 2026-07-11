@@ -1,6 +1,7 @@
 export type { AuthorFrontmatter } from './author';
 export type { CategoryFrontmatter } from './category';
 export type { LegalFrontmatter } from './legal';
+export type { OrganisationFrontmatter } from './organisation';
 export type { PostFrontmatter, PostLinks } from './post';
 export type { TagFrontmatter } from './tag';
 

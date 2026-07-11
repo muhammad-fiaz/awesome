@@ -4,6 +4,7 @@ import { SponsorBanner } from '@/components/home/SponsorBanner';
 import { OWNER } from '@/config/site';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { FavouriteIcon, CodeIcon } from '@hugeicons/core-free-icons';
+import { MagicCard } from '@/components/ui/magic-card';
 ---
 
 <AppShell title="Sponsor Awesome | Support Open Source" description="Support the Awesome Dev Platform and keep it free for everyone." keywords="sponsor, support open source, donate, GitHub Sponsors, funding">
@@ -29,26 +30,30 @@ import { FavouriteIcon, CodeIcon } from '@hugeicons/core-free-icons';
       </div>
 
       <div class="grid gap-4 sm:grid-cols-2 mb-10">
-        <a
-          href={OWNER.sponsor}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="card-ds p-6 text-center hover:no-underline group"
-        >
-          <HugeiconsIcon icon={CodeIcon} className="text-3xl text-ds-primary mb-2 mx-auto block" size={32} />
-          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">GitHub Sponsors</h2>
-          <p class="text-sm text-ds-on-surface-variant">Support monthly via GitHub Sponsors</p>
-        </a>
-        <a
-          href={OWNER.support}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="card-ds p-6 text-center hover:no-underline group"
-        >
-          <span class="text-3xl mb-2 block">☕</span>
-          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">Buy Me a Coffee</h2>
-          <p class="text-sm text-ds-on-surface-variant">One-time support on the support page</p>
-        </a>
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={OWNER.sponsor}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-6 text-center hover:no-underline group w-full h-full flex flex-col items-center justify-center bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={CodeIcon} className="text-3xl text-ds-primary mb-2 mx-auto block" size={32} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">GitHub Sponsors</h2>
+            <p class="text-sm text-ds-on-surface-variant">Support monthly via GitHub Sponsors</p>
+          </a>
+        </MagicCard>
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={OWNER.support}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-6 text-center hover:no-underline group w-full h-full flex flex-col items-center justify-center bg-transparent border-0"
+          >
+            <span class="text-3xl mb-2 block">☕</span>
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors mb-1">Buy Me a Coffee</h2>
+            <p class="text-sm text-ds-on-surface-variant">One-time support on the support page</p>
+          </a>
+        </MagicCard>
       </div>
 
       <SponsorBanner client:load />

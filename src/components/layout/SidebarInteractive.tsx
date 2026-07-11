@@ -1,6 +1,7 @@
 'use client';
 import {
   ArrowRight01Icon,
+  Briefcase01Icon,
   Cancel01Icon,
   Clock01Icon,
   FavouriteIcon,
@@ -15,7 +16,7 @@ import {
   UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   BASE_PATH,
@@ -32,6 +33,7 @@ const ICON_MAP: Record<string, typeof File02Icon> = {
   category: Tag01Icon,
   sell: Tag01Icon,
   person: UserIcon,
+  organisation: Briefcase01Icon,
   star: StarIcon,
   schedule: Clock01Icon,
   rss_feed: RssIcon,
@@ -122,9 +124,19 @@ export function SidebarInteractive({
   const { isOpen, isMobileOpen, toggleSidebar, closeMobileSidebar } =
     useSidebarStore();
 
+  const [activePath, setActivePath] = useState(
+    () => (typeof window !== 'undefined' ? window.location.pathname : currentPath),
+  );
+
+  useEffect(() => {
+    const update = () => setActivePath(window.location.pathname);
+    document.addEventListener('astro:page-load', update);
+    return () => document.removeEventListener('astro:page-load', update);
+  }, []);
+
   const isActive = (href: string) => {
-    if (href === `${BASE_PATH}/`) return currentPath === href;
-    return currentPath.startsWith(href);
+    if (href === `${BASE_PATH}/`) return activePath === href;
+    return activePath.startsWith(href);
   };
 
   useEffect(() => {

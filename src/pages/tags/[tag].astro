@@ -57,18 +57,23 @@ const jsonLd = {
   title={`${tag.data.title} Tag`}
   description={tag.data.description ?? `Resources tagged with ${tag.data.title}`}
 >
+
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="px-4 md:px-6 py-8">
     <div class="max-w-320 mx-auto">
-      <a href={`${BASE_PATH}/tags/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface mb-4 flex items-center gap-1">
-        <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
-        All Tags
-      </a>
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-6 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <a href={`${BASE_PATH}/tags/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Tags</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">#{tag.data.title}</span>
+      </div>
 
       <div class="mb-8">
-        <span class="inline-block font-mono text-3xl font-bold text-ds-primary mb-2">
+        <h1 class="font-mono text-3xl font-bold text-ds-primary mb-2">
           #{tag.data.title}
-        </span>
+        </h1>
         {tag.data.description && (
           <p class="text-ds-on-surface-variant">{tag.data.description}</p>
         )}

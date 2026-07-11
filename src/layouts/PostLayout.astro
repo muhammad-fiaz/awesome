@@ -32,8 +32,9 @@ const toc: TocItem[] = buildToc(headings);
     <meta property="og:type" content="article" />
     <slot name="head" />
   </Fragment>
+
   <div class="w-full xl:pr-64">
-    <article class="w-full min-w-0 max-w-5xl mx-auto px-4 sm:px-6 md:px-8 xl:px-10">
+    <article class="w-full min-w-0">
       <slot />
     </article>
     <RightSidebar

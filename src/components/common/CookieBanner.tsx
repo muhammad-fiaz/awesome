@@ -5,11 +5,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { BASE_PATH } from '@/config/site';
 import { useCookieStore } from '@/store/cookieStore';
+import { useState, useEffect } from 'react';
 
 export function CookieBanner() {
   const { consentAccepted, setConsent } = useCookieStore();
+  const [mounted, setMounted] = useState(false);
 
-  if (consentAccepted !== null) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || consentAccepted !== null) return null;
 
   const accept = () => setConsent(true);
   const decline = () => setConsent(false);

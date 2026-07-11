@@ -3,6 +3,7 @@ import AppShell from '@/layouts/AppShell.astro';
 import { OWNER } from '@/config/site';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { HelpCircleIcon, Bug01Icon, Chat01Icon, Mail01Icon, Coffee02Icon } from '@hugeicons/core-free-icons';
+import { MagicCard } from '@/components/ui/magic-card';
 ---
 
 <AppShell title="Support | Awesome Dev Platform" description="Get support or support the Awesome Dev Platform. Contact us for help." keywords="support, help, contact, bug report, discussions, community">
@@ -26,46 +27,57 @@ import { HelpCircleIcon, Bug01Icon, Chat01Icon, Mail01Icon, Coffee02Icon } from 
       </p>
 
       <div class="grid gap-4 sm:grid-cols-2 text-left">
-        <a
-          href={`${OWNER.github}/issues`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="card-ds p-5 group hover:no-underline"
-        >
-          <HugeiconsIcon icon={Bug01Icon} className="text-2xl text-ds-primary mb-2 block" size={24} />
-          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Report an Issue</h2>
-          <p class="text-sm text-ds-on-surface-variant mt-1">Found a bug? Open a GitHub issue.</p>
-        </a>
-        <a
-          href={`${OWNER.github}/discussions`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="card-ds p-5 group hover:no-underline"
-        >
-          <HugeiconsIcon icon={Chat01Icon} className="text-2xl text-ds-secondary mb-2 block" size={24} />
-          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Discussions</h2>
-          <p class="text-sm text-ds-on-surface-variant mt-1">Ask questions in GitHub Discussions.</p>
-        </a>
-        <a
-          href={OWNER.twitter}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="card-ds p-5 group hover:no-underline"
-        >
-          <HugeiconsIcon icon={Mail01Icon} className="text-2xl text-ds-info mb-2 block" size={24} />
-          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Twitter/X</h2>
-          <p class="text-sm text-ds-on-surface-variant mt-1">Reach out on X (Twitter).</p>
-        </a>
-        <a
-          href={OWNER.support}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="card-ds p-5 group hover:no-underline"
-        >
-          <HugeiconsIcon icon={Coffee02Icon} className="text-2xl text-ds-tertiary mb-2 block" size={24} />
-          <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Financial Support</h2>
-          <p class="text-sm text-ds-on-surface-variant mt-1">Support the project financially.</p>
-        </a>
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={`${OWNER.github}/issues`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Bug01Icon} className="text-2xl text-ds-primary mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Report an Issue</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Found a bug? Open a GitHub issue.</p>
+          </a>
+        </MagicCard>
+        
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={`${OWNER.github}/discussions`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Chat01Icon} className="text-2xl text-ds-secondary mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Discussions</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Ask questions in GitHub Discussions.</p>
+          </a>
+        </MagicCard>
+
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={OWNER.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Mail01Icon} className="text-2xl text-ds-info mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Twitter/X</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Reach out on X (Twitter).</p>
+          </a>
+        </MagicCard>
+
+        <MagicCard client:load className="rounded-xl w-full" gradientSize={160} gradientColor="var(--ds-magic-glow)">
+          <a
+            href={OWNER.support}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-5 group hover:no-underline w-full h-full flex flex-col justify-start bg-transparent border-0"
+          >
+            <HugeiconsIcon icon={Coffee02Icon} className="text-2xl text-ds-tertiary mb-2 block shrink-0" size={24} />
+            <h2 class="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">Financial Support</h2>
+            <p class="text-sm text-ds-on-surface-variant mt-1">Support the project financially.</p>
+          </a>
+        </MagicCard>
       </div>
     </div>
   </div>

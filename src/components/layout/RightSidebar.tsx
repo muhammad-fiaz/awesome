@@ -10,18 +10,82 @@ import {
   Globe02Icon,
   Message01Icon,
   PlayCircleIcon,
+  LinkedinIcon,
+  NewTwitterIcon,
+  InstagramIcon,
+  FacebookIcon,
+  WhatsappIcon,
+  TelegramIcon,
+  RedditIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { icons as mdiIcons } from '@iconify-json/mdi';
-import { Icon, addCollection } from '@iconify/react';
 import { motion, LayoutGroup } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToc } from '@/hooks/useToc';
 import { cn } from '@/lib/utils';
 import type { TocItem } from '@/types';
+import { LinkStatusIndicator, fetchLinkStatus } from '@/components/ui/LinkStatusIndicator';
+import { toast } from 'sonner';
 
-addCollection(mdiIcons);
+function DownloadButton({
+  href,
+  label,
+  icon,
+}: {
+  href: string;
+  label: string;
+  icon: any;
+}) {
+  const [status, setStatus] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!href) {
+      setStatus('inactive');
+      return;
+    }
+    setIsLoading(true);
+    fetchLinkStatus(href)
+      .then((res) => {
+        setStatus(res);
+      })
+      .catch(() => {
+        setStatus('inactive');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [href]);
+
+  const isBroken = status === 'inactive';
+  const checking = isLoading || status === undefined;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        'w-full flex items-center justify-center gap-2 text-sm font-semibold py-2 px-3 rounded-xl transition-all duration-150',
+        checking
+          ? 'bg-ds-primary text-ds-on-primary opacity-80'
+          : isBroken
+            ? 'bg-ds-error text-white hover:bg-ds-error/90 shadow-sm border border-ds-error'
+            : 'bg-ds-success text-white hover:bg-ds-success/90 shadow-sm border border-ds-success',
+        'mb-2',
+      )}
+    >
+      <HugeiconsIcon icon={icon} size={16} />
+      <span>{isBroken ? `${label} (Broken)` : label}</span>
+      <HugeiconsIcon
+        icon={ExternalLinkIcon}
+        size={12}
+        className="opacity-80 ml-auto"
+      />
+    </a>
+  );
+}
 
 interface RightSidebarProps {
   toc?: TocItem[];
@@ -47,7 +111,7 @@ function TocItemComponent({
       <a
         href={`#${item.slug}`}
         className={cn(
-          'relative block text-sm py-1.5 transition-colors duration-200 border-l-2 z-10',
+          'relative block text-sm py-1.5 transition-colors duration-200 border-l-2',
           depth === 0 && 'pl-3 font-medium',
           depth === 1 && 'pl-6',
           depth >= 2 && 'pl-9 text-xs',
@@ -59,11 +123,11 @@ function TocItemComponent({
         {isActive && (
           <motion.div
             layoutId="activeIndicator"
-            className="absolute inset-0 bg-ds-primary/10 rounded-r-lg -z-10"
+            className="absolute inset-0 bg-ds-primary/10 rounded-r-lg z-0"
             transition={{ type: 'spring', stiffness: 350, damping: 30 }}
           />
         )}
-        {item.text}
+        <span className="relative z-10">{item.text}</span>
       </a>
       {hasChildren && (
         <ul className="mt-0.5 space-y-0.5">
@@ -121,34 +185,39 @@ export function RightSidebar({
       try {
         await navigator.clipboard.writeText(window.location.href);
         setCopied(true);
+        toast.success('Link copied to clipboard', {
+          description: 'The article link has been copied to your clipboard.',
+        });
         setTimeout(() => setCopied(false), 2000);
-      } catch {}
+      } catch {
+        toast.error('Failed to copy link');
+      }
     }
   };
 
   const shareLinks = [
-    { label: 'Copy Link', icon: 'mdi:link-variant', href: '#', onClick: handleCopyLink, isButton: true },
-    { label: 'X / Twitter', icon: 'mdi:twitter', href: `https://x.com/intent/tweet?url=${shareUrl}&text=${shareTitle}` },
-    { label: 'LinkedIn', icon: 'mdi:linkedin', href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}` },
-    { label: 'Facebook', icon: 'mdi:facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
-    { label: 'WhatsApp', icon: 'mdi:whatsapp', href: `https://api.whatsapp.com/send?text=${shareTitle}%20${shareUrl}` },
-    { label: 'Reddit', icon: 'mdi:reddit', href: `https://reddit.com/submit?url=${shareUrl}&title=${shareTitle}` },
-    { label: 'Hacker News', icon: 'mdi:alpha-y-box', href: `https://news.ycombinator.com/submitlink?u=${shareUrl}&t=${shareTitle}` },
-    { label: 'Telegram', icon: 'mdi:telegram', href: `https://t.me/share/url?url=${shareUrl}&text=${shareTitle}` },
+    { label: 'Copy Link', icon: Copy01Icon, href: '#', onClick: handleCopyLink, isButton: true },
+    { label: 'X / Twitter', icon: NewTwitterIcon, href: `https://x.com/intent/tweet?url=${shareUrl}&text=${shareTitle}` },
+    { label: 'LinkedIn', icon: LinkedinIcon, href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}` },
+    { label: 'Instagram', icon: InstagramIcon, href: `https://instagram.com` },
+    { label: 'Facebook', icon: FacebookIcon, href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
+    { label: 'WhatsApp', icon: WhatsappIcon, href: `https://api.whatsapp.com/send?text=${shareTitle}%20${shareUrl}` },
+    { label: 'Reddit', icon: RedditIcon, href: `https://reddit.com/submit?url=${shareUrl}&title=${shareTitle}` },
+    { label: 'Telegram', icon: TelegramIcon, href: `https://t.me/share/url?url=${shareUrl}&text=${shareTitle}` },
   ];
 
   return (
     <aside
-      id="right-sidebar"
-      className={cn(
-        'hidden xl:flex flex-col gap-5',
-        'fixed right-0 top-16 bottom-0 w-64 z-40',
-        'p-5 overflow-hidden',
-        'border-l border-ds-outline-variant',
-        'bg-ds-surface-low',
-        className,
-      )}
-    >
+        id="right-sidebar"
+        className={cn(
+          'hidden xl:flex flex-col gap-5',
+          'fixed right-0 top-16 bottom-0 w-64 z-40',
+          'p-5 overflow-hidden',
+          'border-l border-ds-outline-variant',
+          'bg-ds-surface-low',
+          className,
+        )}
+      >
       {toc.length > 0 && (
         <section className="flex flex-col min-h-0 flex-1">
           <h2 className="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3 shrink-0">
@@ -189,6 +258,17 @@ export function RightSidebar({
                 youtube: 'YouTube',
                 discord: 'Discord',
               };
+              const isDownload = key === 'download' || key === 'downloadUrl';
+              if (isDownload) {
+                return (
+                  <DownloadButton
+                    key={key}
+                    href={href || ''}
+                    label={linkLabel[key] ?? key}
+                    icon={linkIcons[key] ?? Download04Icon}
+                  />
+                );
+              }
               return (
                 <a
                   key={key}
@@ -197,9 +277,7 @@ export function RightSidebar({
                   rel="noopener noreferrer"
                   className={cn(
                     'flex items-center gap-2 text-sm py-1.5 px-2 rounded-lg',
-                    key === 'download' || key === 'downloadUrl'
-                      ? 'text-ds-primary font-medium hover:bg-ds-primary/10'
-                      : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
+                    'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
                     'transition-colors duration-150',
                   )}
                 >
@@ -208,10 +286,11 @@ export function RightSidebar({
                     return <HugeiconsIcon icon={Icon} size={16} />;
                   })()}
                   <span>{linkLabel[key] ?? key}</span>
+                  <LinkStatusIndicator url={href || ''} className="ml-auto mr-1" />
                   <HugeiconsIcon
                     icon={ExternalLinkIcon}
                     size={12}
-                    className="ml-auto opacity-50"
+                    className="opacity-50"
                   />
                 </a>
               );
@@ -256,7 +335,7 @@ export function RightSidebar({
                 aria-label={item.label}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors duration-150"
               >
-                <Icon icon={item.icon} width={18} height={18} aria-hidden="true" />
+                <HugeiconsIcon icon={item.icon as any} size={18} aria-hidden="true" />
                 <span className="sr-only">{item.label}</span>
               </a>
             );
@@ -284,6 +363,6 @@ export function RightSidebar({
           </div>
         </section>
       )}
-    </aside>
+      </aside>
   );
 }

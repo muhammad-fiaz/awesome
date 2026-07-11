@@ -99,11 +99,11 @@ const authorItems = authors
   description={SITE_CONFIG.description}
 >
   <!-- Hero Stats -->
-  <HeroStats stats={stats} />
+  <HeroStats stats={stats} client:load />
 
   <!-- Featured Bento -->
   {featuredForBento.length > 0 && (
-    <FeaturedBento posts={featuredForBento} />
+    <FeaturedBento posts={featuredForBento} client:load />
   )}
 
   <!-- Main content + Right sidebar area -->
@@ -118,6 +118,7 @@ const authorItems = authors
             title="Latest Posts"
             icon="schedule"
             viewAllHref={`${BASE_PATH}/posts/`}
+            client:load
           />
         </div>
 

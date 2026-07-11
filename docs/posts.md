@@ -37,6 +37,7 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `authors` | string[] | `[]` | Author slug(s) matching filenames in `src/content/authors/` |
+| `organisations` | string[] | `[]` | Organisation slug(s) matching filenames in `src/content/organisations/` |
 | `categories` | string[] | `[]` | Category slug(s) matching filenames in `src/content/categories/` |
 | `tags` | string[] | `[]` | Tag slug(s) matching filenames in `src/content/tags/` |
 | `thumbnail` | string | — | Path to thumbnail image (relative to `public/` or full URL) |
@@ -59,6 +60,7 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 title: "Getting Started with React Hooks"
 description: "A comprehensive guide to understanding and using React Hooks in modern applications."
 authors: ["muhammad-fiaz"]
+organisations: ["google"]
 categories: ["react"]
 tags: ["javascript", "frontend", "hooks"]
 thumbnail: "/images/posts/react-hooks-thumb.jpg"

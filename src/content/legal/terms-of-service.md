@@ -3,8 +3,6 @@ title: Terms of Service
 description: Comprehensive Terms of Service for Awesome Dev Platform. Governs your use of our website, content submissions, user conduct, intellectual property rights, and all platform services.
 ---
 
-## Terms of Service
-
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
 **Applicable To:** [https://muhammad-fiaz.github.io/awesome](https://muhammad-fiaz.github.io/awesome)

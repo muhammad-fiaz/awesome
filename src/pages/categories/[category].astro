@@ -62,6 +62,7 @@ const jsonLd = {
   description={category.data.description ?? `Resources in ${category.data.title}`}
   ogImage={category.data.customOgImage}
 >
+
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="px-6 py-8">
     <div class="max-w-320 mx-auto">
@@ -73,11 +74,16 @@ const jsonLd = {
         </div>
       )}
 
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <a href={`${BASE_PATH}/categories/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Categories</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">{category.data.title}</span>
+      </div>
+
       <div class="mb-8">
-        <a href={`${BASE_PATH}/categories/`} class="text-sm text-ds-text-muted hover:text-ds-on-surface mb-3 flex items-center gap-1">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
-          Categories
-        </a>
         <h1 class="text-3xl font-bold text-ds-on-surface mb-2">{category.data.title}</h1>
         {category.data.description && (
           <p class="text-ds-on-surface-variant">{category.data.description}</p>

@@ -16,7 +16,7 @@ const SITE_URL = 'https://muhammad-fiaz.github.io';
 const BASE_PATH = '/awesome';
 
 function remarkReadingTime() {
-  return (tree, file) => {
+  return (/** @type {any} */ tree, /** @type {any} */ file) => {
     const textOnPage = toString(tree);
     const readingTime = getReadingTime(textOnPage);
     file.data.astro.frontmatter.minutesRead = readingTime.text;
@@ -37,7 +37,7 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-      exclude: ['@hugeicons/core-free-icons'],
+      exclude: ['@hugeicons/core-free-icons', '@hugeicons/react', '@base-ui/react'],
     },
   },
 
@@ -50,7 +50,7 @@ export default defineConfig({
       serialize(item) {
         if (item.url.endsWith('/')) {
           item.priority = 1.0;
-        } else if (/\/posts\/|\/categories\/|\/tags\/|\/authors\//.test(item.url)) {
+        } else if (/\/posts\/|\/categories\/|\/tags\/|\/authors\/|\/organisations\//.test(item.url)) {
           item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 0.9;
         }

@@ -13,6 +13,7 @@ import {
   LinkedinIcon,
   Globe02Icon,
   FavouriteIcon,
+  Briefcase01Icon,
 } from '@hugeicons/core-free-icons';
 import { render } from 'astro:content';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
@@ -20,6 +21,7 @@ import {
   getAllAuthors,
   getPostReadingTime,
   getPostsByAuthor,
+  getOrganisationsBySlugs,
 } from '@/lib/posts';
 
 export async function getStaticPaths() {
@@ -34,6 +36,11 @@ const { author } = Astro.props;
 const slug = author.id.replace(/\.md$/, '');
 const posts = await getPostsByAuthor(slug);
 const { Content } = await render(author);
+
+const authorOrgList = author.data.organisation
+  ? await getOrganisationsBySlugs([author.data.organisation])
+  : [];
+const authorOrg = authorOrgList[0] || null;
 
 const postItems = posts.map((p) => ({
   slug: p.id.replace(/\.(md|mdx)$/, ''),
@@ -99,6 +106,8 @@ const authorJsonLd = {
   image: author.data.avatar,
   url: author.data.website || author.data.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${slug}/`,
   jobTitle: author.data.title,
+  email: author.data.email,
+  telephone: author.data.phoneNumber,
   address: author.data.location ? {
     '@type': 'PostalAddress',
     addressLocality: author.data.location,
@@ -110,7 +119,11 @@ const authorJsonLd = {
     author.data.website,
     author.data.portfolio,
   ].filter(Boolean),
-  worksFor: {
+  worksFor: authorOrg ? {
+    '@type': 'Organization',
+    name: authorOrg.data.name,
+    url: authorOrg.data.website || `${SITE_CONFIG.url}${BASE_PATH}/organisations/${author.data.organisation}/`,
+  } : {
     '@type': 'Organization',
     name: SITE_CONFIG.name,
   },
@@ -123,36 +136,40 @@ const authorJsonLd = {
   ogImage={author.data.avatar}
   keywords={`${author.data.name}, ${author.data.title ?? 'author'}, developer, contributor`}
 >
+
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(authorJsonLd)} />
   </Fragment>
   <div class="px-4 md:px-6 pb-16">
       <div class="max-w-320 mx-auto">
 
-      <!-- Back link -->
-      <a href={`${BASE_PATH}/authors/`} class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface mb-6 pt-4">
-        <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
-        All Authors
-      </a>
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-6 pt-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <a href={`${BASE_PATH}/authors/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Authors</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">{author.data.name}</span>
+      </div>
 
       <!-- Author Hero Card -->
       <div class="card-ds p-6 md:p-8 mb-10">
         <div class="flex flex-col sm:flex-row items-start gap-6">
 
           <!-- Avatar -->
-          <div class="shrink-0">
+          <div class="shrink-0 relative overflow-hidden w-24 h-24 md:w-28 md:h-28 rounded-full ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card">
             {author.data.avatar ? (
               <img
                 src={author.data.avatar}
                 alt={author.data.name}
-                class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card"
+                class="w-full h-full object-cover"
                 crossorigin="anonymous"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
               />
-            ) : (
-              <div class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-3xl font-bold ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card">
-                {author.data.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-              </div>
-            )}
+            ) : null}
+            <div class="w-full h-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-3xl font-bold" style={author.data.avatar ? "display: none;" : "display: flex;"}>
+              {author.data.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+            </div>
           </div>
 
           <!-- Info -->
@@ -165,6 +182,12 @@ const authorJsonLd = {
                 {author.data.title && (
                   <p class="text-ds-secondary font-medium mt-0.5 text-base">
                     {author.data.title}
+                  </p>
+                )}
+                {authorOrg && (
+                  <p class="text-sm text-ds-text-muted mt-1 flex items-center gap-1.5">
+                    <HugeiconsIcon icon={Briefcase01Icon} className="w-3.5 h-3.5" size={14} />
+                    <span>Works at <a href={`${BASE_PATH}/organisations/${author.data.organisation}/`} class="text-ds-primary hover:underline font-semibold">{authorOrg.data.name}</a></span>
                   </p>
                 )}
                 {author.data.location && (
@@ -249,6 +272,23 @@ const authorJsonLd = {
                     class="tag-ds"
                   >
                     {cat}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Tags covered -->
+          {[...new Set(postItems.flatMap(p => p.tags))].length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                {[...new Set(postItems.flatMap(p => p.tags))].map(tag => (
+                  <a
+                    href={`${BASE_PATH}/tags/${tag}/`}
+                    class="tag-ds"
+                  >
+                    #{tag}
                   </a>
                 ))}
               </div>

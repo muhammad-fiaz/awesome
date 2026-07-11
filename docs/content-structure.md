@@ -8,6 +8,7 @@ This directory contains all the content for the Awesome developer resources plat
 src/content/
 ├── posts/          # Developer resource posts (Markdown/MDX)
 ├── authors/        # Author profiles (Markdown)
+├── organisations/  # Organisation profiles (Markdown)
 ├── categories/     # Category definitions (Markdown)
 ├── tags/           # Tag definitions (Markdown)
 ├── legal/          # Legal policy pages (Markdown)
@@ -29,8 +30,9 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 
 | Type | Folder | File Format | Key Fields |
 |------|--------|-------------|------------|
-| Posts | `posts/<category>/` | `.md` or `.mdx` | title, description, authors, categories, tags |
-| Authors | `authors/` | `.md` | name, avatar, bio |
+| Posts | `posts/<category>/` | `.md` or `.mdx` | title, description, authors, organisations, categories, tags |
+| Authors | `authors/` | `.md` | name, avatar, organisation, bio |
+| Organisations | `organisations/` | `.md` | name, avatar, bio |
 | Categories | `categories/` | `.md` | title, description |
 | Tags | `tags/` | `.md` | title, description |
 | Legal | `legal/` | `.md` | title, description |
@@ -55,6 +57,7 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 
 - [Posts](./posts.md) — How to create developer resource posts
 - [Authors](./authors.md) — How to create author profiles
+- [Organisations](./organisation.md) — How to create organisation profiles
 - [Categories](./categories.md) — How to create categories
 - [Tags](./tags.md) — How to create tags
 - [How to Publish](/awesome/guide/) — Complete step-by-step guide

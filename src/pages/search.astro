@@ -6,13 +6,15 @@ import {
   getAllCategories,
   getAllPosts,
   getAllTags,
+  getAllOrganisations,
 } from '@/lib/posts';
 import { SITE_CONFIG, BASE_PATH, OWNER } from '@/config/site';
 
-const [categories, tags, authors, allPosts] = await Promise.all([
+const [categories, tags, authors, organisations, allPosts] = await Promise.all([
   getAllCategories(),
   getAllTags(),
   getAllAuthors(),
+  getAllOrganisations(),
   getAllPosts(),
 ]);
 
@@ -32,6 +34,11 @@ const authorItems = authors
     name: a.data.name,
   }))
   .filter((a) => allPosts.some((p) => p.data.authors.includes(a.slug)));
+
+const organisationItems = organisations.map((o) => ({
+  slug: o.id.replace(/\.md$/, ''),
+  name: o.data.name,
+}));
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -58,6 +65,7 @@ const jsonLd = {
   title="Search | Awesome"
   description="Search developer tools and curated collections of resources, tutorials, frameworks, and articles on Awesome."
 >
+
   <Fragment slot="head">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="keywords" content="search developer resources, find tutorials, search programming articles, filter by category, filter by tag, developer tools, curated collections" />
@@ -76,7 +84,7 @@ const jsonLd = {
         </p>
       </div>
 
-      <SearchFeed client:load categories={categoryItems} tags={tagItems} authors={authorItems} />
+      <SearchFeed client:load categories={categoryItems} tags={tagItems} authors={authorItems} organisations={organisationItems} />
     </div>
   </div>
 </AppShell>

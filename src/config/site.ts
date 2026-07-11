@@ -109,6 +109,7 @@ const rawNavLinks = [
   { label: 'Categories', href: `${BASE_PATH}/categories/`, icon: 'category' },
   { label: 'Tags', href: `${BASE_PATH}/tags/`, icon: 'sell' },
   { label: 'Authors', href: `${BASE_PATH}/authors/`, icon: 'person' },
+  { label: 'Organisations', href: `${BASE_PATH}/organisations/`, icon: 'organisation' },
 ];
 
 const rawDiscoverLinks = [

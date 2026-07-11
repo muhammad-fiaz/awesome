@@ -16,7 +16,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PostCard, type PostCardData } from '@/components/post/PostCard';
-import { PostCardSkeleton } from '@/components/post/PostCardSkeleton';
+import { SearchSkeleton } from '@/components/skeletons/SearchSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -50,6 +50,7 @@ interface SearchFeedProps {
   categories: { slug: string; title: string }[];
   tags: { slug: string; title: string }[];
   authors: { slug: string; name: string }[];
+  organisations?: { slug: string; name: string }[];
 }
 
 const SORT_OPTIONS = [
@@ -61,37 +62,34 @@ const SORT_OPTIONS = [
   { value: 'alphabetical-desc', label: 'Z to A' },
 ] as const;
 
-function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
-  const [query, setQuery] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedAuthor, setSelectedAuthor] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('latest');
+function getInitialParam(key: string): string {
+  if (typeof window === 'undefined') return '';
+  return new URLSearchParams(window.location.search).get(key) || '';
+}
+function getInitialParamList(key: string): string[] {
+  if (typeof window === 'undefined') return [];
+  const val = new URLSearchParams(window.location.search).get(key);
+  return val ? val.split(',').filter(Boolean) : [];
+}
+
+function SearchFeedContent({ categories, tags, authors, organisations = [] }: SearchFeedProps) {
+  const [query, setQuery] = useState(() => getInitialParam('q'));
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => getInitialParamList('categories'));
+  const [selectedTags, setSelectedTags] = useState<string[]>(() => getInitialParamList('tags'));
+  const [selectedAuthor, setSelectedAuthor] = useState<string>(() => getInitialParam('author') || 'all');
+  const [selectedOrganisations, setSelectedOrganisations] = useState<string[]>(() => getInitialParamList('organisations'));
+  const [sortBy, setSortBy] = useState<string>(() => getInitialParam('sort') || 'latest');
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [tagOpen, setTagOpen] = useState(false);
   const [authorOpen, setAuthorOpen] = useState(false);
+  const [organisationOpen, setOrganisationOpen] = useState(false);
   const [categorySearch, setCategorySearch] = useState('');
   const [tagSearch, setTagSearch] = useState('');
   const [authorSearch, setAuthorSearch] = useState('');
+  const [organisationSearch, setOrganisationSearch] = useState('');
   const parentRef = useRef<HTMLDivElement>(null);
   const [pagefindResults, setPagefindResults] = useState<any[] | null>(null);
   const [pagefindLoading, setPagefindLoading] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const q = params.get('q') || '';
-      setQuery(q);
-      const cats = params.get('categories');
-      if (cats) setSelectedCategories(cats.split(',').filter(Boolean));
-      const tg = params.get('tags');
-      if (tg) setSelectedTags(tg.split(',').filter(Boolean));
-      const au = params.get('author');
-      if (au) setSelectedAuthor(au);
-      const sb = params.get('sort');
-      if (sb) setSortBy(sb);
-    }
-  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -116,6 +114,11 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
       } else {
         url.searchParams.delete('author');
       }
+      if (selectedOrganisations.length > 0) {
+        url.searchParams.set('organisations', selectedOrganisations.join(','));
+      } else {
+        url.searchParams.delete('organisations');
+      }
       if (sortBy !== 'latest') {
         url.searchParams.set('sort', sortBy);
       } else {
@@ -123,7 +126,7 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
       }
       window.history.replaceState({}, '', url.toString());
     }
-  }, [query, selectedCategories, selectedTags, selectedAuthor, sortBy]);
+  }, [query, selectedCategories, selectedTags, selectedAuthor, selectedOrganisations, sortBy]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -190,11 +193,18 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
     );
   }, []);
 
+  const toggleOrganisation = useCallback((slug: string) => {
+    setSelectedOrganisations((prev) =>
+      prev.includes(slug) ? prev.filter((o) => o !== slug) : [...prev, slug],
+    );
+  }, []);
+
   const clearAll = useCallback(() => {
     setQuery('');
     setSelectedCategories([]);
     setSelectedTags([]);
     setSelectedAuthor('all');
+    setSelectedOrganisations([]);
     setSortBy('latest');
   }, []);
 
@@ -203,8 +213,9 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
     if (selectedCategories.length > 0) count += selectedCategories.length;
     if (selectedTags.length > 0) count += selectedTags.length;
     if (selectedAuthor !== 'all') count += 1;
+    if (selectedOrganisations.length > 0) count += selectedOrganisations.length;
     return count;
-  }, [selectedCategories, selectedTags, selectedAuthor]);
+  }, [selectedCategories, selectedTags, selectedAuthor, selectedOrganisations]);
 
   const filteredPosts = useMemo(() => {
     if (pagefindResults !== null) {
@@ -229,7 +240,10 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
           selectedTags.some((t) => post.tags.includes(t));
         const matchesAuthor =
           selectedAuthor === 'all' || post.authors?.includes(selectedAuthor);
-        return matchesCategory && matchesTag && matchesAuthor;
+        const matchesOrganisation =
+          selectedOrganisations.length === 0 ||
+          selectedOrganisations.some((org) => post.organisations?.includes(org));
+        return matchesCategory && matchesTag && matchesAuthor && matchesOrganisation;
       });
     }
 
@@ -240,7 +254,7 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
 
     return posts.filter((post) => {
       const searchStr =
-        `${post.title} ${post.description} ${post.content ?? ''} ${post.tags.join(' ')} ${post.categories.join(' ')} ${post.authors?.join(' ') ?? ''}`.toLowerCase();
+        `${post.title} ${post.description} ${post.content ?? ''} ${post.tags.join(' ')} ${post.categories.join(' ')} ${post.authors?.join(' ') ?? ''} ${post.organisations?.join(' ') ?? ''}`.toLowerCase();
       const matchesQuery =
         queryWords.length === 0 ||
         queryWords.every((word) => searchStr.includes(word));
@@ -252,9 +266,12 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
         selectedTags.some((t) => post.tags.includes(t));
       const matchesAuthor =
         selectedAuthor === 'all' || post.authors?.includes(selectedAuthor);
-      return matchesQuery && matchesCategory && matchesTag && matchesAuthor;
+      const matchesOrganisation =
+        selectedOrganisations.length === 0 ||
+        selectedOrganisations.some((org) => post.organisations?.includes(org));
+      return matchesQuery && matchesCategory && matchesTag && matchesAuthor && matchesOrganisation;
     });
-  }, [posts, query, pagefindResults, selectedCategories, selectedTags, selectedAuthor]);
+  }, [posts, query, pagefindResults, selectedCategories, selectedTags, selectedAuthor, selectedOrganisations]);
 
   const sortedPosts = useMemo(() => {
     const arr = [...filteredPosts];
@@ -298,6 +315,12 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
     const s = authorSearch.toLowerCase();
     return authors.filter((a) => a.name.toLowerCase().includes(s) || a.slug.includes(s));
   }, [authors, authorSearch]);
+
+  const filteredOrganisations = useMemo(() => {
+    if (!organisationSearch) return organisations;
+    const s = organisationSearch.toLowerCase();
+    return organisations.filter((org) => org.name.toLowerCase().includes(s) || org.slug.includes(s));
+  }, [organisations, organisationSearch]);
 
   const hasScrollableTags = tags.length > 25;
 
@@ -535,6 +558,110 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
           )}
         </div>
 
+        {/* Organisations: searchable multi-select */}
+        {organisations.length > 0 && (
+          <div className="p-4 rounded-xl border border-ds-outline-variant bg-ds-surface-low">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">
+              Organisations
+            </h2>
+            <Popover open={organisationOpen} onOpenChange={setOrganisationOpen}>
+              <PopoverTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full justify-between h-9 rounded-xl text-sm"
+                  />
+                }
+              >
+                <span className="truncate">
+                  {selectedOrganisations.length === 0
+                    ? 'All Organisations'
+                    : `${selectedOrganisations.length} selected`}
+                </span>
+                <HugeiconsIcon
+                  icon={ChevronDownIcon}
+                  size={14}
+                  className={cn(
+                    'shrink-0 transition-transform duration-200',
+                    organisationOpen && 'rotate-180',
+                  )}
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                sideOffset={4}
+                className="w-[--radix-popover-trigger-width] p-0"
+              >
+                <div className="p-2 border-b border-ds-outline-variant">
+                  <div className="relative">
+                    <HugeiconsIcon
+                      icon={SearchIcon}
+                      size={14}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ds-text-muted pointer-events-none"
+                    />
+                    <Input
+                      placeholder="Search organisations..."
+                      value={organisationSearch}
+                      onChange={(e) => setOrganisationSearch(e.target.value)}
+                      className="pl-8 h-8 rounded-lg text-xs"
+                    />
+                  </div>
+                </div>
+                <ScrollArea className="max-h-64">
+                  <div className="p-2 space-y-0.5">
+                    {filteredOrganisations.length === 0 ? (
+                      <p className="text-xs text-ds-text-muted text-center py-3">No organisations found</p>
+                    ) : (
+                      filteredOrganisations.map((org) => (
+                        <button
+                          key={org.slug}
+                          type="button"
+                          onClick={() => toggleOrganisation(org.slug)}
+                          className={cn(
+                            'flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-sm transition-colors',
+                            'hover:bg-ds-surface-high focus:bg-ds-surface-high focus:outline-none',
+                            selectedOrganisations.includes(org.slug) &&
+                              'bg-ds-primary-container/10',
+                          )}
+                        >
+                          <Checkbox
+                            checked={selectedOrganisations.includes(org.slug)}
+                            onCheckedChange={() => toggleOrganisation(org.slug)}
+                            className="pointer-events-none"
+                          />
+                          <span className="text-ds-on-surface-variant">
+                            {org.name}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
+
+            {selectedOrganisations.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2.5">
+                {selectedOrganisations.map((slug) => {
+                  const org = organisations.find((o) => o.slug === slug);
+                  return (
+                    <Badge
+                      key={slug}
+                      variant="secondary"
+                      className="gap-1 pr-1 rounded-full cursor-pointer hover:bg-ds-error/10 hover:text-ds-error transition-colors"
+                      onClick={() => toggleOrganisation(slug)}
+                    >
+                      {org?.name ?? slug}
+                      <HugeiconsIcon icon={Cancel01Icon} size={10} />
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Author: searchable dropdown */}
         {authors.length > 0 && (
           <div className="p-4 rounded-xl border border-ds-outline-variant bg-ds-surface-low">
@@ -691,7 +818,7 @@ function SearchFeedContent({ categories, tags, authors }: SearchFeedProps) {
         <div className="space-y-4">
           <AnimatePresence mode="popLayout">
             {isLoading ? (
-              <PostCardSkeleton count={5} />
+              <SearchSkeleton count={6} />
             ) : error ? (
               <div className="text-center py-16 text-ds-text-muted">
                 <HugeiconsIcon

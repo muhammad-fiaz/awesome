@@ -37,6 +37,7 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `avatar` | string | — | Path to profile image (relative to `public/` or full URL) |
+| `organisation` | string | — | Organisation slug matching filenames in `src/content/organisations/` |
 | `bio` | string | — | Short biography |
 | `title` | string | — | Job title or role |
 | `location` | string | — | Geographic location |

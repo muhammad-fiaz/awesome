@@ -5,6 +5,7 @@ import { GiscusComments } from '@/components/post/GiscusComments';
 import { RelatedPosts } from '@/components/post/RelatedPosts';
 import { Recommendations } from '@/components/post/Recommendations';
 import AuthorCard from '@/components/post/AuthorCard.astro';
+import OrganisationCard from '@/components/post/OrganisationCard.astro';
 import Prose from '@/components/common/Prose.astro';
 import { CodeCopyButtons } from '@/components/common/CodeCopy';
 import { render } from 'astro:content';
@@ -12,10 +13,14 @@ import { BASE_PATH, SITE_CONFIG, OWNER } from '@/config/site';
 import {
   getAllPosts,
   getAuthorsBySlugs,
+  getOrganisationsBySlugs,
   getPostReadingTime,
   getRecommendationPosts,
   getRelatedPosts,
 } from '@/lib/posts';
+import { PostReferences } from '@/components/post/PostReferences';
+import { MobileToc } from '@/components/post/MobileToc';
+import { buildToc } from '@/lib/toc';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -33,10 +38,11 @@ if (!post) {
   return Astro.redirect(`${BASE_PATH}/posts/`);
 }
 
-const [relatedPosts, recommendationPosts, postAuthors] = await Promise.all([
+const [relatedPosts, recommendationPosts, postAuthors, postOrganisations] = await Promise.all([
   getRelatedPosts(post, 2),
   getRecommendationPosts(post, 2),
   getAuthorsBySlugs(post.data.authors),
+  getOrganisationsBySlugs(post.data.organisations ?? []),
 ]);
 
 const relatedForComponent = relatedPosts.map((p) => ({
@@ -95,6 +101,8 @@ const authorInfoList = postAuthors.length > 0 ? postAuthors.map((a) => ({
   portfolio: a.data.portfolio,
   sponsor: a.data.sponsor,
   support: a.data.support,
+  email: a.data.email,
+  phoneNumber: a.data.phoneNumber,
 })) : [{
   slug: 'muhammad-fiaz',
   name: OWNER.name,
@@ -109,9 +117,30 @@ const authorInfoList = postAuthors.length > 0 ? postAuthors.map((a) => ({
   portfolio: OWNER.portfolio,
   sponsor: OWNER.sponsor,
   support: OWNER.support,
+  email: 'contact@muhammadfiaz.com',
+  phoneNumber: undefined,
 }];
 
+const orgInfoList = postOrganisations.length > 0 ? postOrganisations.map((o) => ({
+  slug: o.id.replace(/\.md$/, ''),
+  name: o.data.name,
+  title: o.data.title,
+  avatar: o.data.avatar,
+  bio: o.data.bio,
+  location: o.data.location,
+  website: o.data.website,
+  github: o.data.github,
+  twitter: o.data.twitter,
+  linkedin: o.data.linkedin,
+  portfolio: o.data.portfolio,
+  sponsor: o.data.sponsor,
+  support: o.data.support,
+  email: o.data.email,
+  phoneNumber: o.data.phoneNumber,
+})) : [];
+
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
+const toc = buildToc(headings);
 const readingTime =
   remarkPluginFrontmatter.minutesRead ?? `${getPostReadingTime(post)} min read`;
 
@@ -129,6 +158,8 @@ const postJsonLd = {
     name: a.name,
     url: a.website || a.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${a.slug}/`,
     image: a.avatar,
+    email: a.email,
+    telephone: a.phoneNumber,
     sameAs: [
       a.github,
       a.twitter,
@@ -178,6 +209,7 @@ if (post.data.links) {
   postLinks={postLinks}
   keywords={postKeywords}
 >
+
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(postJsonLd)} />
     <meta property="article:author" content={authorInfoList.map(a => a.name).join(', ')} />
@@ -202,8 +234,9 @@ if (post.data.links) {
     difficulty={post.data.difficulty}
   />
 
-  <div class="py-4">
+  <div class="py-4 max-w-5xl mx-auto px-4 sm:px-6 md:px-8 xl:px-10">
     <div class="w-full">
+      <MobileToc client:load toc={toc} />
       <Prose>
         <Content />
       </Prose>
@@ -211,23 +244,7 @@ if (post.data.links) {
       <CodeCopyButtons client:load />
 
       {post.data.references && post.data.references.length > 0 && (
-        <div class="mt-10 pt-6 border-t border-ds-outline-variant">
-          <h2 class="text-lg font-semibold text-ds-on-surface mb-3">References</h2>
-          <ul class="space-y-1.5">
-            {post.data.references.map((ref: string) => (
-              <li>
-                <a
-                  href={ref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-sm text-ds-primary hover:underline break-all"
-                >
-                  {ref}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <PostReferences client:load references={post.data.references} />
       )}
 
       {post.data.tags && post.data.tags.length > 0 && (
@@ -244,6 +261,10 @@ if (post.data.links) {
             ))}
           </div>
         </div>
+      )}
+
+      {orgInfoList.length > 0 && (
+        <OrganisationCard organisations={orgInfoList} />
       )}
 
       <AuthorCard authors={authorInfoList} />

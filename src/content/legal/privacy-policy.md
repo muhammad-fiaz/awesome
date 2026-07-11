@@ -3,8 +3,6 @@ title: Privacy Policy
 description: Comprehensive Privacy Policy for Awesome Dev Platform. Details how we collect, use, store, and protect your personal data, including Google Analytics, Google Tag Manager, Google AdSense, user-submitted content, and third-party integrations.
 ---
 
-## Privacy Policy
-
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
 **Applicable To:** [https://muhammad-fiaz.github.io/awesome](https://muhammad-fiaz.github.io/awesome)

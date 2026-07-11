@@ -71,6 +71,7 @@ awesome/
 │   ├── content/         # Markdown content
 │   │   ├── posts/       # Developer resource posts
 │   │   ├── authors/     # Author profiles
+│   │   ├── organisations/ # Organisation profiles
 │   │   ├── categories/  # Category definitions
 │   │   ├── tags/        # Tag definitions
 │   │   └── legal/       # Legal policy pages
@@ -103,6 +104,7 @@ See the **[How to Publish](https://muhammad-fiaz.github.io/awesome/guide/)** gui
 |-----|-------------|
 | [Posts](./docs/posts.md) | How to create developer resource posts |
 | [Authors](./docs/authors.md) | How to create author profiles |
+| [Organisations](./docs/organisation.md) | How to create organisation profiles |
 | [Categories](./docs/categories.md) | How to create categories |
 | [Tags](./docs/tags.md) | How to create tags |
 | [Content Structure](./docs/content-structure.md) | Directory layout and file naming rules |
@@ -114,6 +116,7 @@ See the **[How to Publish](https://muhammad-fiaz.github.io/awesome/guide/)** gui
 title: "Your Resource Title"
 description: "A clear description of what this resource covers."
 authors: ["your-author-slug"]
+organisations: ["google"]
 categories: ["your-category"]
 tags: ["tag1", "tag2"]
 thumbnail: "/images/posts/your-thumb.jpg"

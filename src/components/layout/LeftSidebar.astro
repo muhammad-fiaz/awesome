@@ -14,6 +14,7 @@ import {
   HelpCircleIcon,
   ShieldIcon,
   ExternalLinkIcon,
+  Briefcase01Icon,
 } from '@hugeicons/core-free-icons';
 import { NAV_LINKS, DISCOVER_LINKS, COMMUNITY_LINKS, BASE_PATH } from '@/config/site';
 import { SidebarInteractive } from '@/components/layout/SidebarInteractive';
@@ -35,6 +36,7 @@ const ICON_MAP: Record<string, any> = {
   category: GridIcon,
   sell: TagsIcon,
   person: UserIcon,
+  organisation: Briefcase01Icon,
   star: StarIcon,
   schedule: Clock01Icon,
   rss_feed: RssIcon,
@@ -160,3 +162,35 @@ const ICON_MAP: Record<string, any> = {
     border-radius: 0.5rem;
   }
 </style>
+
+<script>
+  import { BASE_PATH } from '@/config/site';
+
+  function updateActiveLinks() {
+    const currentPath = window.location.pathname;
+    const sidebar = document.getElementById('left-sidebar');
+    if (!sidebar) return;
+
+    const links = sidebar.querySelectorAll('nav a');
+    links.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      // Handle base path matching and sub-routes
+      const isActive = href === `${BASE_PATH}/`
+        ? currentPath === href
+        : currentPath.startsWith(href);
+
+      if (isActive) {
+        link.classList.add('bg-ds-primary-container', 'text-ds-on-primary-container');
+        link.classList.remove('text-ds-on-surface-variant', 'hover:text-ds-on-surface', 'hover:bg-ds-surface-high');
+      } else {
+        link.classList.remove('bg-ds-primary-container', 'text-ds-on-primary-container');
+        link.classList.add('text-ds-on-surface-variant', 'hover:text-ds-on-surface', 'hover:bg-ds-surface-high');
+      }
+    });
+  }
+
+  // Update on page load and page transitions
+  document.addEventListener('astro:page-load', updateActiveLinks);
+</script>

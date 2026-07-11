@@ -10,6 +10,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { BASE_PATH } from '@/config/site';
 import { getInitials } from '@/lib/utils';
+import { MagicCard } from '@/components/ui/magic-card';
 
 export interface AuthorInfo {
   slug: string;
@@ -54,23 +55,23 @@ function getSocialLinks(author: AuthorInfo) {
       {authors.map((author) => {
         const socialLinks = getSocialLinks(author);
         return (
-          <div class="card-ds p-5">
-            <div class="flex flex-col sm:flex-row items-start gap-4">
+          <MagicCard client:load className="rounded-xl w-full" gradientSize={180} gradientColor="var(--ds-magic-glow)">
+            <div class="p-5 flex flex-col sm:flex-row items-start gap-4 w-full h-full bg-transparent border-0">
               {/* Avatar */}
-              <a href={`${BASE_PATH}/authors/${author.slug}/`} class="shrink-0">
+              <a href={`${BASE_PATH}/authors/${author.slug}/`} class="shrink-0 relative overflow-hidden rounded-full w-16 h-16 ring-2 ring-ds-outline-variant hover:ring-ds-primary transition-all">
                 {author.avatar ? (
                   <img
                     src={author.avatar}
                     alt={author.name}
-                    class="w-16 h-16 rounded-full object-cover ring-2 ring-ds-outline-variant hover:ring-ds-primary transition-all"
+                    class="w-full h-full object-cover"
                     loading="lazy"
                     crossorigin="anonymous"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                   />
-                ) : (
-                  <div class="w-16 h-16 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-lg font-bold ring-2 ring-ds-outline-variant">
-                    {getInitials(author.name)}
-                  </div>
-                )}
+                ) : null}
+                <div class="w-full h-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-lg font-bold" style={author.avatar ? "display: none;" : "display: flex;"}>
+                  {getInitials(author.name)}
+                </div>
               </a>
 
               {/* Info */}
@@ -113,7 +114,7 @@ function getSocialLinks(author: AuthorInfo) {
                 )}
               </div>
             </div>
-          </div>
+          </MagicCard>
         );
       })}
     </div>

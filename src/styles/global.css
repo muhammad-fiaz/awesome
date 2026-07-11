@@ -169,6 +169,7 @@
   --ds-warning: #bf8700;
   --ds-error: #cf222e;
   --ds-info: #0969da;
+  --ds-magic-glow: rgba(26, 127, 55, 0.04);
 }
 
 .dark {
@@ -240,6 +241,7 @@
   --ds-warning: #d29922;
   --ds-error: #f85149;
   --ds-info: #58a6ff;
+  --ds-magic-glow: rgba(63, 185, 80, 0.08);
 }
 
 @layer base {
@@ -643,5 +645,54 @@
       animation: none;
       opacity: 1;
     }
+  }
+
+  /* Theme Toggle View Transition styles */
+  ::view-transition-group(root) {
+    animation-duration: var(--magicui-theme-toggle-vt-duration, 400ms);
+  }
+  
+  [data-magicui-theme-vt="active"]::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  
+  [data-magicui-theme-vt="active"]::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+    clip-path: var(--magicui-theme-vt-clip-from);
+  }
+
+  /* ── View Transitions: main content slide-fade, nav/sidebar untouched ── */
+
+  ::view-transition-old(main-content) {
+    animation: 220ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out;
+  }
+
+  ::view-transition-new(main-content) {
+    animation: 280ms cubic-bezier(0, 0, 0.2, 1) both vt-slide-in;
+  }
+
+  @keyframes vt-slide-out {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-8px); }
+  }
+
+  @keyframes vt-slide-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(main-content),
+    ::view-transition-new(main-content) {
+      animation: none;
+    }
+  }
+
+  /* Ensure rough-notation SVGs are visible and drawn properly on top/under text */
+  svg[style*="position: absolute"] {
+    z-index: 5 !important;
+    pointer-events: none !important;
   }
 }

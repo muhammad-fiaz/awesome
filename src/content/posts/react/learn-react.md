@@ -7,6 +7,8 @@ summary: Learn React fundamentals quickly with practical examples and clear expl
 
 authors:
   - muhammad-fiaz
+organisations:
+  - google
 
 categories:
   - react

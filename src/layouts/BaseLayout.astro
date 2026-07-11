@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { SITE_CONFIG, BASE_PATH, OWNER, GA_ID, GTM_ID, ADSENSE_CLIENT_ID } from '@/config/site';
 import { CookieBanner } from '@/components/common/CookieBanner';
 import { Popup } from '@/components/common/Popup';
+import { Toaster } from '@/components/ui/sonner';
 import { ClientRouter } from 'astro:transitions';
 
 export interface Props {
@@ -26,6 +27,7 @@ const pageTitle = title
   : `${SITE_CONFIG.name} | Curated Developer Resources`;
 const canonicalUrl = new URL(Astro.url.pathname, SITE_CONFIG.url).toString();
 const ogImageUrl = ogImage ?? `https://placehold.co/1200x630/0d1117/3fb950/png?text=${encodeURIComponent(SITE_CONFIG.name)}`;
+const isProd = import.meta.env.PROD;
 
 const webSiteSchema = {
   '@context': 'https://schema.org',
@@ -182,6 +184,39 @@ const webAppSchema = {
         }
       })();
     </script>
+
+    <!-- Register Service Worker for PWA -->
+    {isProd && (
+      <script is:inline define:vars={{ BASE_PATH }}>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register(`${BASE_PATH}/sw.js`)
+              .then((reg) => {
+                console.log('Service Worker registered successfully with scope:', reg.scope);
+              })
+              .catch((err) => {
+                console.warn('Service Worker registration failed:', err);
+              });
+          });
+        }
+      </script>
+    )}
+    {!isProd && (
+      <script is:inline>
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for (let registration of registrations) {
+              registration.unregister().then((success) => {
+                if (success) {
+                  console.log('Successfully unregistered active service worker in development mode.');
+                  window.location.reload();
+                }
+              });
+            }
+          });
+        }
+      </script>
+    )}
   </head>
   <body class="bg-background text-foreground font-sans antialiased overflow-x-hidden" data-pagefind-body>
     <div id="nprogress-bar" aria-hidden="true"></div>
@@ -189,11 +224,11 @@ const webAppSchema = {
       (function () {
         if (window.__awesomeProgressInitialized) return;
         window.__awesomeProgressInitialized = true;
-
+ 
         var pending = 0;
         var trickleTimer = null;
         var hideTimer = null;
-
+ 
         function getBar() {
           var bar = document.getElementById('nprogress-bar');
           if (!bar) {
@@ -204,18 +239,18 @@ const webAppSchema = {
           }
           return bar;
         }
-
+ 
         function setProgress(value) {
           getBar().style.transform = 'scaleX(' + Math.min(value, 0.96) + ')';
         }
-
+ 
         function start() {
           pending += 1;
           var bar = getBar();
           if (hideTimer) clearTimeout(hideTimer);
           bar.classList.add('is-visible');
           setProgress(0.08);
-
+ 
           if (trickleTimer) clearInterval(trickleTimer);
           trickleTimer = setInterval(function () {
             var current = Number(bar.dataset.progress || '0.08');
@@ -224,7 +259,7 @@ const webAppSchema = {
             setProgress(next);
           }, 220);
         }
-
+ 
         function done() {
           pending = Math.max(0, pending - 1);
           if (pending > 0) return;
@@ -238,7 +273,7 @@ const webAppSchema = {
             bar.style.transform = 'scaleX(0)';
           }, 180);
         }
-
+ 
         start();
         window.addEventListener('load', done, { once: true });
         document.addEventListener('astro:before-preparation', start);
@@ -251,7 +286,8 @@ const webAppSchema = {
       <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P4M9T8ZR" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <slot />
-    <CookieBanner client:load />
-    <Popup client:load />
+    <CookieBanner client:load transition:persist />
+    <Popup client:load transition:persist />
+    <Toaster client:load transition:persist />
   </body>
 </html>

@@ -3,6 +3,7 @@ import { calculateReadingTime } from './readingTime';
 
 export type Post = CollectionEntry<'posts'>;
 export type Author = CollectionEntry<'authors'>;
+export type Organisation = CollectionEntry<'organisations'>;
 export type Category = CollectionEntry<'categories'>;
 export type Tag = CollectionEntry<'tags'>;
 
@@ -38,6 +39,12 @@ export async function getPostsByAuthor(authorSlug: string): Promise<Post[]> {
   return posts.filter((p) => p.data.authors.includes(authorSlug));
 }
 
+/** Get posts by organisation slug */
+export async function getPostsByOrganisation(orgSlug: string): Promise<Post[]> {
+  const posts = await getAllPosts();
+  return posts.filter((p) => p.data.organisations?.includes(orgSlug));
+}
+
 /** Get post reading time from body */
 export function getPostReadingTime(post: Post): number {
   return calculateReadingTime(post.body ?? '');
@@ -52,6 +59,17 @@ export async function getAllAuthors(): Promise<Author[]> {
 export async function getAuthorsBySlugs(slugs: string[]): Promise<Author[]> {
   const allAuthors = await getAllAuthors();
   return allAuthors.filter((a) => slugs.includes(a.id.replace(/\.md$/, '')));
+}
+
+/** Get all organisations */
+export async function getAllOrganisations(): Promise<Organisation[]> {
+  return getCollection('organisations');
+}
+
+/** Get organisations by slugs */
+export async function getOrganisationsBySlugs(slugs: string[]): Promise<Organisation[]> {
+  const allOrgs = await getAllOrganisations();
+  return allOrgs.filter((o) => slugs.includes(o.id.replace(/\.md$/, '')));
 }
 
 /** Get all categories */
@@ -81,17 +99,19 @@ export async function getRelatedPosts(post: Post, limit = 4): Promise<Post[]> {
 
 /** Get post stats */
 export async function getPostStats() {
-  const [posts, categories, tags, authors] = await Promise.all([
+  const [posts, categories, tags, authors, organisations] = await Promise.all([
     getAllPosts(),
     getAllCategories(),
     getAllTags(),
     getAllAuthors(),
+    getAllOrganisations(),
   ]);
   return {
     posts: posts.length,
     categories: categories.length,
     tags: tags.length,
     authors: authors.length,
+    organisations: organisations.length,
   };
 }
 

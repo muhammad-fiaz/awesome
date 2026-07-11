@@ -18,6 +18,7 @@ export interface PostFrontmatter {
   description: string;
   summary?: string;
   authors: string[];
+  organisations: string[];
   categories: string[];
   tags: string[];
   keywords: string[];

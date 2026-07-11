@@ -3,8 +3,6 @@ title: Refund Policy
 description: Comprehensive Refund Policy for Awesome Dev Platform. Explains refund eligibility, process, and terms for donations, sponsorships, and any paid services.
 ---
 
-## Refund Policy
-
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
 **Applicable To:** [https://muhammad-fiaz.github.io/awesome](https://muhammad-fiaz.github.io/awesome)

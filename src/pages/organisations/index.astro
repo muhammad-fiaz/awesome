@@ -1,0 +1,70 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { OrganisationsFeed } from '@/components/listing/OrganisationsFeed';
+import { getAllOrganisations } from '@/lib/posts';
+import { SITE_CONFIG, BASE_PATH } from '@/config/site';
+
+const organisations = await getAllOrganisations();
+
+const orgItems = organisations
+  .map((o) => ({
+    slug: o.id.replace(/\.md$/, ''),
+    name: o.data.name,
+    title: o.data.title,
+    avatar: o.data.avatar,
+    bio: o.data.bio,
+    location: o.data.location,
+  }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Associated Organisations',
+  description: 'Meet the companies and organisations that contribute or are associated with Awesome developer resources.',
+  url: `${Astro.url.origin}${SITE_CONFIG.basePath}/organisations/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${SITE_CONFIG.basePath}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${SITE_CONFIG.basePath}/` },
+      { '@type': 'ListItem', position: 2, name: 'Organisations' },
+    ],
+  },
+};
+---
+
+<AppShell title="Associated Organisations" description="Discover organizations and companies driving developer innovation and resources." keywords="developer organizations, technology companies, open source, tech sponsors, developers, software engineering">
+
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Organisations</span>
+      </div>
+
+      <!-- Page header -->
+      <div class="mb-10">
+        <h1 class="text-2xl md:text-4xl font-bold text-ds-on-surface mb-2">
+          Associated Organisations
+        </h1>
+        <p class="text-ds-on-surface-variant text-base md:text-lg">
+          Meet the organisations behind some of our curated developer resources and projects
+        </p>
+      </div>
+
+      <OrganisationsFeed client:load organisations={orgItems} />
+    </div>
+  </div>
+</AppShell>

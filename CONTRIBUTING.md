@@ -11,7 +11,7 @@ Thank you for your interest in contributing to Awesome! This guide will help you
 3. Add your post in `src/content/posts/<category>/`
 4. Submit a Pull Request
 
-See [docs/posts.md](./docs/posts.md) for the full field reference and the [How to Publish](https://muhammad-fiaz.github.io/awesome/guide/) guide for step-by-step instructions.
+See [docs/posts.md](./docs/posts.md), [docs/authors.md](./docs/authors.md), and [docs/organisation.md](./docs/organisation.md) for the full field references and the [How to Publish](https://muhammad-fiaz.github.io/awesome/guide/) guide for step-by-step instructions.
 
 ### 2. Fix Errors or Improve Content
 

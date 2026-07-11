@@ -26,6 +26,7 @@ const posts = defineCollection({
     description: z.string(),
     summary: z.string().optional(),
     authors: z.array(z.string()).default([]),
+    organisations: z.array(z.string()).default([]),
     categories: z.array(z.string()).default([]),
     tags: z.array(z.string()).default([]),
     keywords: z.array(z.string()).default([]),
@@ -62,6 +63,7 @@ const authors = defineCollection({
     name: z.string(),
     title: z.string().optional(),
     avatar: imageSchema,
+    organisation: z.string().optional(),
     bio: z.string().optional(),
     location: z.string().optional(),
     website: z.string().optional(),
@@ -71,6 +73,28 @@ const authors = defineCollection({
     portfolio: z.string().optional(),
     sponsor: z.string().optional(),
     support: z.string().optional(),
+    email: z.string().email().optional(),
+    phoneNumber: z.string().regex(/^\+\d+$/).optional(),
+  }),
+});
+
+const organisations = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/organisations' }),
+  schema: z.object({
+    name: z.string(),
+    title: z.string().optional(),
+    avatar: imageSchema,
+    bio: z.string().optional(),
+    location: z.string().optional(),
+    website: z.string().optional(),
+    github: z.string().optional(),
+    twitter: z.string().optional(),
+    linkedin: z.string().optional(),
+    portfolio: z.string().optional(),
+    sponsor: z.string().optional(),
+    support: z.string().optional(),
+    email: z.string().email().optional(),
+    phoneNumber: z.string().regex(/^\+\d+$/).optional(),
   }),
 });
 
@@ -106,6 +130,7 @@ const legal = defineCollection({
 export const collections = {
   posts,
   authors,
+  organisations,
   categories,
   tags,
   legal,

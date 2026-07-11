@@ -19,6 +19,7 @@ export async function GET() {
       categories: p.data.categories,
       tags: p.data.tags,
       authors: p.data.authors,
+      organisations: p.data.organisations ?? [],
       readingTime: getPostReadingTime(p),
       featured: p.data.featured,
       difficulty: p.data.difficulty,

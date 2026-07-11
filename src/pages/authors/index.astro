@@ -2,7 +2,7 @@
 import AppShell from '@/layouts/AppShell.astro';
 import { AuthorsFeed } from '@/components/listing/AuthorsFeed';
 import { getAllAuthors } from '@/lib/posts';
-import { SITE_CONFIG } from '@/config/site';
+import { SITE_CONFIG, BASE_PATH } from '@/config/site';
 
 const authors = await getAllAuthors();
 
@@ -38,6 +38,7 @@ const jsonLd = {
 ---
 
 <AppShell title="Authors and Contributors" description="Meet the contributors and authors of the Awesome Dev Platform." keywords="authors, contributors, developer community, writers, content creators">
+
   <Fragment slot="head">
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
@@ -45,6 +46,13 @@ const jsonLd = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="px-4 md:px-6 py-8">
     <div class="max-w-320 mx-auto">
+
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Authors</span>
+      </div>
 
       <!-- Page header -->
       <div class="mb-10">

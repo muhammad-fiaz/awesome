@@ -78,6 +78,7 @@ const jsonLd = {
   description="Discover curated developer resources, tutorials, tools, frameworks, and learning materials hand-picked for the community."
   keywords="developer resources, tutorials, tools, frameworks, programming, web development, learning materials"
 >
+
   <Fragment slot="head">
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
@@ -85,6 +86,13 @@ const jsonLd = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="px-4 md:px-6 py-8">
     <div class="max-w-320 mx-auto">
+
+      <!-- Breadcrumbs -->
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Resources</span>
+      </div>
 
       <!-- Header -->
       <div class="mb-8">

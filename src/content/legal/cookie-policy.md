@@ -3,8 +3,6 @@ title: Cookie Policy
 description: Comprehensive Cookie Policy for Awesome Dev Platform. Explains all cookies, local storage, and tracking technologies used across our website, including Google Analytics, Google Tag Manager, and Google AdSense.
 ---
 
-## Cookie Policy
-
 **Effective Date:** June 26, 2026
 **Last Updated:** June 26, 2026
 **Applicable To:** [https://muhammad-fiaz.github.io/awesome](https://muhammad-fiaz.github.io/awesome)
