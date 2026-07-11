@@ -191,6 +191,41 @@ const postJsonLd = {
   inLanguage: post.data.language || 'en',
 };
 
+const postBreadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: `${SITE_CONFIG.url}${BASE_PATH}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Posts',
+      item: `${SITE_CONFIG.url}${BASE_PATH}/posts/`,
+    },
+    ...(post.data.categories.length > 0
+      ? [
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: post.data.categories[0],
+            item: `${SITE_CONFIG.url}${BASE_PATH}/categories/${post.data.categories[0].toLowerCase().replace(/\s+/g, '-')}/`,
+          },
+        ]
+      : []),
+    {
+      '@type': 'ListItem',
+      position: post.data.categories.length > 0 ? 4 : 3,
+      name: post.data.title,
+      item: `${SITE_CONFIG.url}${BASE_PATH}/post/${post.id.replace(/\.(md|mdx)$/, '')}/`,
+    },
+  ],
+};
+
 const postLinks: Record<string, string | undefined> = {};
 if (post.data.links) {
   for (const [k, v] of Object.entries(post.data.links)) {
@@ -212,8 +247,10 @@ if (post.data.links) {
 
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(postJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(postBreadcrumbJsonLd)} />
     <meta property="article:author" content={authorInfoList.map(a => a.name).join(', ')} />
-    <meta property="article:published_time" content={new Date().toISOString()} />
+    <meta property="article:published_time" content={datePublished} />
+    <meta property="article:modified_time" content={dateModified} />
     {post.data.language && <meta property="article:language" content={post.data.language} />}
     {post.data.categories.length > 0 && <meta property="article:section" content={post.data.categories[0]} />}
     {post.data.tags.length > 0 && post.data.tags.map((tag: string) => (

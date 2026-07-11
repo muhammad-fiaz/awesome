@@ -21,6 +21,7 @@ export interface PostCardData {
   readingTime: number;
   featured?: boolean;
   difficulty?: Difficulty;
+  type?: 'post' | 'news' | 'guide';
 }
 
 interface PostCardProps {
@@ -50,6 +51,12 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
   const resolvedThumb = resolveImageUrl(post.thumbnail);
   const gradient = getGradient(post.slug);
 
+  const getHref = () => {
+    if (post.type === 'news') return `${BASE_PATH}/news/${post.slug}/`;
+    if (post.type === 'guide') return `${BASE_PATH}/guide/`;
+    return `${BASE_PATH}/post/${post.slug}/`;
+  };
+
   if (view === 'grid') {
     return (
       <MagicCard
@@ -60,7 +67,7 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
         gradientTo="var(--ds-secondary)"
       >
         <a
-          href={`${BASE_PATH}/post/${post.slug}/`}
+          href={getHref()}
           className="group overflow-hidden flex flex-col w-full h-full bg-transparent border-0"
         >
           {/* Thumbnail */}
@@ -156,7 +163,7 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
       gradientTo="var(--ds-secondary)"
     >
       <a
-        href={`${BASE_PATH}/post/${post.slug}/`}
+        href={getHref()}
         className="group flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 md:p-5 overflow-hidden w-full h-full bg-transparent border-0"
       >
         {/* Thumbnail */}

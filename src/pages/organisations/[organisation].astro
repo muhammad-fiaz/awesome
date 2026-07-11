@@ -12,13 +12,16 @@ import {
   NewTwitterIcon,
   LinkedinIcon,
   Globe02Icon,
+  Calendar01Icon,
+  News01Icon,
 } from '@hugeicons/core-free-icons';
-import { render } from 'astro:content';
+import { render, getCollection } from 'astro:content';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 import {
   getAllOrganisations,
   getPostReadingTime,
   getPostsByOrganisation,
+  getAuthorsForOrganisation,
 } from '@/lib/posts';
 
 export async function getStaticPaths() {
@@ -33,6 +36,12 @@ const { organisation } = Astro.props;
 const slug = organisation.id.replace(/\.md$/, '');
 const posts = await getPostsByOrganisation(slug);
 const { Content } = await render(organisation);
+const linkedAuthors = await getAuthorsForOrganisation(slug);
+
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const orgNews = allNews
+  .filter((n) => n.data.organisations?.includes(slug))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const postItems = posts.map((p) => ({
   slug: p.id.replace(/\.(md|mdx)$/, ''),
@@ -229,10 +238,94 @@ const organisationJsonLd = {
               <PostsFeed client:load posts={postItems} />
             )}
           </div>
+
+          {orgNews.length > 0 && (
+            <div class="mt-10">
+              <h2 class="text-xl font-semibold text-ds-on-surface mb-5 flex items-center gap-2">
+                <HugeiconsIcon icon={News01Icon} className="w-5 h-5 text-ds-primary" size={20} />
+                News from {organisation.data.name}
+              </h2>
+              <div class="space-y-4">
+                {orgNews.map((newsItem) => {
+                  const newsSlug = newsItem.id.replace(/\.md$/, '');
+                  const formattedDate = new Date(newsItem.data.pubDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  });
+                  return (
+                    <div class="card-ds p-5 flex flex-col sm:flex-row gap-4 hover:border-ds-primary transition-all duration-200">
+                      {newsItem.data.thumbnail && (
+                        <div class="w-full sm:w-36 aspect-video sm:aspect-auto overflow-hidden rounded-lg shrink-0 bg-ds-surface-high">
+                          <img
+                            src={newsItem.data.thumbnail}
+                            alt={newsItem.data.title}
+                            class="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div class="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                          <div class="flex items-center gap-2 text-xs text-ds-text-muted mb-1.5">
+                            <span class="flex items-center gap-1">
+                              <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5" size={14} />
+                              {formattedDate}
+                            </span>
+                            {newsItem.data.category && (
+                              <>
+                                <span>·</span>
+                                <span class="text-ds-primary font-semibold uppercase text-[10px] tracking-wider">{newsItem.data.category}</span>
+                              </>
+                            )}
+                          </div>
+                          <h3 class="font-bold text-base text-ds-on-surface hover:text-ds-primary leading-snug">
+                            <a href={`${BASE_PATH}/news/${newsSlug}/`}>{newsItem.data.title}</a>
+                          </h3>
+                          <p class="text-xs text-ds-text-muted mt-2 line-clamp-2 leading-relaxed">
+                            {newsItem.data.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         <!-- Right sidebar -->
         <div class="space-y-6">
+          <!-- Associated Authors -->
+          {linkedAuthors.length > 0 && (
+            <div class="card-ds p-5">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Associated Authors</h3>
+              <div class="space-y-3">
+                {linkedAuthors.map((author) => {
+                  const authorSlug = author.id.replace(/\.md$/, '');
+                  return (
+                    <a
+                      href={`${BASE_PATH}/authors/${authorSlug}/`}
+                      class="flex items-center gap-3 p-2 rounded-lg border border-ds-outline-variant hover:border-ds-primary hover:bg-ds-surface-high/30 group"
+                    >
+                      <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-ds-outline-variant group-hover:ring-ds-primary flex items-center justify-center">
+                        {author.data.avatar ? (
+                          <img src={author.data.avatar} alt={author.data.name} class="w-full h-full object-cover" />
+                        ) : (
+                          <span class="text-xs font-bold text-ds-primary">{author.data.name[0]}</span>
+                        )}
+                      </div>
+                      <div class="min-w-0">
+                        <span class="block text-sm font-semibold text-ds-on-surface group-hover:text-ds-primary truncate">{author.data.name}</span>
+                        {author.data.title && <span class="block text-[10px] text-ds-text-muted truncate">{author.data.title}</span>}
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <!-- Categories covered -->
           {[...new Set(postItems.flatMap(p => p.categories))].length > 0 && (
             <div class="card-ds p-5">

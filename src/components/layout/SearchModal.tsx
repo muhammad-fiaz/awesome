@@ -5,6 +5,7 @@ import {
   File02Icon,
   GridViewIcon,
   Home01Icon,
+  News01Icon,
   Search01Icon,
   Tag01Icon,
   UserIcon,
@@ -29,6 +30,7 @@ interface SearchIndexItem {
 const DEFAULT_ITEMS = [
   { label: 'Home', href: `${BASE_PATH}/`, icon: Home01Icon },
   { label: 'Posts', href: `${BASE_PATH}/posts/`, icon: File02Icon },
+  { label: 'News', href: `${BASE_PATH}/news/`, icon: News01Icon },
   { label: 'Categories', href: `${BASE_PATH}/categories/`, icon: GridViewIcon },
   { label: 'Tags', href: `${BASE_PATH}/tags/`, icon: Tag01Icon },
   { label: 'Authors', href: `${BASE_PATH}/authors/`, icon: UserIcon },
@@ -116,23 +118,50 @@ export function SearchModal() {
     }
 
     if (pagefindResults !== null) {
-      const pagefindSlugs = pagefindResults
-        .map((res: any) => {
-          const cleanUrl = res.url.endsWith('/') ? res.url.slice(0, -1) : res.url;
-          const match = cleanUrl.match(/\/post\/([^/]+)$/);
-          return match ? match[1] : null;
-        })
-        .filter(Boolean) as string[];
+      return pagefindResults.map((res: any) => {
+        const cleanUrl = res.url.endsWith('/') ? res.url.slice(0, -1) : res.url;
+        const isNews = cleanUrl.includes('/news/');
+        const isPost = cleanUrl.includes('/post/');
+        const isGuide = cleanUrl.includes('/guide');
 
-      return pagefindSlugs
-        .map((slug) => posts.find((p) => p.slug === slug))
-        .filter((p): p is SearchIndexItem => !!p)
-        .map((p) => ({
-          label: p.title,
-          href: `${BASE_PATH}/post/${p.slug}/`,
-          sub: p.categories[0] ?? '',
-          icon: File02Icon,
-        }));
+        let label = res.meta?.title || 'Untitled';
+        if (label.endsWith(' | Awesome')) {
+          label = label.slice(0, -10);
+        }
+
+        if (isNews) {
+          const slug = cleanUrl.split('/news/').pop() || '';
+          return {
+            label,
+            href: `${BASE_PATH}/news/${slug}/`,
+            sub: 'News',
+            icon: News01Icon,
+          };
+        } else if (isPost) {
+          const slug = cleanUrl.split('/post/').pop() || '';
+          const postMatch = posts.find((p) => p.slug === slug);
+          return {
+            label: postMatch?.title || label,
+            href: `${BASE_PATH}/post/${slug}/`,
+            sub: postMatch?.categories[0] || 'Post',
+            icon: File02Icon,
+          };
+        } else if (isGuide) {
+          return {
+            label,
+            href: `${BASE_PATH}/guide/`,
+            sub: 'Guide',
+            icon: News01Icon,
+          };
+        } else {
+          return {
+            label,
+            href: res.url,
+            sub: 'Page',
+            icon: File02Icon,
+          };
+        }
+      });
     }
 
     return posts

@@ -31,6 +31,8 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 | Type | Folder | File Format | Key Fields |
 |------|--------|-------------|------------|
 | Posts | `posts/<category>/` | `.md` or `.mdx` | title, description, authors, organisations, categories, tags |
+| News | `news/` | `.md` | title, description, pubDate, authors, organisations, category, tags, thumbnail, heroImage |
+| Guides | `guides/` | `.md` | title, description, keywords, heroImage, authors, organisations |
 | Authors | `authors/` | `.md` | name, avatar, organisation, bio |
 | Organisations | `organisations/` | `.md` | name, avatar, bio |
 | Categories | `categories/` | `.md` | title, description |
@@ -56,6 +58,7 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 ## Related Documentation
 
 - [Posts](./posts.md) — How to create developer resource posts
+- [News](./news.md) — How to create news articles
 - [Authors](./authors.md) — How to create author profiles
 - [Organisations](./organisation.md) — How to create organisation profiles
 - [Categories](./categories.md) — How to create categories

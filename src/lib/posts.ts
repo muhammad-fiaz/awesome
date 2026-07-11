@@ -134,3 +134,65 @@ export async function getRecommendationPosts(
   // Fallback: any other posts not yet shown
   return others.slice(0, limit);
 }
+
+/** Get organisations linked to a specific author */
+export async function getOrganisationsForAuthor(authorSlug: string): Promise<Organisation[]> {
+  const allOrgs = await getAllOrganisations();
+  const allAuthors = await getAllAuthors();
+  const authorObj = allAuthors.find((a) => a.id.replace(/\.md$/, '') === authorSlug);
+  if (!authorObj) return [];
+
+  const linkedOrgSlugs = new Set<string>();
+  
+  if (authorObj.data.organisation) {
+    linkedOrgSlugs.add(authorObj.data.organisation);
+  }
+  
+  if (authorObj.data.organisations && Array.isArray(authorObj.data.organisations)) {
+    for (const org of authorObj.data.organisations) {
+      linkedOrgSlugs.add(org);
+    }
+  }
+
+  for (const org of allOrgs) {
+    const orgSlug = org.id.replace(/\.md$/, '');
+    if (org.data.authors && Array.isArray(org.data.authors)) {
+      if (org.data.authors.includes(authorSlug)) {
+        linkedOrgSlugs.add(orgSlug);
+      }
+    }
+  }
+
+  return allOrgs.filter((o) => linkedOrgSlugs.has(o.id.replace(/\.md$/, '')));
+}
+
+/** Get authors linked to a specific organisation */
+export async function getAuthorsForOrganisation(orgSlug: string): Promise<Author[]> {
+  const allAuthors = await getAllAuthors();
+  const allOrgs = await getAllOrganisations();
+  const orgObj = allOrgs.find((o) => o.id.replace(/\.md$/, '') === orgSlug);
+  if (!orgObj) return [];
+
+  const linkedAuthorSlugs = new Set<string>();
+
+  if (orgObj.data.authors && Array.isArray(orgObj.data.authors)) {
+    for (const author of orgObj.data.authors) {
+      linkedAuthorSlugs.add(author);
+    }
+  }
+
+  for (const author of allAuthors) {
+    const authorSlug = author.id.replace(/\.md$/, '');
+    if (author.data.organisation === orgSlug) {
+      linkedAuthorSlugs.add(authorSlug);
+    }
+    if (author.data.organisations && Array.isArray(author.data.organisations)) {
+      if (author.data.organisations.includes(orgSlug)) {
+        linkedAuthorSlugs.add(authorSlug);
+      }
+    }
+  }
+
+  return allAuthors.filter((a) => linkedAuthorSlugs.has(a.id.replace(/\.md$/, '')));
+}
+

@@ -4,6 +4,7 @@ import {
   BookOpen02Icon,
   Home01Icon,
   File02Icon,
+  News01Icon,
   GridIcon,
   TagsIcon,
   UserIcon,
@@ -33,6 +34,7 @@ function isActive(href: string): boolean {
 const ICON_MAP: Record<string, any> = {
   home: Home01Icon,
   article: File02Icon,
+  news: News01Icon,
   category: GridIcon,
   sell: TagsIcon,
   person: UserIcon,
@@ -49,7 +51,7 @@ const ICON_MAP: Record<string, any> = {
 
 <aside
   id="left-sidebar"
-  class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-(--sidebar-width) bg-ds-surface-low border-r border-ds-outline-variant overflow-hidden z-40 transition-[width] duration-200 ease-in-out"
+  class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-(--sidebar-width) bg-ds-surface-low border-r border-ds-outline-variant overflow-hidden z-40"
 >
   <nav class="flex flex-col gap-0.5 p-3 h-full overflow-y-auto">
     <div class="hidden md:flex items-center pb-2 border-b border-ds-outline-variant mb-2 justify-between px-2" id="sidebar-header">
@@ -64,7 +66,7 @@ const ICON_MAP: Record<string, any> = {
           <a
             href={link.href}
             class:list={[
-              'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
+              'flex items-center rounded-lg text-sm font-medium gap-3 px-3 py-2',
               isActive(link.href)
                 ? 'bg-ds-primary-container text-ds-on-primary-container'
                 : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
@@ -89,7 +91,7 @@ const ICON_MAP: Record<string, any> = {
           <a
             href={link.href}
             class:list={[
-              'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
+              'flex items-center rounded-lg text-sm font-medium gap-3 px-3 py-2',
               isActive(link.href)
                 ? 'bg-ds-primary-container text-ds-on-primary-container'
                 : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',
@@ -116,7 +118,7 @@ const ICON_MAP: Record<string, any> = {
             target={link.external ? '_blank' : undefined}
             rel={link.external ? 'noopener noreferrer' : undefined}
             class:list={[
-              'flex items-center rounded-lg text-sm font-medium transition-all duration-150 gap-3 px-3 py-2',
+              'flex items-center rounded-lg text-sm font-medium gap-3 px-3 py-2',
               isActive(link.href)
                 ? 'bg-ds-primary-container text-ds-on-primary-container'
                 : 'text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high',

@@ -2,6 +2,7 @@ export interface OrganisationFrontmatter {
   name: string;
   title?: string;
   avatar?: string;
+  authors?: string[];
   bio?: string;
   location?: string;
   website?: string;

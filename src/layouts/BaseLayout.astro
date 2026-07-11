@@ -160,7 +160,7 @@ const webAppSchema = {
     </script>
 
     <script is:inline>
-      (function () {
+      function applyTheme() {
         var stored = localStorage.getItem('awesome-theme');
         var theme = 'dark';
         if (stored) {
@@ -181,8 +181,26 @@ const webAppSchema = {
         var sidebarOpen = localStorage.getItem('sidebar-open');
         if (sidebarOpen === 'false') {
           document.documentElement.classList.add('sidebar-collapsed');
+        } else {
+          document.documentElement.classList.remove('sidebar-collapsed');
         }
-      })();
+
+        var storedLayout = localStorage.getItem('awesome-layout-mode');
+        var layout = 'list';
+        if (storedLayout) {
+          try {
+            var parsedLayout = JSON.parse(storedLayout);
+            var l = parsedLayout && parsedLayout.state && parsedLayout.state.viewMode;
+            if (l === 'grid' || l === 'list') layout = l;
+          } catch (e) {}
+        }
+        document.documentElement.classList.remove('layout-grid', 'layout-list');
+        document.documentElement.classList.add('layout-' + layout);
+      }
+
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
+      document.addEventListener('astro:page-load', applyTheme);
     </script>
 
     <!-- Register Service Worker for PWA -->
@@ -286,8 +304,8 @@ const webAppSchema = {
       <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P4M9T8ZR" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <slot />
-    <CookieBanner client:load transition:persist />
-    <Popup client:load transition:persist />
-    <Toaster client:load transition:persist />
+    <CookieBanner client:load transition:persist transition:name="cookiebanner" />
+    <Popup client:load transition:persist transition:name="popup" />
+    <Toaster client:load transition:persist transition:name="toaster" />
   </body>
 </html>

@@ -96,7 +96,7 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
       {/* Results */}
       {filtered.length === 0 ? (
         <MagicCard
-          className="rounded-xl border border-ds-outline-variant bg-ds-surface-card shadow-sm"
+          className="rounded-xl"
           gradientSize={180}
           gradientColor="var(--ds-magic-glow)"
         >
@@ -111,7 +111,7 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
           {filtered.map((org) => (
             <MagicCard
               key={org.slug}
-              className="flex flex-col transition-all duration-200 hover:scale-[1.02] rounded-xl border border-ds-outline-variant bg-ds-surface-card shadow-sm"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.02] rounded-xl"
               gradientSize={150}
               gradientColor="var(--ds-magic-glow)"
               gradientFrom="var(--ds-primary)"
@@ -156,7 +156,7 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
           {filtered.map((org) => (
             <MagicCard
               key={org.slug}
-              className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl border border-ds-outline-variant bg-ds-surface-card shadow-sm"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl"
               gradientSize={150}
               gradientColor="var(--ds-magic-glow)"
               gradientFrom="var(--ds-primary)"

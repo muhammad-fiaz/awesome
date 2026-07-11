@@ -1,46 +1,44 @@
 ---
+import { getEntry, render } from 'astro:content';
 import PostLayout from '@/layouts/PostLayout.astro';
 import Prose from '@/components/common/Prose.astro';
 import { CodeCopyButtons } from '@/components/common/CodeCopy';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Clock01Icon } from '@hugeicons/core-free-icons';
 import { BASE_PATH, OWNER, SITE_CONFIG } from '@/config/site';
-import { getAuthorsBySlugs } from '@/lib/posts';
+import { getAuthorsBySlugs, getOrganisationsBySlugs } from '@/lib/posts';
 import { getInitials } from '@/lib/utils';
 
-const headings = [
-  { depth: 2, slug: 'overview', text: 'Overview' },
-  { depth: 2, slug: 'quick-start', text: 'Quick Start' },
-  { depth: 2, slug: 'step-by-step', text: 'Step-by-Step Guide' },
-  { depth: 3, slug: 'step-1', text: 'Step 1: Fork the Repository' },
-  { depth: 3, slug: 'step-2', text: 'Step 2: Create Your Post' },
-  { depth: 3, slug: 'step-3', text: 'Step 3: Add Front Matter' },
-  { depth: 3, slug: 'step-4', text: 'Step 4: Submit a Pull Request' },
-  { depth: 2, slug: 'frontmatter', text: 'Front Matter Reference' },
-  { depth: 3, slug: 'frontmatter-required', text: 'Required Fields' },
-  { depth: 3, slug: 'frontmatter-optional', text: 'Optional Fields' },
-  { depth: 3, slug: 'frontmatter-links', text: 'Links Object' },
-  { depth: 2, slug: 'content-structure', text: 'Content Structure' },
-  { depth: 2, slug: 'rules', text: 'Rules & Guidelines' },
-  { depth: 2, slug: 'tips', text: 'Tips & Best Practices' },
-];
+const guide = await getEntry('guides', 'publishing-guide');
+if (!guide) {
+  return new Response('Guide not found', { status: 404 });
+}
+
+const { Content, headings } = await render(guide);
+
+const guideAuthorsList = guide.data.authors && guide.data.authors.length > 0
+  ? guide.data.authors
+  : [];
+const authorList = await getAuthorsBySlugs(guideAuthorsList);
+
+const guideOrgsList = guide.data.organisations && guide.data.organisations.length > 0
+  ? guide.data.organisations
+  : [];
+const orgList = guideOrgsList.length > 0
+  ? await getOrganisationsBySlugs(guideOrgsList)
+  : [];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
-  headline: 'How to Publish a Post on Awesome',
-  description: 'Step-by-step guide to publishing developer resources on the Awesome platform by creating a Markdown file and submitting a Pull Request.',
-  author: {
+  headline: guide.data.title,
+  description: guide.data.description,
+  author: authorList.map((a) => ({
     '@type': 'Person',
-    name: OWNER.name,
-    url: OWNER.portfolio,
-    sameAs: [
-      OWNER.github,
-      OWNER.twitter,
-      OWNER.linkedin,
-      OWNER.portfolio,
-    ],
-  },
+    name: a.data.name,
+    url: a.data.website || a.data.portfolio || `${SITE_CONFIG.url}${BASE_PATH}/authors/${a.id.replace(/\.md$/, '')}/`,
+    sameAs: [a.data.github, a.data.twitter, a.data.linkedin].filter(Boolean),
+  })),
   publisher: {
     '@type': 'Person',
     name: OWNER.name,
@@ -50,33 +48,26 @@ const jsonLd = {
     '@type': 'WebSite',
     '@id': `${SITE_CONFIG.url}${BASE_PATH}/guide/`,
   },
-  datePublished: '2025-01-01',
-  dateModified: new Date().toISOString().split('T')[0],
+  datePublished: guide.data.datePublished || '2025-01-01',
+  dateModified: guide.data.dateModified || new Date().toISOString().split('T')[0],
   inLanguage: 'en',
-  keywords: 'developer resources, publishing guide, GitHub, content management, pull request',
+  keywords: guide.data.keywords || 'developer resources, publishing guide, GitHub, content management, pull request',
 };
 
-// Fetch the guide author's info
-const authorList = await getAuthorsBySlugs(['muhammad-fiaz']);
-const author = authorList[0];
-const authorData = author?.data;
-const authorSlug = author?.id.replace(/\.md$/, '') || 'muhammad-fiaz';
-
-const heroImage = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&h=420&q=80";
+const heroImage = guide.data.heroImage || "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&h=420&q=80";
 ---
 
 <PostLayout
-  title="How to Publish a Post"
-  description="Step-by-step guide to publishing developer resources on the Awesome platform by creating a Markdown file and submitting a Pull Request."
+  title={guide.data.title}
+  description={guide.data.description || ''}
   headings={headings}
-  keywords="publishing guide, GitHub submission, pull request, developer resources, content management"
+  keywords={guide.data.keywords || ''}
   ogImage={heroImage}
 >
-
   <Fragment slot="head">
     <meta property="article:author" content={OWNER.name} />
-    <meta property="article:published_time" content="2025-01-01" />
-    <meta property="article:modified_time" content={new Date().toISOString().split('T')[0]} />
+    <meta property="article:published_time" content={guide.data.datePublished || '2025-01-01'} />
+    <meta property="article:modified_time" content={guide.data.dateModified || new Date().toISOString().split('T')[0]} />
   </Fragment>
 
   <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -87,7 +78,7 @@ const heroImage = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?
       <div class="relative h-48 md:h-80 overflow-hidden rounded-2xl mb-6">
         <img
           src={heroImage}
-          alt="How to Publish a Post"
+          alt={guide.data.title}
           class="w-full h-full object-cover opacity-80 dark:opacity-60"
         />
         <div
@@ -105,34 +96,60 @@ const heroImage = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?
           <span class="text-sm text-ds-on-surface font-medium">Guide</span>
         </div>
         <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-ds-on-surface tracking-tight mb-3 leading-tight">
-          How to Publish a Post
+          {guide.data.title}
         </h1>
-        <p class="text-ds-on-surface-variant text-base md:text-lg leading-relaxed max-w-3xl">
-          This guide walks you through publishing developer resources on the Awesome platform.
-          Create a Markdown file and submit a Pull Request on GitHub.
-        </p>
+        {guide.data.description && (
+          <p class="text-ds-on-surface-variant text-base md:text-lg leading-relaxed max-w-3xl">
+            {guide.data.description}
+          </p>
+        )}
         <div class="flex flex-wrap items-center gap-4 text-sm mt-5">
-          <div class="flex items-center gap-2">
-            <a
-              href={`${BASE_PATH}/authors/${authorSlug}/`}
-              class="flex items-center gap-2 text-ds-on-surface-variant hover:text-ds-on-surface transition-colors"
-            >
-              {authorData?.avatar ? (
-                <img
-                  src={authorData.avatar}
-                  alt={authorData.name}
-                  class="w-7 h-7 rounded-full object-cover ring-1 ring-ds-outline-variant"
-                  loading="lazy"
-                  crossorigin="anonymous"
-                />
-              ) : (
-                <div class="w-7 h-7 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-[10px] font-bold">
-                  {getInitials(authorData?.name || OWNER.name)}
-                </div>
-              )}
-              <span class="font-medium">{authorData?.name || OWNER.name}</span>
-            </a>
-          </div>
+          {authorList.map((authorObj) => {
+            const authorSlug = authorObj.id.replace(/\.md$/, '');
+            const authorData = authorObj.data;
+            return (
+              <div class="flex items-center gap-2">
+                <a
+                  href={`${BASE_PATH}/authors/${authorSlug}/`}
+                  class="flex items-center gap-2 text-ds-on-surface-variant hover:text-ds-on-surface transition-colors"
+                >
+                  {authorData?.avatar ? (
+                    <img
+                      src={authorData.avatar}
+                      alt={authorData.name}
+                      class="w-7 h-7 rounded-full object-cover ring-1 ring-ds-outline-variant"
+                      loading="lazy"
+                      crossorigin="anonymous"
+                    />
+                  ) : (
+                    <div class="w-7 h-7 rounded-full bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center text-[10px] font-bold">
+                      {getInitials(authorData?.name || OWNER.name)}
+                    </div>
+                  )}
+                  <span class="font-medium">{authorData?.name || OWNER.name}</span>
+                </a>
+              </div>
+            );
+          })}
+
+          {orgList.length > 0 && (
+            <>
+              <span class="text-ds-outline">·</span>
+              <span class="text-ds-text-muted">via</span>
+              {orgList.map((orgObj, idx) => {
+                const orgSlug = orgObj.id.replace(/\.md$/, '');
+                return (
+                  <a
+                    href={`${BASE_PATH}/organisations/${orgSlug}/`}
+                    class="text-ds-primary hover:underline font-semibold"
+                  >
+                    {orgObj.data.name}
+                    {idx < orgList.length - 1 && <span class="text-ds-outline-variant">,</span>}
+                  </a>
+                );
+              })}
+            </>
+          )}
 
           <span class="text-ds-outline">·</span>
 
@@ -148,226 +165,7 @@ const heroImage = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?
   <div class="py-4">
     <div class="max-w-4xl mx-auto px-4 md:px-6">
       <Prose>
-        <h2 id="overview">Overview</h2>
-        <p>
-          Publishing on Awesome is simple: create a Markdown (.md) file with your content
-          and submit it via a GitHub Pull Request. Once reviewed and merged, your post goes live automatically.
-        </p>
-
-        <h2 id="quick-start">Quick Start</h2>
-        <p>Already familiar with GitHub? Here's the short version:</p>
-        <ol>
-          <li>Fork <a href="https://github.com/muhammad-fiaz/awesome" target="_blank" rel="noopener noreferrer">muhammad-fiaz/awesome</a></li>
-          <li>Create a new <code>.md</code> file in <code>src/content/posts/your-category/</code></li>
-          <li>Add front matter (title, description, authors, categories, tags) and your content</li>
-          <li>Submit a Pull Request</li>
-        </ol>
-
-        <h2 id="step-by-step">Step-by-Step Guide</h2>
-
-        <h3 id="step-1">Step 1: Fork the Repository</h3>
-        <ol>
-          <li>Go to <a href="https://github.com/muhammad-fiaz/awesome" target="_blank" rel="noopener noreferrer">github.com/muhammad-fiaz/awesome</a></li>
-          <li>Click <strong>"Fork"</strong> in the top right corner</li>
-          <li>Clone your fork locally:
-            <pre><code>git clone https://github.com/YOUR-USERNAME/awesome.git
-cd awesome</code></pre>
-          </li>
-          <li>Install dependencies:
-            <pre><code>bun install</code></pre>
-          </li>
-        </ol>
-
-        <h3 id="step-2">Step 2: Create Your Post</h3>
-        <p>Create a new Markdown file in the appropriate category folder:</p>
-        <pre><code>src/content/posts/your-category/your-post-slug.md</code></pre>
-
-        <p><strong>File naming rules:</strong></p>
-        <ul>
-          <li>Use lowercase letters, numbers, and hyphens only</li>
-          <li>Example: <code>react-hooks-guide.md</code>, <code>getting-started-with-rust.md</code></li>
-          <li>Do NOT use spaces, underscores, or special characters</li>
-        </ul>
-
-        <h3 id="step-3">Step 3: Add Front Matter and Content</h3>
-        <p>Every post requires YAML front matter at the top of the file, followed by your Markdown content:</p>
-        <pre><code>---
-title: "Your Post Title"
-description: "A clear description of what this resource covers (min 20 characters)."
-authors: ["your-author-slug"]
-categories: ["your-category"]
-tags: ["tag1", "tag2"]
-thumbnail: "/images/posts/your-thumb.jpg"
-featured: false
-draft: false
-difficulty: "intermediate"
-license: "MIT"
-language: "English"
-links:
-  website: "https://example.com"
-  github: "https://github.com/org/repo"
-  downloadUrl: "https://example.com/download"
-references:
-  - "https://example.com/reference1"
-keywords:
-  - "keyword1"
-  - "keyword2"
----
-
-# Your Post Title
-
-Write your content here using Markdown.
-
-## Introduction
-
-Explain what this resource is about.
-
-## Getting Started
-
-Provide step-by-step instructions.
-
-## Conclusion
-
-Summarize the key points.</code></pre>
-
-        <h3 id="step-4">Step 4: Submit a Pull Request</h3>
-        <ol>
-          <li>Commit your changes:
-            <pre><code>git add .
-git commit -m "add: Your Post Title"</code></pre>
-          </li>
-          <li>Push to your fork:
-            <pre><code>git push origin main</code></pre>
-          </li>
-          <li>Go to your fork on GitHub</li>
-          <li>Click <strong>"Contribute"</strong> → <strong>"Open pull request"</strong></li>
-          <li>Fill in the PR description explaining your post</li>
-          <li>Click <strong>"Create pull request"</strong></li>
-          <li>Wait for review and merge</li>
-        </ol>
-
-        <p>Once merged, GitHub Actions automatically builds and deploys the site. Your post will be live within minutes.</p>
-
-        <h2 id="frontmatter">Front Matter Reference</h2>
-
-        <h3 id="frontmatter-required">Required Fields</h3>
-        <div class="overflow-x-auto -mx-6 px-6">
-          <table>
-            <thead>
-              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><code>title</code></td><td>string</td><td>Post title (min 5 characters)</td></tr>
-              <tr><td><code>description</code></td><td>string</td><td>SEO description (min 20 characters)</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 id="frontmatter-optional">Optional Fields</h3>
-        <div class="overflow-x-auto -mx-6 px-6">
-          <table>
-            <thead>
-              <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><code>summary</code></td><td>string</td><td>—</td><td>Short summary for cards and previews</td></tr>
-              <tr><td><code>authors</code></td><td>string[]</td><td><code>[]</code></td><td>Author slug(s) from <code>src/content/authors/</code></td></tr>
-              <tr><td><code>organisations</code></td><td>string[]</td><td><code>[]</code></td><td>Organisation slug(s) from <code>src/content/organisations/</code></td></tr>
-              <tr><td><code>categories</code></td><td>string[]</td><td><code>[]</code></td><td>Category slug(s) from <code>src/content/categories/</code></td></tr>
-              <tr><td><code>tags</code></td><td>string[]</td><td><code>[]</code></td><td>Tag slug(s) from <code>src/content/tags/</code></td></tr>
-              <tr><td><code>keywords</code></td><td>string[]</td><td><code>[]</code></td><td>SEO keywords for search indexing</td></tr>
-              <tr><td><code>thumbnail</code></td><td>string</td><td>—</td><td>Thumbnail image path or URL</td></tr>
-              <tr><td><code>heroImage</code></td><td>string</td><td>—</td><td>Hero banner image path or URL</td></tr>
-              <tr><td><code>customOgImage</code></td><td>string</td><td>—</td><td>Custom Open Graph image for social sharing</td></tr>
-              <tr><td><code>featured</code></td><td>boolean</td><td><code>false</code></td><td>Show in featured section</td></tr>
-              <tr><td><code>draft</code></td><td>boolean</td><td><code>false</code></td><td>Keep as draft until ready</td></tr>
-              <tr><td><code>difficulty</code></td><td>enum</td><td>—</td><td><code>beginner</code>, <code>intermediate</code>, <code>advanced</code>, or <code>expert</code></td></tr>
-              <tr><td><code>links</code></td><td>object</td><td>—</td><td>External links (see below)</td></tr>
-              <tr><td><code>references</code></td><td>string[]</td><td><code>[]</code></td><td>Reference URLs cited in the post</td></tr>
-              <tr><td><code>license</code></td><td>string</td><td>—</td><td>License identifier (e.g. MIT, Apache-2.0)</td></tr>
-              <tr><td><code>language</code></td><td>string</td><td><code>English</code></td><td>Content language</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 id="frontmatter-links">Links Object</h3>
-        <div class="overflow-x-auto -mx-6 px-6">
-          <table>
-            <thead>
-              <tr><th>Key</th><th>Type</th><th>Description</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><code>website</code></td><td>string</td><td>Official website URL</td></tr>
-              <tr><td><code>github</code></td><td>string</td><td>GitHub repository URL</td></tr>
-              <tr><td><code>documentation</code></td><td>string</td><td>Documentation URL</td></tr>
-              <tr><td><code>demo</code></td><td>string</td><td>Live demo URL</td></tr>
-              <tr><td><code>npm</code></td><td>string</td><td>npm package URL</td></tr>
-              <tr><td><code>crate</code></td><td>string</td><td>Rust crate URL</td></tr>
-              <tr><td><code>youtube</code></td><td>string</td><td>YouTube video URL</td></tr>
-              <tr><td><code>discord</code></td><td>string</td><td>Discord invite URL</td></tr>
-              <tr><td><code>downloadUrl</code></td><td>string</td><td>Download URL (file or page)</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h2 id="content-structure">Content Structure</h2>
-        <pre><code>src/content/
-├── posts/
-│   ├── react/
-│   │   └── learn-react.md
-│   ├── rust/
-│   │   └── getting-started-with-rust.md
-│   └── astro/
-│       └── build-your-first-astro-site.md
-├── authors/
-│   └── muhammad-fiaz.md
-├── organisations/
-│   └── google.md
-├── categories/
-│   ├── react.md
-│   ├── rust.md
-│   └── astro.md
-├── tags/
-│   ├── javascript.md
-│   ├── frontend.md
-│   └── systems-programming.md
-└── legal/
-    ├── privacy-policy.md
-    └── terms-of-service.md</code></pre>
-
-        <h2 id="rules">Rules &amp; Guidelines</h2>
-        <ul>
-          <li><strong>One post per resource</strong> — Do not combine multiple resources in one post</li>
-          <li><strong>Original content</strong> — Your post must be your own work or properly attributed</li>
-          <li><strong>No spam</strong> — Posts promoting spam, scams, or low-quality content will be rejected</li>
-          <li><strong>Working links</strong> — All URLs must be valid and accessible</li>
-          <li><strong>Correct category</strong> — Place your post in the appropriate category folder</li>
-          <li><strong>Valid front matter</strong> — All required fields must be present and correctly formatted</li>
-          <li><strong>Markdown only</strong> — Use standard Markdown syntax (no HTML unless necessary)</li>
-          <li><strong>English content</strong> — Posts should be written in English</li>
-        </ul>
-
-        <h2 id="tips">Tips &amp; Best Practices</h2>
-        <ul>
-          <li><strong>Write clear titles:</strong> Make your title descriptive and specific</li>
-          <li><strong>Add a good description:</strong> This appears in search results and social shares</li>
-          <li><strong>Use relevant tags:</strong> Help readers find your content through multiple paths</li>
-          <li><strong>Set difficulty level:</strong> Helps readers find content appropriate for their skill level</li>
-          <li><strong>Add thumbnails:</strong> Visual content gets more engagement</li>
-          <li><strong>Start with drafts:</strong> Keep <code>draft: true</code> until your post is polished</li>
-          <li><strong>Link to sources:</strong> Reference official documentation and original projects</li>
-          <li><strong>Add download links:</strong> If your resource has releases, add a <code>downloadUrl</code> pointing to the file or page</li>
-          <li><strong>Use Markdown features:</strong> Code blocks, tables, and lists make content scannable</li>
-        </ul>
-
-        <h3>Need Help?</h3>
-        <p>
-          If you have questions about publishing, reach out via:
-        </p>
-        <ul>
-          <li><a href={`${OWNER.github}`} target="_blank" rel="noopener noreferrer">GitHub Issues</a></li>
-          <li><a href={`mailto:${OWNER.email}`}>{OWNER.email}</a></li>
-        </ul>
+        <Content />
       </Prose>
 
       <CodeCopyButtons client:load />

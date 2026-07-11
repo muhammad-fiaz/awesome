@@ -3,6 +3,7 @@ export interface AuthorFrontmatter {
   title?: string;
   avatar?: string;
   organisation?: string;
+  organisations?: string[];
   bio?: string;
   location?: string;
   website?: string;

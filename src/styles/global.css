@@ -695,4 +695,26 @@
     z-index: 5 !important;
     pointer-events: none !important;
   }
+
+  /* Layout View Preference rules to prevent layout shift */
+  .posts-feed-list {
+    display: block !important;
+  }
+  .posts-feed-grid {
+    display: none !important;
+  }
+  
+  html.layout-grid .posts-feed-list {
+    display: none !important;
+  }
+  html.layout-grid .posts-feed-grid {
+    display: grid !important;
+  }
+  
+  html.layout-list .posts-feed-list {
+    display: block !important;
+  }
+  html.layout-list .posts-feed-grid {
+    display: none !important;
+  }
 }

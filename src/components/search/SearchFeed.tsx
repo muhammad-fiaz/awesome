@@ -219,16 +219,20 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
 
   const filteredPosts = useMemo(() => {
     if (pagefindResults !== null) {
-      const pagefindSlugs = pagefindResults
+      const pagefindItems = pagefindResults
         .map((res: any) => {
           const cleanUrl = res.url.endsWith('/') ? res.url.slice(0, -1) : res.url;
-          const match = cleanUrl.match(/\/post\/([^/]+)$/);
-          return match ? match[1] : null;
+          const postMatch = cleanUrl.match(/\/post\/([^/]+)$/);
+          if (postMatch) return { slug: postMatch[1], type: 'post' };
+          const newsMatch = cleanUrl.match(/\/news\/([^/]+)$/);
+          if (newsMatch) return { slug: newsMatch[1], type: 'news' };
+          if (cleanUrl.endsWith('/guide')) return { slug: 'publishing-guide', type: 'guide' };
+          return null;
         })
-        .filter(Boolean) as string[];
+        .filter(Boolean) as { slug: string; type: string }[];
 
-      const matched = pagefindSlugs
-        .map((slug) => posts.find((p) => p.slug === slug))
+      const matched = pagefindItems
+        .map((item) => posts.find((p) => p.slug === item.slug && (p.type === item.type || (!p.type && item.type === 'post'))))
         .filter((p): p is PostCardData => !!p);
 
       return matched.filter((post) => {

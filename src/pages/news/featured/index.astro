@@ -1,0 +1,101 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { NewsFeed } from '@/components/news/NewsFeed';
+import { getCollection } from 'astro:content';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
+
+const newsEntries = await getCollection('news', ({ data }) => !data.draft && data.featured);
+const sortedNews = newsEntries.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const newsItems = sortedNews.map((n) => ({
+  slug: n.id.replace(/\.md$/, ''),
+  title: n.data.title,
+  description: n.data.description,
+  pubDate: n.data.pubDate.toISOString(),
+  authors: n.data.authors,
+  category: n.data.category,
+  tags: n.data.tags,
+  thumbnail: n.data.thumbnail,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Featured Developer News',
+  description: 'Top hand-picked developer news and major technology milestone announcements.',
+  url: `${Astro.url.origin}${BASE_PATH}/news/featured/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${Astro.url.origin}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.url.origin}${BASE_PATH}/` },
+      { '@type': 'ListItem', position: 2, name: 'News', item: `${Astro.url.origin}${BASE_PATH}/news/` },
+      { '@type': 'ListItem', position: 3, name: 'Featured' },
+    ],
+  },
+};
+---
+
+<AppShell
+  title="Featured Developer News"
+  description="Top hand-picked developer news and major technology milestone announcements."
+  keywords="featured news, developer announcements, hot tech news"
+>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+  </Fragment>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      {/* Breadcrumbs */}
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
+        <span class="text-ds-outline-variant">/</span>
+        <a href={`${BASE_PATH}/news/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">News</a>
+        <span class="text-ds-outline-variant">/</span>
+        <span class="text-sm text-ds-on-surface font-medium">Featured</span>
+      </div>
+
+      {/* Back link */}
+      <div class="mb-6">
+        <a
+          href={`${BASE_PATH}/news/`}
+          class="inline-flex items-center gap-1.5 text-sm text-ds-text-muted hover:text-ds-on-surface transition-colors"
+        >
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" size={16} />
+          Back to News
+        </a>
+      </div>
+
+      {/* Header */}
+      <div class="mb-10">
+        <h1 class="text-2xl md:text-4xl font-bold text-ds-on-surface tracking-tight mb-2">
+          Featured Developer News
+        </h1>
+        <p class="text-ds-on-surface-variant text-base md:text-lg">
+          The most important developer news and tech sector stories curated for you.
+        </p>
+      </div>
+
+      {/* News list */}
+      <div class="max-w-4xl">
+        {newsItems.length === 0 ? (
+          <div class="card-ds p-16 text-center">
+            <p class="text-ds-text-muted text-lg">No content available yet</p>
+          </div>
+        ) : (
+          <NewsFeed client:load newsItems={newsItems} />
+        )}
+      </div>
+    </div>
+  </div>
+</AppShell>

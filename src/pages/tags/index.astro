@@ -57,7 +57,13 @@ const jsonLd = {
         </p>
       </div>
 
-      <TagsFeed client:load tags={tagItems} />
+      {tagItems.length === 0 ? (
+        <div class="card-ds p-16 text-center">
+          <p class="text-ds-text-muted text-lg">No content available yet</p>
+        </div>
+      ) : (
+        <TagsFeed client:load tags={tagItems} />
+      )}
     </div>
   </div>
 </AppShell>

@@ -76,19 +76,16 @@ export function PostsFeed({ posts, showViewToggle = true, emptyMessage }: PostsF
       )}
 
       {/* Posts */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-          {posts.map((post, i) => (
-            <PostCard key={post.slug} post={post} index={i} view="grid" />
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {posts.map((post, i) => (
-            <PostCard key={post.slug} post={post} index={i} view="list" />
-          ))}
-        </div>
-      )}
+      <div className="posts-feed-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        {posts.map((post, i) => (
+          <PostCard key={post.slug} post={post} index={i} view="grid" />
+        ))}
+      </div>
+      <div className="posts-feed-list space-y-3">
+        {posts.map((post, i) => (
+          <PostCard key={post.slug} post={post} index={i} view="list" />
+        ))}
+      </div>
     </div>
   );
 }

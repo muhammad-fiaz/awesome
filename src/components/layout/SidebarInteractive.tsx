@@ -10,6 +10,7 @@ import {
   Home01Icon,
   Menu03Icon,
   MenuSquareIcon,
+  News01Icon,
   RssIcon,
   StarIcon,
   Tag01Icon,
@@ -30,6 +31,7 @@ import { useSidebarStore } from '@/store/sidebarStore';
 const ICON_MAP: Record<string, typeof File02Icon> = {
   home: Home01Icon,
   article: File02Icon,
+  news: News01Icon,
   category: Tag01Icon,
   sell: Tag01Icon,
   person: UserIcon,
@@ -64,7 +66,7 @@ function NavItem({
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener noreferrer' : undefined}
       className={cn(
-        'flex items-center rounded-lg text-sm font-medium transition-all duration-150',
+        'flex items-center rounded-lg text-sm font-medium',
         isOpen ? 'gap-3 px-3 py-2' : 'justify-center p-2.5',
         isActive
           ? 'bg-ds-primary-container text-ds-on-primary-container'
@@ -78,6 +80,14 @@ function NavItem({
           <span className="text-xs font-bold tracking-wide uppercase truncate flex-1">
             {label}
           </span>
+          {label === 'News' && (
+            <span className="relative flex items-center shrink-0">
+              <span className="absolute -inset-0.5 rounded bg-red-500 opacity-30 blur-xs animate-pulse"></span>
+              <span className="relative bg-red-500 text-white text-[7px] font-black px-1 py-0.5 rounded uppercase tracking-wider scale-95 shadow-sm">
+                Hot
+              </span>
+            </span>
+          )}
           {external && (
             <HugeiconsIcon
               icon={ArrowRight01Icon}
@@ -212,11 +222,11 @@ export function SidebarInteractive({
         {isMobileOpen && (
           <>
             <div
-              className="fixed inset-0 z-60 bg-black/60 md:hidden transition-opacity duration-200"
+              className="fixed inset-0 z-60 bg-black/60 md:hidden"
               onClick={closeMobileSidebar}
             />
             <aside
-              className="fixed left-0 top-0 bottom-0 w-70 z-61 bg-ds-surface-low border-r border-ds-outline-variant flex flex-col md:hidden transition-transform duration-200"
+              className="fixed left-0 top-0 bottom-0 w-70 z-61 bg-ds-surface-low border-r border-ds-outline-variant flex flex-col md:hidden"
             >
               <div className="flex items-center justify-between px-4 h-16 border-b border-ds-outline-variant">
                 <span className="font-bold text-lg text-ds-on-surface">

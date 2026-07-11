@@ -19,7 +19,6 @@ import {
   RedditIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { motion, LayoutGroup } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToc } from '@/hooks/useToc';
@@ -111,7 +110,7 @@ function TocItemComponent({
       <a
         href={`#${item.slug}`}
         className={cn(
-          'relative block text-sm py-1.5 transition-colors duration-200 border-l-2',
+          'relative block text-sm py-1.5 border-l-2',
           depth === 0 && 'pl-3 font-medium',
           depth === 1 && 'pl-6',
           depth >= 2 && 'pl-9 text-xs',
@@ -121,10 +120,8 @@ function TocItemComponent({
         )}
       >
         {isActive && (
-          <motion.div
-            layoutId="activeIndicator"
+          <div
             className="absolute inset-0 bg-ds-primary/10 rounded-r-lg z-0"
-            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
           />
         )}
         <span className="relative z-10">{item.text}</span>
@@ -224,17 +221,15 @@ export function RightSidebar({
             On This Page
           </h2>
           <div className="overflow-y-auto pr-1 flex-1 min-h-0 custom-scrollbar scrollbar-thin">
-            <LayoutGroup id="toc">
-              <ul className="space-y-0.5">
-                {toc.map((item) => (
-                  <TocItemComponent
-                    key={item.slug}
-                    item={item}
-                    activeId={activeId}
-                  />
-                ))}
-              </ul>
-            </LayoutGroup>
+            <ul className="space-y-0.5">
+              {toc.map((item) => (
+                <TocItemComponent
+                  key={item.slug}
+                  item={item}
+                  activeId={activeId}
+                />
+              ))}
+            </ul>
           </div>
         </section>
       )}

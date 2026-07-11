@@ -22,8 +22,8 @@ const currentPath = Astro.url.pathname;
     <slot name="head" />
   </Fragment>
 
-  <TopNavbar currentPath={currentPath} transition:persist="topnav" />
-  <LeftSidebar currentPath={currentPath} transition:persist="leftsidebar" />
+  <TopNavbar currentPath={currentPath} transition:persist="topnav" transition:name="topnav" />
+  <LeftSidebar currentPath={currentPath} transition:persist="leftsidebar" transition:name="leftsidebar" />
 
   <div
     class="flex flex-col min-h-screen pt-16 md:pl-(--sidebar-width) transition-[padding] duration-200 ease-in-out"
@@ -35,8 +35,8 @@ const currentPath = Astro.url.pathname;
     >
       <slot />
     </main>
-    <BottomBar transition:persist="bottombar" />
+    <BottomBar transition:persist="bottombar" transition:name="bottombar" />
   </div>
 
-  <SearchModal client:load transition:persist="searchmodal" />
+  <SearchModal client:load transition:persist="searchmodal" transition:name="searchmodal" />
 </BaseLayout>

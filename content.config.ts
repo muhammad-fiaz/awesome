@@ -70,6 +70,7 @@ const authors = defineCollection({
     title: z.string().optional(),
     avatar: imageSchema,
     organisation: z.string().optional(),
+    organisations: z.array(z.string()).default([]),
     bio: z.string().optional(),
     location: z.string().optional(),
     website: urlSchema,
@@ -89,6 +90,7 @@ const organisations = defineCollection({
     name: z.string(),
     title: z.string().optional(),
     avatar: imageSchema,
+    authors: z.array(z.string()).default([]),
     bio: z.string().optional(),
     location: z.string().optional(),
     website: urlSchema,
@@ -132,6 +134,60 @@ const legal = defineCollection({
   }),
 });
 
+const guides = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/guides' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    keywords: z.string().optional(),
+    heroImage: imageSchema,
+    authors: z.array(z.string()).default([]),
+    organisations: z.array(z.string()).default([]),
+    datePublished: z.string().optional(),
+    dateModified: z.string().optional(),
+  }),
+});
+
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    summary: z.string().optional(),
+    authors: z.array(z.string()).default([]),
+    organisations: z.array(z.string()).default([]),
+    categories: z.array(z.string()).default([]),
+    category: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    keywords: z.array(z.string()).default([]),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+    thumbnail: imageSchema,
+    heroImage: imageSchema,
+    customOgImage: imageSchema,
+    references: z.array(z.string()).default([]),
+    links: z
+      .object({
+        website: z.string().optional(),
+        github: z.string().optional(),
+        documentation: z.string().optional(),
+        demo: z.string().optional(),
+        npm: z.string().optional(),
+        crate: z.string().optional(),
+        youtube: z.string().optional(),
+        discord: z.string().optional(),
+        downloadUrl: z.string().optional(),
+      })
+      .optional(),
+    license: z.string().optional(),
+    language: z.string().default('English'),
+    difficulty: z
+      .enum(['beginner', 'intermediate', 'advanced', 'expert'])
+      .optional(),
+  }),
+});
+
 export const collections = {
   posts,
   authors,
@@ -139,4 +195,6 @@ export const collections = {
   categories,
   tags,
   legal,
+  guides,
+  news,
 };

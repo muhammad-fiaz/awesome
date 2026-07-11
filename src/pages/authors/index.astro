@@ -64,7 +64,13 @@ const jsonLd = {
         </p>
       </div>
 
-      <AuthorsFeed client:load authors={authorItems} />
+      {authorItems.length === 0 ? (
+        <div class="card-ds p-16 text-center">
+          <p class="text-ds-text-muted text-lg">No content available yet</p>
+        </div>
+      ) : (
+        <AuthorsFeed client:load authors={authorItems} />
+      )}
     </div>
   </div>
 </AppShell>
