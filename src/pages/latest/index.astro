@@ -1,13 +1,15 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
+import { ListingSidebar } from '@/components/layout/ListingSidebar';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Clock01Icon, ArrowLeft01Icon, File02Icon, StarIcon, TagsIcon } from '@hugeicons/core-free-icons';
-import { getAllCategories, getAllPosts, getPostReadingTime } from '@/lib/posts';
+import { Clock01Icon, ArrowLeft01Icon, File02Icon } from '@hugeicons/core-free-icons';
+import { getAllCategories, getAllPosts, getPostReadingTime, getAllTags } from '@/lib/posts';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 
 const allPosts = await getAllPosts();
 const categories = await getAllCategories();
+const tags = await getAllTags();
 
 const posts = allPosts.map((p) => ({
   slug: p.id.replace(/\.(md|mdx)$/, ''),
@@ -20,6 +22,7 @@ const posts = allPosts.map((p) => ({
   readingTime: getPostReadingTime(p),
   featured: p.data.featured,
   difficulty: p.data.difficulty,
+  projectName: p.data.projectName,
 }));
 
 const categoryItems = categories
@@ -32,7 +35,16 @@ const categoryItems = categories
   }))
   .filter((c) => c.count > 0)
   .sort((a, b) => b.count - a.count)
-  .slice(0, 8);
+  .slice(0, 5);
+
+const tagItems = tags
+  .map((t) => ({
+    slug: t.id.replace(/\.md$/, ''),
+    title: t.data.title,
+    count: allPosts.filter((post) => post.data.tags.includes(t.id.replace(/\.md$/, ''))).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 10);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -106,54 +118,13 @@ const jsonLd = {
               <p class="text-ds-text-muted text-lg">No posts yet.</p>
             </div>
           ) : (
-            <PostsFeed client:load posts={posts} />
+            <PostsFeed client:load posts={posts} showSearch={true} />
           )}
         </div>
 
         <!-- Sidebar -->
         <div class="space-y-6">
-          <div class="card-ds p-5 sticky top-20">
-            <h3 class="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">Explore</h3>
-            <div class="space-y-1">
-              <a
-                href={`${BASE_PATH}/featured/`}
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-              >
-                <HugeiconsIcon icon={StarIcon} className="w-4 h-4" size={16} />
-                Featured Posts
-              </a>
-              <a
-                href={`${BASE_PATH}/categories/`}
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-              >
-                <HugeiconsIcon icon={TagsIcon} className="w-4 h-4" size={16} />
-                Categories
-              </a>
-              <a
-                href={`${BASE_PATH}/tags/`}
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-              >
-                <HugeiconsIcon icon={TagsIcon} className="w-4 h-4" size={16} />
-                Tags
-              </a>
-            </div>
-
-            {categoryItems.length > 0 && (
-              <div class="mt-5 pt-5 border-t border-ds-outline-variant">
-                <h4 class="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">Categories</h4>
-                <div class="space-y-1">
-                  {categoryItems.map(cat => (
-                    <a
-                      href={`${BASE_PATH}/categories/${cat.slug}/`}
-                      class="flex items-center px-3 py-1.5 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-                    >
-                      <span class="capitalize">{cat.title}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <ListingSidebar type="post" categories={categoryItems} tags={tagItems} client:load />
         </div>
       </div>
     </div>

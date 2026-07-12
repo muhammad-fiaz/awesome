@@ -1,10 +1,19 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { OrganisationsFeed } from '@/components/listing/OrganisationsFeed';
-import { getAllOrganisations } from '@/lib/posts';
+import { ListingSidebar } from '@/components/layout/ListingSidebar';
+import {
+  getAllOrganisations,
+  getAllCategories,
+  getAllTags,
+  getAllPosts,
+} from '@/lib/posts';
 import { SITE_CONFIG, BASE_PATH } from '@/config/site';
 
 const organisations = await getAllOrganisations();
+const allPosts = await getAllPosts();
+const tags = await getAllTags();
+const categories = await getAllCategories();
 
 const orgItems = organisations
   .map((o) => ({
@@ -15,6 +24,24 @@ const orgItems = organisations
     bio: o.data.bio,
     location: o.data.location,
   }));
+
+const tagItems = tags
+  .map((t) => ({
+    slug: t.id.replace(/\.md$/, ''),
+    title: t.data.title,
+    count: allPosts.filter((post) => post.data.tags.includes(t.id.replace(/\.md$/, ''))).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 10);
+
+const categoryItems = categories
+  .map((c) => ({
+    slug: c.id.replace(/\.md$/, ''),
+    title: c.data.title,
+    count: allPosts.filter((post) => post.data.categories.includes(c.id.replace(/\.md$/, ''))).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -64,13 +91,24 @@ const jsonLd = {
         </p>
       </div>
 
-      {orgItems.length === 0 ? (
-        <div class="card-ds p-16 text-center">
-          <p class="text-ds-text-muted text-lg">No content available yet</p>
+      {/* Sidebar Layout */}
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Main column */}
+        <div class="lg:col-span-2">
+          {orgItems.length === 0 ? (
+            <div class="card-ds p-16 text-center">
+              <p class="text-ds-text-muted text-lg">No content available yet</p>
+            </div>
+          ) : (
+            <OrganisationsFeed client:load organisations={orgItems} />
+          )}
         </div>
-      ) : (
-        <OrganisationsFeed client:load organisations={orgItems} />
-      )}
+
+        {/* Sidebar widgets */}
+        <div class="space-y-6">
+          <ListingSidebar type="post" categories={categoryItems} tags={tagItems} client:load />
+        </div>
+      </div>
     </div>
   </div>
 </AppShell>

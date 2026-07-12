@@ -169,7 +169,9 @@
   --ds-warning: #bf8700;
   --ds-error: #cf222e;
   --ds-info: #0969da;
-  --ds-magic-glow: rgba(26, 127, 55, 0.04);
+  --ds-magic-glow: rgba(99, 102, 241, 0.05);
+  --ds-magic-glow-from: rgba(99, 102, 241, 0.3);
+  --ds-magic-glow-to: rgba(168, 85, 247, 0.3);
 }
 
 .dark {
@@ -241,7 +243,9 @@
   --ds-warning: #d29922;
   --ds-error: #f85149;
   --ds-info: #58a6ff;
-  --ds-magic-glow: rgba(63, 185, 80, 0.08);
+  --ds-magic-glow: rgba(129, 140, 248, 0.09);
+  --ds-magic-glow-from: rgba(129, 140, 248, 0.35);
+  --ds-magic-glow-to: rgba(192, 132, 252, 0.35);
 }
 
 @layer base {

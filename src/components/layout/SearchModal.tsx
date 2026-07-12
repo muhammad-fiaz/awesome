@@ -12,7 +12,6 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useHotkey } from '@tanstack/react-hotkeys';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { BASE_PATH } from '@/config/site';
@@ -212,27 +211,20 @@ export function SearchModal() {
     }
   });
 
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeSearch}
-          />
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Search"
-            className="fixed top-[12%] left-1/2 z-101 w-full max-w-2xl -translate-x-1/2 px-4"
-            initial={{ opacity: 0, y: -16, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.97 }}
-            transition={{ duration: 0.16, ease: 'easeOut' }}
-          >
+    <>
+      <div
+        className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm animate-none"
+        onClick={closeSearch}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search"
+        className="fixed top-[12%] left-1/2 z-101 w-full max-w-2xl -translate-x-1/2 px-4 animate-none"
+      >
             <div className="rounded-2xl border border-ds-outline-variant shadow-2xl bg-ds-surface-container overflow-hidden">
               <div className="flex items-center gap-3 px-4 py-3.5 border-b border-ds-outline-variant">
                 <HugeiconsIcon
@@ -399,9 +391,7 @@ export function SearchModal() {
                 )}
               </div>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+      </div>
+    </>
   );
 }

@@ -54,6 +54,7 @@ const posts = defineCollection({
     difficulty: z
       .enum(['beginner', 'intermediate', 'advanced', 'expert'])
       .optional(),
+    projectName: z.string().optional(),
   }),
 });
 
@@ -180,6 +181,7 @@ const news = defineCollection({
     difficulty: z
       .enum(['beginner', 'intermediate', 'advanced', 'expert'])
       .optional(),
+    projectName: z.string().optional(),
   }),
 });
 

@@ -124,8 +124,8 @@ export function NewsFeed({ newsItems }: NewsFeedProps) {
 
       {/* Grid or List list of news cards */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
-          <HugeiconsIcon icon={Calendar01Icon} size={48} className="mx-auto mb-3 opacity-30" />
+        <div className="text-center py-16 text-ds-text-muted flex flex-col items-center justify-center">
+          <HugeiconsIcon icon={Calendar01Icon} size={48} className="mb-3 opacity-30 animate-none" />
           <p className="text-base font-semibold mb-1">No news found</p>
           <p className="text-sm">Try a different search query</p>
         </div>

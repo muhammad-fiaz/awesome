@@ -28,6 +28,7 @@ export async function GET() {
       readingTime: getPostReadingTime(p),
       featured: p.data.featured,
       difficulty: p.data.difficulty,
+      projectName: p.data.projectName,
     };
   });
 
@@ -53,6 +54,7 @@ export async function GET() {
       readingTime: 3,
       featured: false,
       difficulty: undefined,
+      projectName: n.data.projectName,
     };
   });
 

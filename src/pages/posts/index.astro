@@ -1,7 +1,7 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
-import { TagCloud } from '@/components/home/TagCloud';
+import { ListingSidebar } from '@/components/layout/ListingSidebar';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { StarIcon, Clock01Icon, Search01Icon } from '@hugeicons/core-free-icons';
 import {
@@ -135,55 +135,7 @@ const jsonLd = {
 
         <!-- Sidebar -->
         <div class="space-y-6">
-
-          <!-- Quick links -->
-          <div class="card-ds p-5">
-            <h3 class="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">Explore</h3>
-            <div class="space-y-1">
-              <a
-                href={`${BASE_PATH}/featured/`}
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-              >
-                <HugeiconsIcon icon={StarIcon} className="w-4 h-4 text-ds-primary shrink-0" size={16} />
-                Featured Posts
-              </a>
-              <a
-                href={`${BASE_PATH}/latest/`}
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-              >
-                <HugeiconsIcon icon={Clock01Icon} className="w-4 h-4 text-ds-secondary shrink-0" size={16} />
-                Latest Posts
-              </a>
-            </div>
-          </div>
-
-          <!-- Top categories -->
-          {categoryItems.length > 0 && (
-            <div class="card-ds p-5">
-              <h3 class="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">
-                Top Categories
-              </h3>
-              <div class="space-y-1">
-                {categoryItems.map((cat) => (
-                  <a
-                    href={`${BASE_PATH}/categories/${cat.slug}/`}
-                    class="flex items-center px-3 py-2 rounded-lg text-sm text-ds-on-surface-variant hover:text-ds-on-surface hover:bg-ds-surface-high transition-colors"
-                  >
-                    <span class="capitalize font-medium">{cat.title}</span>
-                  </a>
-                ))}
-              </div>
-              <a
-                href={`${BASE_PATH}/categories/`}
-                class="block mt-3 pt-3 border-t border-ds-outline-variant text-xs text-ds-text-muted hover:text-ds-on-surface text-center transition-colors"
-              >
-                View all categories →
-              </a>
-            </div>
-          )}
-
-          <!-- Tags -->
-          <TagCloud tags={tagItems} title="Browse by Tag" />
+          <ListingSidebar type="post" categories={categoryItems} tags={tagItems} client:load />
         </div>
       </div>
     </div>

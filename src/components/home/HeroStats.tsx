@@ -6,9 +6,11 @@ import { NumberTicker } from '@/components/ui/number-ticker';
 interface HeroStatsProps {
   stats: {
     posts: number;
+    news: number;
     categories: number;
     tags: number;
     authors: number;
+    organisations: number;
   };
 }
 
@@ -30,7 +32,7 @@ export function HeroStats({ stats }: HeroStatsProps) {
             </p>
           </div>
           {stats && (
-            <div className="grid grid-cols-4 gap-2 w-full lg:w-auto lg:flex lg:items-center lg:gap-3 shrink-0">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full lg:w-auto lg:flex lg:items-center lg:gap-3 shrink-0">
               <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-primary/30">
                 <NumberTicker
                   value={stats.posts}
@@ -42,29 +44,47 @@ export function HeroStats({ stats }: HeroStatsProps) {
               </div>
               <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-secondary/30">
                 <NumberTicker
-                  value={stats.categories}
+                  value={stats.news}
                   className="block text-lg lg:text-xl font-extrabold text-ds-secondary tracking-tight dark:text-ds-secondary"
+                />
+                <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
+                  News
+                </span>
+              </div>
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-tertiary/30">
+                <NumberTicker
+                  value={stats.categories}
+                  className="block text-lg lg:text-xl font-extrabold text-ds-tertiary tracking-tight dark:text-ds-tertiary"
                 />
                 <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
                   Categories
                 </span>
               </div>
-              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-tertiary/30">
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-info/30">
                 <NumberTicker
                   value={stats.tags}
-                  className="block text-lg lg:text-xl font-extrabold text-ds-tertiary tracking-tight dark:text-ds-tertiary"
+                  className="block text-lg lg:text-xl font-extrabold text-ds-info tracking-tight dark:text-ds-info"
                 />
                 <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
                   Tags
                 </span>
               </div>
-              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-on-surface/30">
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-success/30">
                 <NumberTicker
                   value={stats.authors}
-                  className="block text-lg lg:text-xl font-extrabold text-ds-on-surface tracking-tight dark:text-ds-on-surface"
+                  className="block text-lg lg:text-xl font-extrabold text-ds-success tracking-tight dark:text-ds-success"
                 />
                 <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
                   Authors
+                </span>
+              </div>
+              <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-on-surface/30">
+                <NumberTicker
+                  value={stats.organisations}
+                  className="block text-lg lg:text-xl font-extrabold text-ds-on-surface tracking-tight dark:text-ds-on-surface"
+                />
+                <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-wider text-ds-text-muted">
+                  Orgs
                 </span>
               </div>
             </div>

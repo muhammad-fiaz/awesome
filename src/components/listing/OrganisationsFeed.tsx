@@ -95,27 +95,21 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <MagicCard
-          className="rounded-xl"
-          gradientSize={180}
-          gradientColor="var(--ds-magic-glow)"
-        >
-          <div className="text-center py-16 text-ds-text-muted w-full h-full bg-transparent border-0 flex flex-col items-center justify-center">
-            <HugeiconsIcon icon={Briefcase01Icon} size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="text-base font-semibold mb-1">No organisations found</p>
-            <p className="text-sm">Try a different search term</p>
-          </div>
-        </MagicCard>
+        <div className="text-center py-16 text-ds-text-muted flex flex-col items-center justify-center">
+          <HugeiconsIcon icon={Briefcase01Icon} size={48} className="mb-3 opacity-30 animate-none" />
+          <p className="text-base font-semibold mb-1">No organisations found</p>
+          <p className="text-sm">Try a different search term</p>
+        </div>
       ) : view === 'grid' ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((org) => (
             <MagicCard
               key={org.slug}
               className="flex flex-col transition-all duration-200 hover:scale-[1.02] rounded-xl"
               gradientSize={150}
               gradientColor="var(--ds-magic-glow)"
-              gradientFrom="var(--ds-primary)"
-              gradientTo="var(--ds-secondary)"
+              gradientFrom="var(--ds-magic-glow-from)"
+              gradientTo="var(--ds-magic-glow-to)"
             >
               <a
                 href={`${BASE_PATH}/organisations/${org.slug}/`}
@@ -135,7 +129,7 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
                     }
                   />
                 </div>
-                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base">
+                <h3 className="font-bold text-ds-on-surface text-base">
                   {org.name}
                 </h3>
                 {org.title && (
@@ -159,8 +153,8 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
               className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl"
               gradientSize={150}
               gradientColor="var(--ds-magic-glow)"
-              gradientFrom="var(--ds-primary)"
-              gradientTo="var(--ds-secondary)"
+              gradientFrom="var(--ds-magic-glow-from)"
+              gradientTo="var(--ds-magic-glow-to)"
             >
               <a
                 href={`${BASE_PATH}/organisations/${org.slug}/`}
@@ -181,7 +175,7 @@ export function OrganisationsFeed({ organisations }: OrganisationsFeedProps) {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
+                  <h3 className="font-bold text-ds-on-surface text-sm">
                     {org.name}
                   </h3>
                   {org.title && (

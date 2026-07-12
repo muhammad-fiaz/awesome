@@ -1,5 +1,5 @@
 'use client';
-import { Clock01Icon, File02Icon } from '@hugeicons/core-free-icons';
+import { Clock01Icon, File02Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { BASE_PATH } from '@/config/site';
 import { cn, resolveImageUrl } from '@/lib/utils';
@@ -7,6 +7,7 @@ import { difficultyColors } from '@/lib/difficulty';
 import type { Difficulty } from '@/types/post';
 import { SafeImage } from '@/components/ui/SafeImage';
 import { MagicCard } from '@/components/ui/magic-card';
+import { Button } from '@/components/ui/button';
 
 export interface PostCardData {
   slug: string;
@@ -22,6 +23,7 @@ export interface PostCardData {
   featured?: boolean;
   difficulty?: Difficulty;
   type?: 'post' | 'news' | 'guide';
+  projectName?: string;
 }
 
 interface PostCardProps {
@@ -63,8 +65,8 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
         className="flex flex-col transition-all duration-200 hover:scale-[1.02] hover:-translate-y-0.5 rounded-xl"
         gradientSize={150}
         gradientColor="var(--ds-magic-glow)"
-        gradientFrom="var(--ds-primary)"
-        gradientTo="var(--ds-secondary)"
+        gradientFrom="var(--ds-magic-glow-from)"
+        gradientTo="var(--ds-magic-glow-to)"
       >
         <a
           href={getHref()}
@@ -100,7 +102,7 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
             )}
             {/* Featured badge */}
             {post.featured && (
-              <span className="absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-ds-primary text-ds-on-primary shadow-sm">
+              <span className="absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-ds-primary text-ds-on-primary shadow-sm z-10">
                 Featured
               </span>
             )}
@@ -108,13 +110,21 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
             {post.difficulty && (
               <span
                 className={cn(
-                  'absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full border backdrop-blur-sm',
+                  'absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full border backdrop-blur-sm z-10 group-hover:opacity-0 transition-opacity duration-150',
                   difficultyColors[post.difficulty],
                 )}
               >
                 {post.difficulty}
               </span>
             )}
+            {/* Read Post Button - Top Right Corner */}
+            <Button
+              type="button"
+              className="opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 flex items-center gap-1 h-7 rounded-lg text-[10px] font-semibold bg-ds-primary text-ds-on-primary hover:bg-ds-primary/95 px-2.5 absolute right-2 top-2 shadow-sm pointer-events-none z-20"
+            >
+              {post.type === 'news' ? 'Read News' : post.type === 'guide' ? 'Read Guide' : 'Read Post'}
+              <HugeiconsIcon icon={ArrowRight01Icon} size={11} />
+            </Button>
             {/* Category pill */}
             {post.categories[0] && (
               <span className="absolute bottom-2 left-2 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full bg-ds-surface-lowest/90 text-ds-secondary backdrop-blur-sm border border-ds-outline-variant/40">
@@ -125,14 +135,21 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
 
           {/* Content */}
           <div className="flex flex-col flex-1 p-4">
-            <h3 className="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors leading-snug text-sm line-clamp-2 mb-1.5">
+            {post.projectName && (
+              <div className="flex items-center mb-1.5">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
+                  {post.projectName}
+                </span>
+              </div>
+            )}
+            <h3 className="font-semibold text-ds-on-surface leading-snug text-sm line-clamp-2 mb-1.5">
               {post.title}
             </h3>
             <p className="text-xs text-ds-on-surface-variant line-clamp-2 mb-3 flex-1">
               {post.description}
             </p>
             {/* Footer */}
-            <div className="flex items-center gap-2 flex-wrap mt-auto">
+            <div className="relative flex items-center justify-between mt-auto pt-2 border-t border-ds-outline-variant/20">
               <span className="text-[10px] text-ds-text-muted flex items-center gap-0.5">
                 <HugeiconsIcon
                   icon={Clock01Icon}
@@ -141,11 +158,9 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
                 />
                 {post.readingTime} min
               </span>
-              {post.authors[0] && (
-                <span className="text-[10px] text-ds-text-muted ml-auto truncate max-w-20">
-                  {post.authors[0].replace(/-/g, ' ')}
-                </span>
-              )}
+              <span className="text-[10px] text-ds-text-muted truncate max-w-20">
+                {post.authors[0] ? post.authors[0].replace(/-/g, ' ') : ''}
+              </span>
             </div>
           </div>
         </a>
@@ -159,8 +174,8 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
       className="flex flex-col sm:flex-row transition-all duration-200 hover:scale-[1.005] rounded-xl"
       gradientSize={180}
       gradientColor="var(--ds-magic-glow)"
-      gradientFrom="var(--ds-primary)"
-      gradientTo="var(--ds-secondary)"
+      gradientFrom="var(--ds-magic-glow-from)"
+      gradientTo="var(--ds-magic-glow-to)"
     >
       <a
         href={getHref()}
@@ -193,11 +208,19 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
 
         <div className="flex-1 min-w-0">
           {/* Category + Author */}
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
             {post.categories[0] && (
               <span className="text-[10px] font-bold uppercase tracking-wider text-ds-secondary">
                 {post.categories[0]}
               </span>
+            )}
+            {post.projectName && (
+              <>
+                <span className="text-ds-text-muted text-xs">·</span>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
+                  {post.projectName}
+                </span>
+              </>
             )}
             {post.authors[0] && (
               <>
@@ -225,7 +248,7 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors leading-snug text-sm md:text-base mb-1 line-clamp-2">
+          <h3 className="font-semibold text-ds-on-surface leading-snug text-sm md:text-base mb-1 line-clamp-2">
             {post.title}
           </h3>
 
@@ -235,23 +258,32 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
           </p>
 
           {/* Footer */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-ds-text-muted flex items-center gap-1">
-              <HugeiconsIcon
-                icon={Clock01Icon}
-                size={12}
-                className="fill-current"
-              />
-              {post.readingTime} min
-            </span>
-            {post.tags.slice(0, 2).map((tag) => (
-              <span
-                key={tag}
-                className="tag-ds text-[10px] hidden sm:inline-flex"
-              >
-                #{tag}
+          <div className="relative flex items-center justify-between mt-2 pt-2 border-t border-ds-outline-variant/20">
+            <div className="flex items-center gap-2 flex-wrap group-hover:opacity-0 transition-opacity duration-150">
+              <span className="text-xs text-ds-text-muted flex items-center gap-1">
+                <HugeiconsIcon
+                  icon={Clock01Icon}
+                  size={12}
+                  className="fill-current"
+                />
+                {post.readingTime} min
               </span>
-            ))}
+              {post.tags.slice(0, 2).map((tag) => (
+                <span
+                  key={tag}
+                  className="tag-ds text-[10px] hidden sm:inline-flex"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+            <Button
+              type="button"
+              className="opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 flex items-center gap-1 h-7 rounded-lg text-[10px] font-semibold bg-ds-primary text-ds-on-primary hover:bg-ds-primary/95 px-2.5 absolute right-0 bottom-0 shadow-xs pointer-events-none"
+            >
+              {post.type === 'news' ? 'Read News' : post.type === 'guide' ? 'Read Guide' : 'Read Post'}
+              <HugeiconsIcon icon={ArrowRight01Icon} size={11} />
+            </Button>
           </div>
         </div>
       </a>

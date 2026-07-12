@@ -27,7 +27,7 @@ export function CategoryCloud({ categories }: CategoryCloudProps) {
               'inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium',
               'bg-ds-surface-high border border-ds-outline-variant',
               'text-ds-on-surface-variant hover:text-ds-on-surface',
-              'hover:border-ds-primary hover:scale-[1.04] transition-all duration-150 ease-out',
+              'hover:scale-[1.04] transition-all duration-150 ease-out',
               'focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:ring-offset-1 focus:ring-offset-ds-surface-lowest',
             )}
           >

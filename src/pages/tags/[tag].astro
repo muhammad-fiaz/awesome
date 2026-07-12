@@ -1,9 +1,16 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
+import { ListingSidebar } from '@/components/layout/ListingSidebar';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon, TagsIcon } from '@hugeicons/core-free-icons';
-import { getAllTags, getPostReadingTime, getPostsByTag } from '@/lib/posts';
+import {
+  getAllTags,
+  getPostReadingTime,
+  getPostsByTag,
+  getAllCategories,
+  getAllPosts,
+} from '@/lib/posts';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 
 export async function getStaticPaths() {
@@ -17,6 +24,9 @@ export async function getStaticPaths() {
 const { tag } = Astro.props;
 const slug = tag.id.replace(/\.md$/, '');
 const posts = await getPostsByTag(slug);
+const allPosts = await getAllPosts();
+const tagsList = await getAllTags();
+const categories = await getAllCategories();
 
 const postItems = posts.map((p) => ({
   slug: p.id.replace(/\.(md|mdx)$/, ''),
@@ -29,7 +39,26 @@ const postItems = posts.map((p) => ({
   readingTime: getPostReadingTime(p),
   featured: p.data.featured,
   difficulty: p.data.difficulty,
+  projectName: p.data.projectName,
 }));
+
+const tagItems = tagsList
+  .map((t) => ({
+    slug: t.id.replace(/\.md$/, ''),
+    title: t.data.title,
+    count: allPosts.filter((post) => post.data.tags.includes(t.id.replace(/\.md$/, ''))).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 10);
+
+const categoryItems = categories
+  .map((c) => ({
+    slug: c.id.replace(/\.md$/, ''),
+    title: c.data.title,
+    count: allPosts.filter((post) => post.data.categories.includes(c.id.replace(/\.md$/, ''))).length,
+  }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -79,15 +108,26 @@ const jsonLd = {
         )}
       </div>
 
-      {postItems.length === 0 ? (
-        <div class="text-center py-16 text-ds-text-muted">
-          <HugeiconsIcon icon={TagsIcon} className="w-12 h-12 mx-auto mb-3 opacity-50" size={48} />
-          <p class="text-base font-semibold text-ds-on-surface mb-1">No posts yet</p>
-          <p class="text-sm">No posts with this tag yet. Check back later.</p>
+      {/* Sidebar Layout */}
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Main column */}
+        <div class="lg:col-span-2">
+          {postItems.length === 0 ? (
+            <div class="text-center py-16 text-ds-text-muted">
+              <HugeiconsIcon icon={TagsIcon} className="w-12 h-12 mx-auto mb-3 opacity-50" size={48} />
+              <p class="text-base font-semibold text-ds-on-surface mb-1">No posts yet</p>
+              <p class="text-sm">No posts with this tag yet. Check back later.</p>
+            </div>
+          ) : (
+            <PostsFeed client:load posts={postItems} showSearch={true} />
+          )}
         </div>
-      ) : (
-        <PostsFeed client:load posts={postItems} />
-      )}
+
+        {/* Sidebar widgets */}
+        <div class="space-y-6">
+          <ListingSidebar type="post" categories={categoryItems} tags={tagItems} client:load />
+        </div>
+      </div>
     </div>
   </div>
 </AppShell>

@@ -1,10 +1,11 @@
 'use client';
-import { Calendar01Icon, UserIcon } from '@hugeicons/core-free-icons';
+import { Calendar01Icon, UserIcon, ArrowRight01Icon, News01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { BASE_PATH } from '@/config/site';
 import { cn, resolveImageUrl } from '@/lib/utils';
 import { SafeImage } from '@/components/ui/SafeImage';
 import { MagicCard } from '@/components/ui/magic-card';
+import { Button } from '@/components/ui/button';
 
 export interface NewsCardData {
   slug: string;
@@ -16,6 +17,7 @@ export interface NewsCardData {
   category?: string;
   tags: string[];
   thumbnail?: string;
+  projectName?: string;
 }
 
 interface NewsCardProps {
@@ -60,8 +62,8 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
         className="flex flex-col transition-all duration-200 hover:scale-[1.02] hover:-translate-y-0.5 rounded-xl h-full"
         gradientSize={150}
         gradientColor="var(--ds-magic-glow)"
-        gradientFrom="var(--ds-primary)"
-        gradientTo="var(--ds-secondary)"
+        gradientFrom="var(--ds-magic-glow-from)"
+        gradientTo="var(--ds-magic-glow-to)"
       >
         <a
           href={`${BASE_PATH}/news/${news.slug}/`}
@@ -77,24 +79,39 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
               fallback={
                 <div
                   className={cn(
-                    'w-full h-full bg-gradient-to-br flex items-center justify-center text-xs font-semibold uppercase tracking-wider text-ds-text-muted',
-                    gradient
+                    'w-full h-full bg-linear-to-br',
+                    gradient,
+                    'flex items-center justify-center',
                   )}
                 >
-                  News
+                  <div className="text-center p-4">
+                    <HugeiconsIcon
+                      icon={News01Icon}
+                      size={40}
+                      className="text-ds-primary opacity-60"
+                    />
+                  </div>
                 </div>
               }
             />
-            {news.category && (
-              <span className="absolute top-3 left-3 bg-ds-background/80 backdrop-blur-sm border border-ds-outline-variant text-[10px] font-bold text-ds-primary px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                {news.category}
-              </span>
+            {resolvedThumb && (
+              <div className="absolute inset-0 bg-linear-to-t from-ds-surface-lowest/80 via-transparent to-transparent pointer-events-none" />
             )}
+
+            {/* Read News Button - Top Right Corner */}
+            <Button
+              type="button"
+              className="opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 flex items-center gap-1 h-7 rounded-lg text-[10px] font-semibold bg-ds-primary text-ds-on-primary hover:bg-ds-primary/95 px-2.5 absolute right-2 top-2 shadow-sm pointer-events-none z-20"
+            >
+              Read News
+              <HugeiconsIcon icon={ArrowRight01Icon} size={11} />
+            </Button>
           </div>
 
-          {/* Info */}
-          <div className="p-4 flex flex-col flex-1 min-w-0">
-            <div className="flex items-center gap-3 text-[10px] text-ds-text-muted mb-2">
+          {/* Content */}
+          <div className="flex flex-col flex-1 p-4">
+            {/* Header info */}
+            <div className="flex items-center justify-between text-[10px] text-ds-text-muted mb-2">
               <span className="flex items-center gap-1">
                 <HugeiconsIcon icon={Calendar01Icon} size={11} strokeWidth={1.5} />
                 <span>{formattedDate}</span>
@@ -105,7 +122,7 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
               </span>
             </div>
 
-            <h3 className="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm line-clamp-2 leading-snug mb-1.5">
+            <h3 className="font-semibold text-ds-on-surface text-sm line-clamp-2 leading-snug mb-1.5">
               {news.title}
             </h3>
 
@@ -113,15 +130,17 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
               {news.description}
             </p>
 
-            <div className="flex flex-wrap gap-1 mt-auto pt-2 border-t border-ds-outline-variant/30">
-              {news.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[10px] text-ds-on-surface-variant bg-ds-surface-high/60 px-2 py-0.5 rounded"
-                >
-                  #{tag}
-                </span>
-              ))}
+            <div className="relative flex items-center justify-between mt-auto pt-2 border-t border-ds-outline-variant/30">
+              <div className="flex flex-wrap gap-1">
+                {news.tags.slice(0, 3).map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-[10px] text-ds-on-surface-variant bg-ds-surface-high/60 px-2 py-0.5 rounded"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </a>
@@ -134,8 +153,8 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
       className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl"
       gradientSize={150}
       gradientColor="var(--ds-magic-glow)"
-      gradientFrom="var(--ds-primary)"
-      gradientTo="var(--ds-secondary)"
+      gradientFrom="var(--ds-magic-glow-from)"
+      gradientTo="var(--ds-magic-glow-to)"
     >
       <a
         href={`${BASE_PATH}/news/${news.slug}/`}
@@ -168,6 +187,13 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
 
         {/* Content (Right side on desktop) */}
         <div className="p-4 flex flex-col flex-1 min-w-0">
+          {news.projectName && (
+            <div className="flex items-center mb-1.5">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
+                {news.projectName}
+              </span>
+            </div>
+          )}
           <div className="flex items-center gap-3 text-[10px] text-ds-text-muted mb-2">
             <span className="flex items-center gap-1">
               <HugeiconsIcon icon={Calendar01Icon} size={11} strokeWidth={1.5} />
@@ -179,7 +205,7 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
             </span>
           </div>
 
-          <h3 className="font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm sm:text-base line-clamp-2 leading-snug mb-1.5">
+          <h3 className="font-semibold text-ds-on-surface text-sm sm:text-base line-clamp-2 leading-snug mb-1.5">
             {news.title}
           </h3>
 
@@ -187,15 +213,24 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
             {news.description}
           </p>
 
-          <div className="flex flex-wrap gap-1 mt-auto pt-2">
-            {news.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-[10px] text-ds-on-surface-variant bg-ds-surface-high/60 px-2 py-0.5 rounded"
-              >
-                #{tag}
-              </span>
-            ))}
+          <div className="relative flex items-center justify-between mt-auto pt-2 border-t border-ds-outline-variant/30">
+            <div className="flex flex-wrap gap-1 group-hover:opacity-0 transition-opacity duration-150">
+              {news.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-[10px] text-ds-on-surface-variant bg-ds-surface-high/60 px-2 py-0.5 rounded"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+            <Button
+              type="button"
+              className="opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 flex items-center gap-1 h-7 rounded-lg text-[10px] font-semibold bg-ds-primary text-ds-on-primary hover:bg-ds-primary/95 px-2.5 absolute right-0 bottom-0 shadow-xs pointer-events-none"
+            >
+              Read News
+              <HugeiconsIcon icon={ArrowRight01Icon} size={11} />
+            </Button>
           </div>
         </div>
       </a>

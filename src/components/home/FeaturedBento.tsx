@@ -1,7 +1,6 @@
 'use client';
 import { Clock01Icon, StarIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { motion } from 'framer-motion';
 import { BASE_PATH } from '@/config/site';
 import { cn } from '@/lib/utils';
 
@@ -56,8 +55,8 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
             className="lg:col-span-2 relative overflow-hidden rounded-xl"
             gradientSize={240}
             gradientColor="var(--ds-magic-glow)"
-            gradientFrom="var(--ds-primary)"
-            gradientTo="var(--ds-secondary)"
+            gradientFrom="var(--ds-magic-glow-from)"
+            gradientTo="var(--ds-magic-glow-to)"
           >
             <a
               href={`${BASE_PATH}/post/${primary.slug}/`}
@@ -104,8 +103,8 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
                 className="relative overflow-hidden rounded-xl"
                 gradientSize={180}
                 gradientColor="var(--ds-magic-glow)"
-                gradientFrom="var(--ds-primary)"
-                gradientTo="var(--ds-secondary)"
+                gradientFrom="var(--ds-magic-glow-from)"
+                gradientTo="var(--ds-magic-glow-to)"
               >
                 <a
                   href={`${BASE_PATH}/post/${post.slug}/`}

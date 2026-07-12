@@ -159,7 +159,7 @@ export function MagicCard(props: MagicCardProps) {
   return (
     <motion.div
       className={cn(
-        "group relative isolate overflow-hidden rounded-[inherit] border border-transparent",
+        "group relative overflow-hidden rounded-[inherit] border border-transparent",
         className
       )}
       onPointerMove={handlePointerMove}
@@ -171,16 +171,18 @@ export function MagicCard(props: MagicCardProps) {
           radial-gradient(${gradientSize}px circle at ${mouseX}px ${mouseY}px,
             ${gradientFrom},
             ${gradientTo},
-            var(--border) 100%
+            var(--ds-outline-variant) 100%
           ) border-box
         `,
       }}
     >
+      {/* Inner background cover */}
       <div 
         className="absolute inset-px z-20 rounded-[inherit]" 
         style={{ background: 'var(--ds-surface-card)' }}
       />
 
+      {/* Spotlight Content Glow */}
       {mode === "gradient" && (
         <motion.div
           suppressHydrationWarning
@@ -219,7 +221,7 @@ export function MagicCard(props: MagicCardProps) {
           }}
         />
       )}
-      <div className="relative z-40">{children}</div>
+      <div className="relative z-40 w-full h-full">{children}</div>
     </motion.div>
   )
 }

@@ -18,6 +18,7 @@ import {
 } from '@/lib/posts';
 import { SITE_CONFIG, BASE_PATH } from '@/config/site';
 import { getCollection } from 'astro:content';
+import { MagicCard } from '@/components/ui/magic-card';
 
 // Fetch all data
 const [featuredPosts, allPosts, categories, tags, authors, stats, newsEntries] =
@@ -102,6 +103,11 @@ const authorItems = authors
   }))
   .sort((a, b) => b.postCount - a.postCount)
   .slice(0, 5);
+
+const extendedStats = {
+  ...stats,
+  news: newsEntries.length,
+};
 ---
 
 <AppShell
@@ -109,7 +115,7 @@ const authorItems = authors
   description={SITE_CONFIG.description}
 >
   <!-- Hero Stats -->
-  <HeroStats stats={stats} client:load />
+  <HeroStats stats={extendedStats} client:load />
 
   <!-- Featured Bento -->
   {featuredForBento.length > 0 && (
@@ -119,23 +125,18 @@ const authorItems = authors
   <!-- Main content + Right sidebar area -->
   <div class="px-4 md:px-6 pb-12">
     <div class="max-w-320 mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-
-        <!-- Trending Feed -->
-        <div class="lg:col-span-2 space-y-10">
-          <TrendingFeed
-            posts={trendingPosts}
-            title="Latest Posts"
-            icon="schedule"
-            viewAllHref={`${BASE_PATH}/posts/`}
+      {/* Mobile-only Hot News section */}
+      {hotNews.length > 0 && (
+        <div class="lg:hidden mb-8">
+          <MagicCard
+            className="rounded-xl"
+            gradientSize={150}
+            gradientColor="var(--ds-magic-glow)"
+            gradientFrom="var(--ds-magic-glow-from)"
+            gradientTo="var(--ds-magic-glow-to)"
             client:load
-          />
-        </div>
-
-        <!-- Sidebar content -->
-        <div class="space-y-10">
-          {hotNews.length > 0 && (
-            <div class="card-ds p-5 space-y-4">
+          >
+            <div class="p-5 space-y-4 w-full h-full bg-transparent border-0">
               <div class="flex items-center justify-between pb-3 border-b border-ds-outline-variant">
                 <h3 class="text-sm font-bold uppercase tracking-widest text-ds-on-surface flex items-center gap-2">
                   <span class="relative flex h-2 w-2">
@@ -165,13 +166,83 @@ const authorItems = authors
                         <span>·</span>
                         <span>{dateStr}</span>
                       </div>
-                      <h4 class="font-bold text-xs text-ds-on-surface group-hover:text-ds-primary transition-colors line-clamp-2 leading-snug">
+                      <h4 class="font-bold text-xs text-ds-on-surface line-clamp-2 leading-snug">
                         {item.data.title}
                       </h4>
                     </a>
                   );
                 })}
               </div>
+            </div>
+          </MagicCard>
+        </div>
+      )}
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <!-- Trending Feed -->
+        <div class="lg:col-span-2 space-y-10">
+          <TrendingFeed
+            posts={trendingPosts}
+            title="Latest Posts"
+            icon="schedule"
+            viewAllHref={`${BASE_PATH}/posts/`}
+            client:load
+          />
+        </div>
+
+        <!-- Sidebar content -->
+        <div class="space-y-10">
+          {/* Desktop-only Hot News section */}
+          {hotNews.length > 0 && (
+            <div class="hidden lg:block">
+              <MagicCard
+                className="rounded-xl"
+                gradientSize={150}
+                gradientColor="var(--ds-magic-glow)"
+                gradientFrom="var(--ds-magic-glow-from)"
+                gradientTo="var(--ds-magic-glow-to)"
+                client:load
+              >
+                <div class="p-5 space-y-4 w-full h-full bg-transparent border-0">
+                  <div class="flex items-center justify-between pb-3 border-b border-ds-outline-variant">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-ds-on-surface flex items-center gap-2">
+                      <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                      Hot News
+                    </h3>
+                    <a href={`${BASE_PATH}/news/`} class="text-xs text-ds-primary hover:underline font-semibold">View all</a>
+                  </div>
+                  <div class="space-y-3">
+                    {hotNews.map((item) => {
+                      const slug = item.id.replace(/\.md$/, '');
+                      const dateStr = new Date(item.data.pubDate).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+                      return (
+                        <a
+                          href={`${BASE_PATH}/news/${slug}/`}
+                          class="block group p-2 rounded-lg hover:bg-ds-surface-high/30 transition-all border border-transparent hover:border-ds-outline-variant/30"
+                        >
+                          <div class="flex items-center gap-2 text-[10px] text-ds-text-muted mb-1">
+                            <span class="bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider scale-90">Hot</span>
+                            <span>·</span>
+                            <span>{dateStr}</span>
+                          </div>
+                          <h4 class="font-bold text-xs text-ds-on-surface line-clamp-2 leading-snug">
+                            {item.data.title}
+                          </h4>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </MagicCard>
             </div>
           )}
 

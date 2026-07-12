@@ -13,7 +13,6 @@ import {
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PostCard, type PostCardData } from '@/components/post/PostCard';
 import { SearchSkeleton } from '@/components/skeletons/SearchSkeleton';
@@ -79,6 +78,7 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
   const [selectedAuthor, setSelectedAuthor] = useState<string>(() => getInitialParam('author') || 'all');
   const [selectedOrganisations, setSelectedOrganisations] = useState<string[]>(() => getInitialParamList('organisations'));
   const [sortBy, setSortBy] = useState<string>(() => getInitialParam('sort') || 'latest');
+  const [selectedType, setSelectedType] = useState<string>(() => getInitialParam('type') || 'all');
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [tagOpen, setTagOpen] = useState(false);
   const [authorOpen, setAuthorOpen] = useState(false);
@@ -124,9 +124,14 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
       } else {
         url.searchParams.delete('sort');
       }
+      if (selectedType !== 'all') {
+        url.searchParams.set('type', selectedType);
+      } else {
+        url.searchParams.delete('type');
+      }
       window.history.replaceState({}, '', url.toString());
     }
-  }, [query, selectedCategories, selectedTags, selectedAuthor, selectedOrganisations, sortBy]);
+  }, [query, selectedCategories, selectedTags, selectedAuthor, selectedOrganisations, sortBy, selectedType]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -206,6 +211,7 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
     setSelectedAuthor('all');
     setSelectedOrganisations([]);
     setSortBy('latest');
+    setSelectedType('all');
   }, []);
 
   const activeFilterCount = useMemo(() => {
@@ -214,8 +220,9 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
     if (selectedTags.length > 0) count += selectedTags.length;
     if (selectedAuthor !== 'all') count += 1;
     if (selectedOrganisations.length > 0) count += selectedOrganisations.length;
+    if (selectedType !== 'all') count += 1;
     return count;
-  }, [selectedCategories, selectedTags, selectedAuthor, selectedOrganisations]);
+  }, [selectedCategories, selectedTags, selectedAuthor, selectedOrganisations, selectedType]);
 
   const filteredPosts = useMemo(() => {
     if (pagefindResults !== null) {
@@ -236,6 +243,10 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
         .filter((p): p is PostCardData => !!p);
 
       return matched.filter((post) => {
+        const matchesType =
+          selectedType === 'all' ||
+          post.type === selectedType ||
+          (selectedType === 'post' && (!post.type || post.type === 'post'));
         const matchesCategory =
           selectedCategories.length === 0 ||
           selectedCategories.some((c) => post.categories.includes(c));
@@ -247,7 +258,7 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
         const matchesOrganisation =
           selectedOrganisations.length === 0 ||
           selectedOrganisations.some((org) => post.organisations?.includes(org));
-        return matchesCategory && matchesTag && matchesAuthor && matchesOrganisation;
+        return matchesType && matchesCategory && matchesTag && matchesAuthor && matchesOrganisation;
       });
     }
 
@@ -257,6 +268,10 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
       .filter((w) => w.length > 0);
 
     return posts.filter((post) => {
+      const matchesType =
+        selectedType === 'all' ||
+        post.type === selectedType ||
+        (selectedType === 'post' && (!post.type || post.type === 'post'));
       const searchStr =
         `${post.title} ${post.description} ${post.content ?? ''} ${post.tags.join(' ')} ${post.categories.join(' ')} ${post.authors?.join(' ') ?? ''} ${post.organisations?.join(' ') ?? ''}`.toLowerCase();
       const matchesQuery =
@@ -273,9 +288,9 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
       const matchesOrganisation =
         selectedOrganisations.length === 0 ||
         selectedOrganisations.some((org) => post.organisations?.includes(org));
-      return matchesQuery && matchesCategory && matchesTag && matchesAuthor && matchesOrganisation;
+      return matchesType && matchesQuery && matchesCategory && matchesTag && matchesAuthor && matchesOrganisation;
     });
-  }, [posts, query, pagefindResults, selectedCategories, selectedTags, selectedAuthor, selectedOrganisations]);
+  }, [posts, query, pagefindResults, selectedCategories, selectedTags, selectedAuthor, selectedOrganisations, selectedType]);
 
   const sortedPosts = useMemo(() => {
     const arr = [...filteredPosts];
@@ -356,6 +371,51 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
               <HugeiconsIcon icon={Cancel01Icon} size={14} />
             </Button>
           )}
+        </div>
+
+        {/* Content Type filter */}
+        <div className="p-4 rounded-xl border border-ds-outline-variant bg-ds-surface-low animate-none">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">
+            Content Type
+          </h2>
+          <div className="grid grid-cols-3 gap-1 bg-ds-surface-high/50 p-1 rounded-xl border border-ds-outline-variant/60">
+            <button
+              type="button"
+              onClick={() => setSelectedType('all')}
+              className={cn(
+                'py-1.5 text-xs font-semibold rounded-lg transition-all',
+                selectedType === 'all'
+                  ? 'bg-ds-primary-container text-ds-on-primary-container shadow-xs'
+                  : 'text-ds-on-surface-variant hover:text-ds-on-surface'
+              )}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedType('post')}
+              className={cn(
+                'py-1.5 text-xs font-semibold rounded-lg transition-all',
+                selectedType === 'post'
+                  ? 'bg-ds-primary-container text-ds-on-primary-container shadow-xs'
+                  : 'text-ds-on-surface-variant hover:text-ds-on-surface'
+              )}
+            >
+              Posts
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedType('news')}
+              className={cn(
+                'py-1.5 text-xs font-semibold rounded-lg transition-all',
+                selectedType === 'news'
+                  ? 'bg-ds-primary-container text-ds-on-primary-container shadow-xs'
+                  : 'text-ds-on-surface-variant hover:text-ds-on-surface'
+              )}
+            >
+              News
+            </button>
+          </div>
         </div>
 
         {/* Categories: searchable multi-select */}
@@ -820,88 +880,83 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
 
         {/* Results */}
         <div className="space-y-4">
-          <AnimatePresence mode="popLayout">
-            {isLoading ? (
-              <SearchSkeleton count={6} />
-            ) : error ? (
-              <div className="text-center py-16 text-ds-text-muted">
+          {isLoading ? (
+            <SearchSkeleton count={6} />
+          ) : error ? (
+            <div className="text-center py-16 text-ds-text-muted">
+              <HugeiconsIcon
+                icon={SearchIcon}
+                size={48}
+                className="mx-auto mb-3 opacity-40 animate-none"
+              />
+              Failed to load posts index.
+            </div>
+          ) : sortedPosts.length === 0 ? (
+            <div
+              className="flex items-center justify-center min-h-[60vh] text-ds-text-muted w-full"
+            >
+              <div className="text-center px-6">
                 <HugeiconsIcon
                   icon={SearchIcon}
-                  size={48}
-                  className="mx-auto mb-3 opacity-40"
+                  size={56}
+                  className="mx-auto mb-4 opacity-30 animate-none"
                 />
-                Failed to load posts index.
-              </div>
-            ) : sortedPosts.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center min-h-[60vh] text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl bg-ds-surface-low"
-              >
-                <div className="text-center px-6">
-                  <HugeiconsIcon
-                    icon={SearchIcon}
-                    size={56}
-                    className="mx-auto mb-4 opacity-30"
-                  />
-                  <p className="text-base font-semibold mb-2 text-ds-on-surface">
-                    {query
-                      ? `No results found for "${query}"`
-                      : 'No results found'}
-                  </p>
-                  <p className="text-sm text-ds-text-muted max-w-md mx-auto">
-                    Try adjusting your filters or search query. You can browse all posts or explore categories and tags.
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={clearAll}
-                    className="mt-4 rounded-xl"
-                  >
-                    Clear all filters
-                  </Button>
-                </div>
-              </motion.div>
-            ) : sortedPosts.length > 10 ? (
-              <div
-                ref={parentRef}
-                className="overflow-auto max-h-200"
-              >
-                <div
-                  style={{
-                    height: `${virtualizer.getTotalSize()}px`,
-                    width: '100%',
-                    position: 'relative',
-                  }}
+                <p className="text-base font-semibold mb-2 text-ds-on-surface">
+                  {query
+                    ? `No results found for "${query}"`
+                    : 'No results found'}
+                </p>
+                <p className="text-sm text-ds-text-muted max-w-md mx-auto">
+                  Try adjusting your filters or search query. You can browse all posts or explore categories and tags.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={clearAll}
+                  className="mt-4 rounded-xl"
                 >
-                  {virtualizer.getVirtualItems().map((virtualItem) => {
-                    const post = sortedPosts[virtualItem.index];
-                    return (
-                      <div
-                        key={virtualItem.key}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: `${virtualItem.size}px`,
-                          transform: `translateY(${virtualItem.start}px)`,
-                        }}
-                      >
-                        <PostCard post={post} index={virtualItem.index} />
-                      </div>
-                    );
-                  })}
-                </div>
+                  Clear all filters
+                </Button>
               </div>
-            ) : (
-              sortedPosts.map((post, i) => (
-                <PostCard key={post.slug} post={post} index={i} />
-              ))
-            )}
-          </AnimatePresence>
+            </div>
+          ) : sortedPosts.length > 10 ? (
+            <div
+              ref={parentRef}
+              className="overflow-auto max-h-200"
+            >
+              <div
+                style={{
+                  height: `${virtualizer.getTotalSize()}px`,
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                {virtualizer.getVirtualItems().map((virtualItem) => {
+                  const post = sortedPosts[virtualItem.index];
+                  return (
+                    <div
+                      key={virtualItem.key}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: `${virtualItem.size}px`,
+                        transform: `translateY(${virtualItem.start}px)`,
+                      }}
+                    >
+                      <PostCard post={post} index={virtualItem.index} />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            sortedPosts.map((post, i) => (
+              <PostCard key={post.slug} post={post} index={i} />
+            ))
+          )}
         </div>
       </div>
     </div>

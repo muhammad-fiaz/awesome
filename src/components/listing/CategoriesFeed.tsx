@@ -8,6 +8,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { MagicCard } from '@/components/ui/magic-card';
 import { BASE_PATH } from '@/config/site';
 import { cn } from '@/lib/utils';
 
@@ -87,45 +88,61 @@ export function CategoriesFeed({ categories }: CategoriesFeedProps) {
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
-          <HugeiconsIcon icon={SearchIcon} size={48} className="mx-auto mb-3 opacity-30" />
+        <div className="text-center py-16 text-ds-text-muted flex flex-col items-center justify-center">
+          <HugeiconsIcon icon={SearchIcon} size={48} className="mb-3 opacity-30 animate-none" />
           <p className="text-base font-semibold mb-1">No categories found</p>
           <p className="text-sm">Try a different search term</p>
         </div>
       ) : view === 'grid' ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((cat) => (
-            <a
+            <MagicCard
               key={cat.slug}
-              href={`${BASE_PATH}/categories/${cat.slug}/`}
-              className="card-ds p-5 group hover:scale-[1.02] transition-transform duration-200"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.02] hover:-translate-y-0.5 rounded-xl h-full"
+              gradientSize={150}
+              gradientColor="var(--ds-magic-glow)"
+              gradientFrom="var(--ds-magic-glow-from)"
+              gradientTo="var(--ds-magic-glow-to)"
             >
-              <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-base mb-1">
-                {cat.title}
-              </h3>
-              {cat.description && (
-                <p className="text-xs text-ds-on-surface-variant line-clamp-2 mb-2">{cat.description}</p>
-              )}
-            </a>
+              <a
+                href={`${BASE_PATH}/categories/${cat.slug}/`}
+                className="group overflow-hidden flex flex-col w-full h-full p-5 bg-transparent border-0"
+              >
+                <h3 className="font-bold text-ds-on-surface text-base mb-1">
+                  {cat.title}
+                </h3>
+                {cat.description && (
+                  <p className="text-xs text-ds-on-surface-variant line-clamp-2 mb-2">{cat.description}</p>
+                )}
+              </a>
+            </MagicCard>
           ))}
         </div>
       ) : (
         <div className="space-y-3">
           {filtered.map((cat) => (
-            <a
+            <MagicCard
               key={cat.slug}
-              href={`${BASE_PATH}/categories/${cat.slug}/`}
-              className="card-ds flex items-center gap-4 p-4 group hover:scale-[1.01] transition-transform duration-200"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl"
+              gradientSize={150}
+              gradientColor="var(--ds-magic-glow)"
+              gradientFrom="var(--ds-magic-glow-from)"
+              gradientTo="var(--ds-magic-glow-to)"
             >
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-ds-on-surface group-hover:text-ds-primary transition-colors text-sm">
-                  {cat.title}
-                </h3>
-                {cat.description && (
-                  <p className="text-xs text-ds-on-surface-variant line-clamp-1">{cat.description}</p>
-                )}
-              </div>
-            </a>
+              <a
+                href={`${BASE_PATH}/categories/${cat.slug}/`}
+                className="group overflow-hidden flex items-center gap-4 p-4 w-full h-full bg-transparent border-0"
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-ds-on-surface text-sm">
+                    {cat.title}
+                  </h3>
+                  {cat.description && (
+                    <p className="text-xs text-ds-on-surface-variant line-clamp-1">{cat.description}</p>
+                  )}
+                </div>
+              </a>
+            </MagicCard>
           ))}
         </div>
       )}

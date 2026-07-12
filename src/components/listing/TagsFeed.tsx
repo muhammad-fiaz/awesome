@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { MagicCard } from '@/components/ui/magic-card';
 import { BASE_PATH } from '@/config/site';
 import { cn } from '@/lib/utils';
 
@@ -84,41 +85,57 @@ export function TagsFeed({ tags }: TagsFeedProps) {
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-ds-text-muted border border-dashed border-ds-outline-variant rounded-xl">
-          <HugeiconsIcon icon={SearchIcon} size={48} className="mx-auto mb-3 opacity-30" />
+        <div className="text-center py-16 text-ds-text-muted flex flex-col items-center justify-center">
+          <HugeiconsIcon icon={SearchIcon} size={48} className="mb-3 opacity-30 animate-none" />
           <p className="text-base font-semibold mb-1">No tags found</p>
           <p className="text-sm">Try a different search term</p>
         </div>
       ) : view === 'grid' ? (
         <div className="flex flex-wrap gap-2.5">
           {filtered.map((tag) => (
-            <a
+            <MagicCard
               key={tag.slug}
-              href={`${BASE_PATH}/tags/${tag.slug}/`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-ds-outline-variant bg-ds-surface-high text-ds-on-surface-variant hover:border-ds-primary hover:text-ds-primary hover:bg-ds-primary-container/30 transition-all duration-200 hover:scale-105"
+              className="flex transition-all duration-200 hover:scale-105 rounded-full"
+              gradientSize={80}
+              gradientColor="var(--ds-magic-glow)"
+              gradientFrom="var(--ds-magic-glow-from)"
+              gradientTo="var(--ds-magic-glow-to)"
             >
-              <span className="text-sm font-semibold">#{tag.title}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
-                {tag.count}
-              </Badge>
-            </a>
+              <a
+                href={`${BASE_PATH}/tags/${tag.slug}/`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full w-full h-full bg-transparent border-0"
+              >
+                <span className="text-sm font-semibold">#{tag.title}</span>
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+                  {tag.count}
+                </Badge>
+              </a>
+            </MagicCard>
           ))}
         </div>
       ) : (
         <div className="space-y-2">
           {filtered.map((tag) => (
-            <a
+            <MagicCard
               key={tag.slug}
-              href={`${BASE_PATH}/tags/${tag.slug}/`}
-              className="card-ds flex items-center gap-3 p-3 group hover:scale-[1.01] transition-transform duration-200"
+              className="flex flex-col transition-all duration-200 hover:scale-[1.01] rounded-xl"
+              gradientSize={150}
+              gradientColor="var(--ds-magic-glow)"
+              gradientFrom="var(--ds-magic-glow-from)"
+              gradientTo="var(--ds-magic-glow-to)"
             >
-              <span className="text-sm font-semibold text-ds-on-surface group-hover:text-ds-primary transition-colors">
-                #{tag.title}
-              </span>
-              <span className="text-xs text-ds-text-muted">
-                {tag.count} post{tag.count !== 1 ? 's' : ''}
-              </span>
-            </a>
+              <a
+                href={`${BASE_PATH}/tags/${tag.slug}/`}
+                className="group overflow-hidden flex items-center gap-3 p-3 w-full h-full bg-transparent border-0"
+              >
+                <span className="text-sm font-semibold text-ds-on-surface">
+                  #{tag.title}
+                </span>
+                <span className="text-xs text-ds-text-muted">
+                  {tag.count} post{tag.count !== 1 ? 's' : ''}
+                </span>
+              </a>
+            </MagicCard>
           ))}
         </div>
       )}

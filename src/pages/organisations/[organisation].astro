@@ -1,7 +1,9 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
+import { NewsCard } from '@/components/news/NewsCard';
 import Prose from '@/components/common/Prose.astro';
+import { MagicCard } from '@/components/ui/magic-card';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   ArrowLeft01Icon,
@@ -140,8 +142,15 @@ const organisationJsonLd = {
       </div>
 
       <!-- Organisation Hero Card -->
-      <div class="card-ds p-6 md:p-8 mb-10">
-        <div class="flex flex-col sm:flex-row items-start gap-6">
+      <MagicCard
+        className="rounded-xl mb-10"
+        gradientSize={200}
+        gradientColor="var(--ds-magic-glow)"
+        gradientFrom="var(--ds-magic-glow-from)"
+        gradientTo="var(--ds-magic-glow-to)"
+        client:load
+      >
+        <div class="p-6 md:p-8 flex flex-col sm:flex-row items-start gap-6">
 
           <!-- Logo -->
           <div class="shrink-0 relative overflow-hidden w-24 h-24 md:w-28 md:h-28 rounded-xl ring-4 ring-ds-outline-variant ring-offset-2 ring-offset-ds-surface-card bg-ds-surface-high flex items-center justify-center">
@@ -205,7 +214,7 @@ const organisationJsonLd = {
             )}
           </div>
         </div>
-      </div>
+      </MagicCard>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <!-- Main content -->
@@ -248,45 +257,19 @@ const organisationJsonLd = {
               <div class="space-y-4">
                 {orgNews.map((newsItem) => {
                   const newsSlug = newsItem.id.replace(/\.md$/, '');
-                  const formattedDate = new Date(newsItem.data.pubDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  });
+                  const newsItemData = {
+                    slug: newsSlug,
+                    title: newsItem.data.title,
+                    description: newsItem.data.description,
+                    pubDate: newsItem.data.pubDate.toISOString(),
+                    authors: newsItem.data.authors,
+                    category: newsItem.data.category,
+                    tags: newsItem.data.tags,
+                    thumbnail: newsItem.data.thumbnail,
+                    projectName: newsItem.data.projectName,
+                  };
                   return (
-                    <div class="card-ds p-5 flex flex-col sm:flex-row gap-4 hover:border-ds-primary transition-all duration-200">
-                      {newsItem.data.thumbnail && (
-                        <div class="w-full sm:w-36 aspect-video sm:aspect-auto overflow-hidden rounded-lg shrink-0 bg-ds-surface-high">
-                          <img
-                            src={newsItem.data.thumbnail}
-                            alt={newsItem.data.title}
-                            class="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <div class="flex-1 min-w-0 flex flex-col justify-between">
-                        <div>
-                          <div class="flex items-center gap-2 text-xs text-ds-text-muted mb-1.5">
-                            <span class="flex items-center gap-1">
-                              <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5" size={14} />
-                              {formattedDate}
-                            </span>
-                            {newsItem.data.category && (
-                              <>
-                                <span>·</span>
-                                <span class="text-ds-primary font-semibold uppercase text-[10px] tracking-wider">{newsItem.data.category}</span>
-                              </>
-                            )}
-                          </div>
-                          <h3 class="font-bold text-base text-ds-on-surface hover:text-ds-primary leading-snug">
-                            <a href={`${BASE_PATH}/news/${newsSlug}/`}>{newsItem.data.title}</a>
-                          </h3>
-                          <p class="text-xs text-ds-text-muted mt-2 line-clamp-2 leading-relaxed">
-                            {newsItem.data.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <NewsCard news={newsItemData} view="list" client:load />
                   );
                 })}
               </div>

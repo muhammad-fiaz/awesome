@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Menu01Icon, ArrowDown01Icon } from '@hugeicons/core-free-icons';
 import { cn } from '@/lib/utils';
@@ -49,31 +48,20 @@ export function MobileToc({ toc }: MobileTocProps) {
           <HugeiconsIcon icon={Menu01Icon} size={16} className="text-ds-primary" />
           <span>On This Page</span>
         </div>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
+        <div className={cn("transition-transform duration-200", isOpen && "rotate-180")}>
           <HugeiconsIcon icon={ArrowDown01Icon} size={16} className="text-ds-text-muted" />
-        </motion.div>
+        </div>
       </button>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ height: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="p-4 pt-0 border-t border-ds-outline-variant/20 bg-ds-surface-low/50">
-              <nav className="mt-3">
-                {renderItems(toc)}
-              </nav>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div className="border-t border-ds-outline-variant/20 bg-ds-surface-low/50">
+          <div className="p-4 pt-0">
+            <nav className="mt-3">
+              {renderItems(toc)}
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

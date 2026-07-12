@@ -59,6 +59,7 @@ const posts = defineCollection({
     license: z.string().optional(),
     language: z.string().default('English'),
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']).optional(),
+    projectName: z.string().optional(),
   }),
 });
 
@@ -185,6 +186,7 @@ const news = defineCollection({
     difficulty: z
       .enum(['beginner', 'intermediate', 'advanced', 'expert'])
       .optional(),
+    projectName: z.string().optional(),
   }),
 });
 
