@@ -8,13 +8,9 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PostCard, type PostCardData } from '@/components/post/PostCard';
+import { NewsCard } from '@/components/news/NewsCard';
 import { SearchSkeleton } from '@/components/skeletons/SearchSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,14 +32,7 @@ import {
 import { BASE_PATH } from '@/config/site';
 import { cn } from '@/lib/utils';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 5,
-    },
-  },
-});
+
 
 interface SearchFeedProps {
   categories: { slug: string; title: string }[];
@@ -167,24 +156,27 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
     return () => clearTimeout(debounceTimer);
   }, [query]);
 
-  const {
-    data: posts = [],
-    isLoading,
-    error,
-  } = useQuery<PostCardData[]>({
-    queryKey: ['postsSearchIndex'],
-    queryFn: async () => {
-      const base = import.meta.env.BASE_URL;
-      const url = base.endsWith('/') ? `${base}search-index.json` : `${base}/search-index.json`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        const fallback = await fetch('/search-index.json');
-        if (!fallback.ok) throw new Error('Failed to fetch search index');
-        return fallback.json();
-      }
-      return res.json();
-    },
-  });
+  const [posts, setPosts] = useState<PostCardData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<any>(null);
+
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL;
+    const url = base.endsWith('/') ? `${base}search-index.json` : `${base}/search-index.json`;
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) return fetch('/search-index.json').then((f) => f.json());
+        return res.json();
+      })
+      .then((data) => {
+        setPosts(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const toggleCategory = useCallback((slug: string) => {
     setSelectedCategories((prev) =>
@@ -228,12 +220,17 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
     if (pagefindResults !== null) {
       const pagefindItems = pagefindResults
         .map((res: any) => {
-          const cleanUrl = res.url.endsWith('/') ? res.url.slice(0, -1) : res.url;
-          const postMatch = cleanUrl.match(/\/post\/([^/]+)$/);
-          if (postMatch) return { slug: postMatch[1], type: 'post' };
-          const newsMatch = cleanUrl.match(/\/news\/([^/]+)$/);
-          if (newsMatch) return { slug: newsMatch[1], type: 'news' };
-          if (cleanUrl.endsWith('/guide')) return { slug: 'publishing-guide', type: 'guide' };
+          const url = res.url;
+          if (url.includes('/news/')) {
+            const match = url.match(/\/news\/([^/]+)/);
+            if (match) return { slug: match[1], type: 'news' };
+          } else if (url.includes('/post/')) {
+            const cleanUrl = url.endsWith('/') ? url.slice(0, -1) : url;
+            const match = cleanUrl.match(/\/post\/(.+)$/);
+            if (match) return { slug: match[1], type: 'post' };
+          } else if (url.includes('/guide/') || url.endsWith('/guide')) {
+            return { slug: 'publishing-guide', type: 'guide' };
+          }
           return null;
         })
         .filter(Boolean) as { slug: string; type: string }[];
@@ -273,7 +270,7 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
         post.type === selectedType ||
         (selectedType === 'post' && (!post.type || post.type === 'post'));
       const searchStr =
-        `${post.title} ${post.description} ${post.content ?? ''} ${post.tags.join(' ')} ${post.categories.join(' ')} ${post.authors?.join(' ') ?? ''} ${post.organisations?.join(' ') ?? ''}`.toLowerCase();
+        `${post.title} ${post.description} ${post.content ?? ''} ${post.tags.join(' ')} ${post.categories.join(' ')} ${post.authors?.join(' ') ?? ''} ${post.organisations?.join(' ') ?? ''} ${post.sources?.map((s) => s.name).join(' ') ?? ''} ${post.links?.github ?? ''} ${post.links?.website ?? ''}`.toLowerCase();
       const matchesQuery =
         queryWords.length === 0 ||
         queryWords.every((word) => searchStr.includes(word));
@@ -524,9 +521,6 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
         <div className="p-4 rounded-xl border border-ds-outline-variant bg-ds-surface-low">
           <h2 className="text-xs font-bold uppercase tracking-widest text-ds-text-muted mb-3">
             Tags
-            {tags.length > 0 && (
-              <span className="ml-1 font-normal normal-case">({tags.length})</span>
-            )}
           </h2>
           <Popover open={tagOpen} onOpenChange={setTagOpen}>
             <PopoverTrigger
@@ -946,16 +940,53 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
                         transform: `translateY(${virtualItem.start}px)`,
                       }}
                     >
-                      <PostCard post={post} index={virtualItem.index} />
+                      {post.type === 'news' ? (
+                        <NewsCard
+                          news={{
+                            slug: post.slug,
+                            title: post.title,
+                            description: post.description,
+                            pubDate: post.pubDate || new Date().toISOString(),
+                            authors: post.authors,
+                            category: post.categories[0],
+                            tags: post.tags,
+                            thumbnail: post.thumbnail,
+                            sources: post.sources,
+                            organisations: post.organisations,
+                          }}
+                          view="list"
+                        />
+                      ) : (
+                        <PostCard post={post} index={virtualItem.index} />
+                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
           ) : (
-            sortedPosts.map((post, i) => (
-              <PostCard key={post.slug} post={post} index={i} />
-            ))
+            sortedPosts.map((post, i) =>
+              post.type === 'news' ? (
+                <NewsCard
+                  key={post.slug}
+                  news={{
+                    slug: post.slug,
+                    title: post.title,
+                    description: post.description,
+                    pubDate: post.pubDate || new Date().toISOString(),
+                    authors: post.authors,
+                    category: post.categories[0],
+                    tags: post.tags,
+                    thumbnail: post.thumbnail,
+                    sources: post.sources,
+                    organisations: post.organisations,
+                  }}
+                  view="list"
+                />
+              ) : (
+                <PostCard key={post.slug} post={post} index={i} />
+              )
+            )
           )}
         </div>
       </div>
@@ -964,9 +995,5 @@ function SearchFeedContent({ categories, tags, authors, organisations = [] }: Se
 }
 
 export function SearchFeed(props: SearchFeedProps) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SearchFeedContent {...props} />
-    </QueryClientProvider>
-  );
+  return <SearchFeedContent {...props} />;
 }

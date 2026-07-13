@@ -68,7 +68,7 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
                   <img
                     src={primary.thumbnail}
                     alt={primary.title}
-                    className="w-full h-full object-cover opacity-70 dark:opacity-40 group-hover:opacity-80 dark:group-hover:opacity-50 transition-opacity"
+                    className="w-full h-full object-cover opacity-90 dark:opacity-80 group-hover:opacity-100 transition-opacity"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-ds-surface-lowest via-ds-surface-lowest/80 to-transparent" />
                 </div>
@@ -116,7 +116,7 @@ export function FeaturedBento({ posts }: FeaturedBentoProps) {
                       <img
                         src={post.thumbnail}
                         alt={post.title}
-                        className="w-full h-full object-cover opacity-60 dark:opacity-25 group-hover:opacity-75 dark:group-hover:opacity-35 transition-opacity"
+                        className="w-full h-full object-cover opacity-85 dark:opacity-75 group-hover:opacity-100 transition-opacity"
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-ds-surface-card via-ds-surface-card/85 to-ds-surface-card/45" />
                     </div>

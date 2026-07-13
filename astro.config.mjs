@@ -37,7 +37,8 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-      exclude: ['@hugeicons/core-free-icons', '@hugeicons/react', '@base-ui/react'],
+      exclude: ['@hugeicons/core-free-icons', '@hugeicons/react'],
+      include: ['use-sync-external-store/shim', 'use-sync-external-store', '@tanstack/react-virtual'],
     },
   },
 

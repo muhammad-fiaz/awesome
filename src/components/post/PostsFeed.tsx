@@ -40,7 +40,9 @@ export function PostsFeed({
         post.description.toLowerCase().includes(q) ||
         post.tags.some((t) => t.toLowerCase().includes(q)) ||
         post.categories.some((c) => c.toLowerCase().includes(q)) ||
-        (post.projectName?.toLowerCase().includes(q) ?? false)
+        (post.sources?.some((s) => s.name.toLowerCase().includes(q)) ?? false) ||
+        (post.links?.website?.toLowerCase().includes(q) ?? false) ||
+        (post.links?.github?.toLowerCase().includes(q) ?? false)
     );
   }, [posts, searchQuery]);
 

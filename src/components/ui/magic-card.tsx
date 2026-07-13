@@ -7,7 +7,7 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion"
-import { useTheme } from "next-themes"
+import { useThemeStore } from "@/store/themeStore"
 
 import { cn } from "@/lib/utils"
 
@@ -72,16 +72,15 @@ export function MagicCard(props: MagicCardProps) {
   const glowSize = isOrbMode(props) ? (props.glowSize ?? 420) : 420
   const glowBlur = isOrbMode(props) ? (props.glowBlur ?? 60) : 60
   const glowOpacity = isOrbMode(props) ? (props.glowOpacity ?? 0.9) : 0.9
-  const { theme, systemTheme } = useTheme()
+  const { theme } = useThemeStore()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
   const isDarkTheme = useMemo(() => {
     if (!mounted) return true
-    const currentTheme = theme === "system" ? systemTheme : theme
-    return currentTheme === "dark"
-  }, [theme, systemTheme, mounted])
+    return theme === "dark"
+  }, [theme, mounted])
 
   const mouseX = useMotionValue(-gradientSize)
   const mouseY = useMotionValue(-gradientSize)
@@ -159,7 +158,7 @@ export function MagicCard(props: MagicCardProps) {
   return (
     <motion.div
       className={cn(
-        "group relative overflow-hidden rounded-[inherit] border border-transparent",
+        "group relative overflow-hidden rounded-[inherit] border-2 border-transparent",
         className
       )}
       onPointerMove={handlePointerMove}
@@ -167,7 +166,7 @@ export function MagicCard(props: MagicCardProps) {
       onPointerEnter={() => reset("enter")}
       style={{
         background: useMotionTemplate`
-          linear-gradient(var(--ds-surface-card) 0 0) padding-box,
+          linear-gradient(var(--ds-surface-card), var(--ds-surface-card)) padding-box,
           radial-gradient(${gradientSize}px circle at ${mouseX}px ${mouseY}px,
             ${gradientFrom},
             ${gradientTo},
@@ -178,7 +177,7 @@ export function MagicCard(props: MagicCardProps) {
     >
       {/* Inner background cover */}
       <div 
-        className="absolute inset-px z-20 rounded-[inherit]" 
+        className="absolute inset-2 z-20 rounded-[inherit]" 
         style={{ background: 'var(--ds-surface-card)' }}
       />
 
@@ -186,7 +185,7 @@ export function MagicCard(props: MagicCardProps) {
       {mode === "gradient" && (
         <motion.div
           suppressHydrationWarning
-          className="pointer-events-none absolute inset-px z-30 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-2 z-30 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-[var(--gradient-opacity)]"
           style={{
             background: useMotionTemplate`
               radial-gradient(${gradientSize}px circle at ${mouseX}px ${mouseY}px,
@@ -194,8 +193,8 @@ export function MagicCard(props: MagicCardProps) {
                 transparent 100%
               )
             `,
-            opacity: gradientOpacity,
-          }}
+            "--gradient-opacity": gradientOpacity,
+          } as unknown as React.CSSProperties}
         />
       )}
 

@@ -1,13 +1,14 @@
 ---
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
-import { getCollection } from 'astro:content';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
+import { getAllNews } from '@/lib/posts';
 
-const newsEntries = await getCollection('news', ({ data }) => !data.draft && data.featured);
-const sortedNews = newsEntries.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const newsEntries = await getAllNews();
+const featuredNews = newsEntries.filter((n) => n.data.featured);
+const sortedNews = featuredNews.sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf());
 
 const newsItems = sortedNews.map((n) => ({
   slug: n.id.replace(/\.md$/, ''),
@@ -20,7 +21,7 @@ const newsItems = sortedNews.map((n) => ({
   organisations: n.data.organisations ?? [],
   readingTime: 3,
   type: 'news' as const,
-  projectName: n.data.projectName,
+  sources: n.data.sources,
 }));
 
 const jsonLd = {
@@ -62,9 +63,9 @@ const jsonLd = {
       {/* Breadcrumbs */}
       <div class="flex items-center gap-2 mb-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <a href={`${BASE_PATH}/news/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">News</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-sm text-ds-on-surface font-medium">Featured</span>
       </div>
 

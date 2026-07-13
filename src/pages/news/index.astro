@@ -2,13 +2,13 @@
 import AppShell from '@/layouts/AppShell.astro';
 import { PostsFeed } from '@/components/post/PostsFeed';
 import { ListingSidebar } from '@/components/layout/ListingSidebar';
-import { getCollection } from 'astro:content';
+import { getAllNews } from '@/lib/posts';
 import { BASE_PATH, SITE_CONFIG } from '@/config/site';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { StarIcon, Clock01Icon } from '@hugeicons/core-free-icons';
 
-const newsEntries = await getCollection('news', ({ data }) => !data.draft);
-const sortedNews = newsEntries.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const newsEntries = await getAllNews();
+const sortedNews = [...newsEntries].sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf());
 
 const newsItems = sortedNews.map((n) => ({
   slug: n.id.replace(/\.md$/, ''),
@@ -21,7 +21,8 @@ const newsItems = sortedNews.map((n) => ({
   organisations: n.data.organisations ?? [],
   readingTime: 3,
   type: 'news' as const,
-  projectName: n.data.projectName,
+  sources: n.data.sources,
+  pubDate: n.data.datePublished.toISOString(),
 }));
 
 // Build news categories and tags count
@@ -77,7 +78,7 @@ const jsonLd = {
       {/* Breadcrumbs */}
       <div class="flex items-center gap-2 mb-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-sm text-ds-on-surface font-medium">News</span>
       </div>
 

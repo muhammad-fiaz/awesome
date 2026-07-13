@@ -152,7 +152,7 @@ News articles are created as Markdown files under `src/content/news/`.
 |---|---|---|---|
 | `title` | string | — | Title of the news article (Required) |
 | `description` | string | — | Short description of the news article (Required) |
-| `pubDate` | date | — | Publication date in `YYYY-MM-DD` format (Required) |
+| `pubDate` | date | — | Optional. Custom publication date. If omitted, publication and modification dates are dynamically resolved using file creation (`birthtime`) and modification (`mtime`) times from git/file-system stats. |
 | `authors` | string[] | `[]` | Author slugs from `src/content/authors/` |
 | `organisations` | string[] | `[]` | Linked organisation slugs from `src/content/organisations/` |
 | `category` | string | — | Article category (e.g. `web-development`, `ai`, `general`) |

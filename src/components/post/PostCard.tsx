@@ -23,7 +23,18 @@ export interface PostCardData {
   featured?: boolean;
   difficulty?: Difficulty;
   type?: 'post' | 'news' | 'guide';
-  projectName?: string;
+  sources?: { name: string; url?: string }[];
+  links?: {
+    website?: string;
+    github?: string;
+    documentation?: string;
+    demo?: string;
+    npm?: string;
+    crate?: string;
+    youtube?: string;
+    discord?: string;
+  };
+  pubDate?: string;
 }
 
 interface PostCardProps {
@@ -31,6 +42,7 @@ interface PostCardProps {
   index?: number;
   /** grid = vertical card with big thumbnail; list = horizontal row */
   view?: 'grid' | 'list';
+  aspectSquare?: boolean;
 }
 
 // Deterministic gradient fallback based on slug hash
@@ -49,7 +61,7 @@ function getGradient(slug: string) {
   return gradients[Math.abs(hash) % gradients.length];
 }
 
-export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
+export function PostCard({ post, index = 0, view = 'list', aspectSquare = false }: PostCardProps) {
   const resolvedThumb = resolveImageUrl(post.thumbnail);
   const gradient = getGradient(post.slug);
 
@@ -73,7 +85,10 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
           className="group overflow-hidden flex flex-col w-full h-full bg-transparent border-0"
         >
           {/* Thumbnail */}
-          <div className="relative w-full aspect-video overflow-hidden bg-ds-surface-high shrink-0">
+          <div className={cn(
+            "relative w-full overflow-hidden bg-ds-surface-high shrink-0",
+            aspectSquare ? "aspect-[4/3]" : "aspect-video"
+          )}>
             <SafeImage
               src={resolvedThumb}
               alt={post.title}
@@ -131,15 +146,37 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
                 {post.categories[0]}
               </span>
             )}
+            {post.type && (
+              <span className={cn(
+                "absolute bottom-2 right-2 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider rounded-full backdrop-blur-sm border z-10",
+                post.type === 'news' && "bg-orange-500/80 dark:bg-orange-950/80 text-white dark:text-orange-400 border-orange-500/30",
+                post.type === 'guide' && "bg-indigo-500/80 dark:bg-indigo-950/80 text-white dark:text-indigo-400 border-indigo-500/30",
+                (post.type === 'post' || !post.type) && "bg-emerald-500/80 dark:bg-emerald-950/80 text-white dark:text-emerald-400 border-emerald-500/30"
+              )}>
+                {post.type ?? 'post'}
+              </span>
+            )}
           </div>
 
           {/* Content */}
           <div className="flex flex-col flex-1 p-4">
-            {post.projectName && (
-              <div className="flex items-center mb-1.5">
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
-                  {post.projectName}
-                </span>
+            {post.sources && post.sources.length > 0 && (
+              <div className="flex flex-wrap gap-1 items-center mb-1.5">
+                {post.sources.map((src) => {
+                  const badge = (
+                    <span key={src.name} className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20 hover:bg-ds-secondary/20 transition-colors">
+                      {src.name}
+                    </span>
+                  );
+                  if (src.url) {
+                    return (
+                      <a key={src.name} href={src.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="no-underline">
+                        {badge}
+                      </a>
+                    );
+                  }
+                  return badge;
+                })}
               </div>
             )}
             <h3 className="font-semibold text-ds-on-surface leading-snug text-sm line-clamp-2 mb-1.5">
@@ -209,24 +246,56 @@ export function PostCard({ post, index = 0, view = 'list' }: PostCardProps) {
         <div className="flex-1 min-w-0">
           {/* Category + Author */}
           <div className="flex flex-wrap items-center gap-2 mb-1">
+            {post.type && (
+              <span className={cn(
+                "inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider border",
+                post.type === 'news' && "bg-orange-500/10 text-orange-500 border-orange-500/20",
+                post.type === 'guide' && "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+                (post.type === 'post' || !post.type) && "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+              )}>
+                {post.type}
+              </span>
+            )}
             {post.categories[0] && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-ds-secondary">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
                 {post.categories[0]}
               </span>
             )}
-            {post.projectName && (
+            {post.sources && post.sources.length > 0 && (
               <>
                 <span className="text-ds-text-muted text-xs">·</span>
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
-                  {post.projectName}
+                <span className="flex flex-wrap gap-1 items-center">
+                  {post.sources.map((src) => {
+                    const badge = (
+                      <span key={src.name} className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20 hover:bg-ds-secondary/20 transition-colors">
+                        {src.name}
+                      </span>
+                    );
+                    if (src.url) {
+                      return (
+                        <a key={src.name} href={src.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="no-underline">
+                          {badge}
+                        </a>
+                      );
+                    }
+                    return badge;
+                  })}
                 </span>
               </>
             )}
-            {post.authors[0] && (
+            {post.authors && post.authors.length > 0 && (
               <>
                 <span className="text-ds-text-muted text-xs">·</span>
                 <span className="text-xs text-ds-text-muted capitalize">
-                  {post.authors[0].replace(/-/g, ' ')}
+                  {post.authors.map((a) => a.replace(/-/g, ' ')).join(', ')}
+                </span>
+              </>
+            )}
+            {post.organisations && post.organisations.length > 0 && (
+              <>
+                <span className="text-ds-text-muted text-xs">·</span>
+                <span className="text-[10px] text-ds-text-muted bg-ds-surface-high/60 px-1.5 py-0.5 rounded capitalize">
+                  {post.organisations.map((org) => org.replace(/-/g, ' ')).join(', ')}
                 </span>
               </>
             )}

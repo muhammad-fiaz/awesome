@@ -1,7 +1,6 @@
 ---
 title: "Awesome Developer Platform Reaches Major Milestone"
 description: "The Awesome platform has officially crossed its initial milestone of listing over 1,000 developer resources, articles, and templates."
-pubDate: "2026-07-11"
 authors: ["muhammad-fiaz"]
 category: "general"
 tags: ["awesome", "milestone", "community"]

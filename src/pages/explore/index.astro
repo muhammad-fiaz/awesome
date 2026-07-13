@@ -1,0 +1,130 @@
+---
+import AppShell from '@/layouts/AppShell.astro';
+import { ExploreFeed } from '@/components/home/ExploreFeed';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { CompassIcon } from '@hugeicons/core-free-icons';
+import {
+  getAllPostsWithDates,
+  getAllNews,
+  getPostReadingTime,
+} from '@/lib/posts';
+import { BASE_PATH, SITE_CONFIG } from '@/config/site';
+
+const [allPosts, allNews] = await Promise.all([
+  getAllPostsWithDates(),
+  getAllNews(),
+]);
+
+// Map posts to a unified schema
+const postItems = allPosts.map((p) => ({
+  type: 'post' as const,
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  description: p.data.description,
+  thumbnail: p.data.thumbnail,
+  categories: p.data.categories,
+  tags: p.data.tags,
+  authors: p.data.authors,
+  readingTime: getPostReadingTime(p as any),
+  featured: p.data.featured,
+  difficulty: p.data.difficulty,
+  sources: p.data.sources,
+  links: p.data.links,
+  pubDate: p.data.datePublished.toISOString(),
+  dateModified: p.data.dateModified.toISOString(),
+}));
+
+// Map news to a unified schema
+const newsItems = allNews.map((n) => ({
+  type: 'news' as const,
+  slug: n.id.replace(/\.md$/, ''),
+  title: n.data.title,
+  description: n.data.description,
+  thumbnail: n.data.thumbnail,
+  categories: n.data.category ? [n.data.category] : [],
+  tags: n.data.tags,
+  authors: n.data.authors,
+  readingTime: 3,
+  featured: n.data.featured,
+  difficulty: undefined,
+  sources: n.data.sources,
+  links: n.data.links,
+  pubDate: n.data.datePublished.toISOString(),
+  dateModified: n.data.dateModified.toISOString(),
+}));
+
+// Combine and sort chronologically
+const combinedItems = [...postItems, ...newsItems].sort(
+  (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+);
+
+const pageTitle = "Explore All Updates";
+const pageDescription = "Explore the complete timeline of awesome resources, tool keynotes, and developer updates.";
+
+const exploreJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: pageTitle,
+  description: pageDescription,
+  url: `${SITE_CONFIG.url}${BASE_PATH}/explore/`,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: SITE_CONFIG.name,
+    url: `${SITE_CONFIG.url}${BASE_PATH}/`,
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: `${SITE_CONFIG.url}${BASE_PATH}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Explore',
+        item: `${SITE_CONFIG.url}${BASE_PATH}/explore/`,
+      },
+    ],
+  },
+};
+---
+
+<AppShell
+  title={pageTitle}
+  description={pageDescription}
+  keywords="explore updates, developer timeline, awesome projects, release notes"
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(exploreJsonLd)} />
+  </Fragment>
+
+  <div class="px-4 md:px-6 py-8">
+    <div class="max-w-320 mx-auto">
+      {/* Header */}
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-ds-outline-variant mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-2 text-xs text-ds-text-muted font-bold uppercase tracking-wider">
+            <span class="p-1 rounded bg-ds-primary-container text-ds-on-primary-container flex items-center justify-center">
+              <HugeiconsIcon icon={CompassIcon} className="w-3.5 h-3.5" size={14} client:load />
+            </span>
+            <span>Feed Timeline</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-ds-on-surface tracking-tight">
+            Explore Updates
+          </h1>
+          <p class="text-sm text-ds-on-surface-variant mt-1.5 max-w-xl">
+            A combined chronological view of developer resources, tutorials, tool updates, and platform announcements.
+          </p>
+        </div>
+      </div>
+
+      {/* Main Feed (Full Width) */}
+      <div class="w-full">
+        <ExploreFeed client:load items={combinedItems} />
+      </div>
+    </div>
+  </div>
+</AppShell>

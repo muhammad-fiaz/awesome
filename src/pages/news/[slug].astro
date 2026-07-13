@@ -7,9 +7,11 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Clock01Icon, Calendar01Icon, UserIcon } from '@hugeicons/core-free-icons';
 import { render, getCollection } from 'astro:content';
 import { BASE_PATH, SITE_CONFIG, OWNER } from '@/config/site';
-import { getAuthorsBySlugs, getOrganisationsBySlugs } from '@/lib/posts';
+import { getAuthorsBySlugs, getOrganisationsBySlugs, getFileTimestamps } from '@/lib/posts';
 import { calculateReadingTime } from '@/lib/readingTime';
 import { resolveImageUrl } from '@/lib/utils';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export async function getStaticPaths() {
   const newsEntries = await getCollection('news');
@@ -26,6 +28,9 @@ const { news } = Astro.props;
 if (!news) {
   return Astro.redirect(`${BASE_PATH}/news/`);
 }
+
+const newsFilePath = path.join(process.cwd(), 'src/content/news', news.id);
+const { datePublished, dateModified } = getFileTimestamps(newsFilePath);
 
 const { Content, headings } = await render(news);
 
@@ -44,7 +49,7 @@ const orgList = newsOrgsList.length > 0
   : [];
 
 const readingTime = Math.ceil(calculateReadingTime(news.body ?? ''));
-const formattedDate = new Date(news.data.pubDate).toLocaleDateString('en-US', {
+const formattedDate = datePublished.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -60,8 +65,8 @@ const jsonLd = {
     news.data.thumbnail ? `${Astro.url.origin}${resolveImageUrl(news.data.thumbnail)}` : null,
     news.data.heroImage ? `${Astro.url.origin}${resolveImageUrl(news.data.heroImage)}` : null,
   ].filter(Boolean),
-  datePublished: news.data.pubDate.toISOString(),
-  dateModified: news.data.pubDate.toISOString(),
+  datePublished: datePublished.toISOString(),
+  dateModified: dateModified.toISOString(),
   author: authorList.map((a) => ({
     '@type': 'Person',
     name: a.data.name,
@@ -114,7 +119,7 @@ const heroImage = news.data.heroImage || news.data.thumbnail;
 >
   <Fragment slot="head">
     <meta property="og:type" content="article" />
-    <meta property="article:published_time" content={news.data.pubDate.toISOString()} />
+    <meta property="article:published_time" content={datePublished.toISOString()} />
     <meta property="article:author" content={authorList.map((a) => a.data.name).join(', ')} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
@@ -139,9 +144,9 @@ const heroImage = news.data.heroImage || news.data.thumbnail;
     <div class="px-4 sm:px-6 md:px-8 xl:px-10 pb-6">
       <div class="flex items-center gap-2 mb-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <a href={`${BASE_PATH}/news/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">News</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-ds-on-surface font-medium truncate max-w-40 sm:max-w-xs">{news.data.title}</span>
       </div>
 

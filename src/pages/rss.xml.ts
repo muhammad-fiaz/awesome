@@ -30,16 +30,28 @@ export async function GET(context: APIContext) {
     };
   });
 
-  const newsItems = newsEntries.map((news) => ({
-    title: news.data.title,
-    description: news.data.description,
-    link: `${BASE_PATH}/news/${news.id.replace(/\.md$/, '')}/`,
-    pubDate: news.data.pubDate,
-    categories: [news.data.category ?? 'News', ...news.data.tags],
-  }));
+  const newsItems = newsEntries.map((news) => {
+    const newsFilePath = path.join(process.cwd(), 'src/content/news', news.id);
+    let pubDate = new Date();
+    try {
+      if (fs.existsSync(newsFilePath)) {
+        pubDate = fs.statSync(newsFilePath).birthtime;
+      }
+    } catch (e) {
+      // Fallback
+    }
+
+    return {
+      title: news.data.title,
+      description: news.data.description,
+      link: `${BASE_PATH}/news/${news.id.replace(/\.md$/, '')}/`,
+      pubDate,
+      categories: [news.data.category ?? 'News', ...news.data.tags],
+    };
+  });
 
   const combinedItems = [...postItems, ...newsItems].sort(
-    (a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()
+    (a, b) => b.pubDate.getTime() - a.pubDate.getTime()
   );
 
   return rss({

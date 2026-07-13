@@ -1,5 +1,7 @@
 import { getAllPosts, getPostReadingTime } from '@/lib/posts';
 import { getCollection } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export async function GET() {
   const posts = await getAllPosts();
@@ -28,7 +30,8 @@ export async function GET() {
       readingTime: getPostReadingTime(p),
       featured: p.data.featured,
       difficulty: p.data.difficulty,
-      projectName: p.data.projectName,
+      sources: p.data.sources,
+      links: p.data.links,
     };
   });
 
@@ -39,6 +42,16 @@ export async function GET() {
       .replace(/\n+/g, ' ')
       .trim()
       .slice(0, 5000);
+
+    const newsFilePath = path.join(process.cwd(), 'src/content/news', n.id);
+    let pubDateStr = new Date().toISOString();
+    try {
+      if (fs.existsSync(newsFilePath)) {
+        pubDateStr = fs.statSync(newsFilePath).birthtime.toISOString();
+      }
+    } catch (e) {
+      // Fallback
+    }
 
     return {
       type: 'news',
@@ -54,7 +67,9 @@ export async function GET() {
       readingTime: 3,
       featured: false,
       difficulty: undefined,
-      projectName: n.data.projectName,
+      sources: n.data.sources,
+      links: n.data.links,
+      pubDate: pubDateStr,
     };
   });
 

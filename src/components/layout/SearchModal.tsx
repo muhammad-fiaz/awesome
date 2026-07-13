@@ -129,7 +129,8 @@ export function SearchModal() {
         }
 
         if (isNews) {
-          const slug = cleanUrl.split('/news/').pop() || '';
+          const idx = cleanUrl.indexOf('/news/');
+          const slug = idx !== -1 ? cleanUrl.slice(idx + 6) : '';
           return {
             label,
             href: `${BASE_PATH}/news/${slug}/`,
@@ -137,7 +138,8 @@ export function SearchModal() {
             icon: News01Icon,
           };
         } else if (isPost) {
-          const slug = cleanUrl.split('/post/').pop() || '';
+          const idx = cleanUrl.indexOf('/post/');
+          const slug = idx !== -1 ? cleanUrl.slice(idx + 6) : '';
           const postMatch = posts.find((p) => p.slug === slug);
           return {
             label: postMatch?.title || label,
@@ -164,22 +166,39 @@ export function SearchModal() {
     }
 
     return posts
-      .filter((p) =>
+      .filter((p: any) =>
         queryWords.every(
           (w) =>
             p.title.toLowerCase().includes(w) ||
             p.description.toLowerCase().includes(w) ||
-            p.tags.some((t) => t.toLowerCase().includes(w)) ||
-            p.categories.some((c) => c.toLowerCase().includes(w)),
+            p.tags.some((t: string) => t.toLowerCase().includes(w)) ||
+            p.categories.some((c: string) => c.toLowerCase().includes(w)) ||
+            (p.sourceNames && p.sourceNames.some((s: string) => s.toLowerCase().includes(w)))
         ),
       )
       .slice(0, 8)
-      .map((p) => ({
-        label: p.title,
-        href: `${BASE_PATH}/post/${p.slug}/`,
-        sub: p.categories[0] ?? '',
-        icon: File02Icon,
-      }));
+      .map((p: any) => {
+        let href = `${BASE_PATH}/post/${p.slug}/`;
+        let sub = p.categories[0] ?? 'Post';
+        let icon = File02Icon;
+
+        if (p.type === 'news') {
+          href = `${BASE_PATH}/news/${p.slug}/`;
+          sub = 'News';
+          icon = News01Icon;
+        } else if (p.type === 'guide') {
+          href = `${BASE_PATH}/guide/`;
+          sub = 'Guide';
+          icon = News01Icon;
+        }
+
+        return {
+          label: p.title,
+          href,
+          sub,
+          icon,
+        };
+      });
   }, [queryWords, pagefindResults, posts]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

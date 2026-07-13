@@ -196,3 +196,73 @@ export async function getAuthorsForOrganisation(orgSlug: string): Promise<Author
   return allAuthors.filter((a) => linkedAuthorSlugs.has(a.id.replace(/\.md$/, '')));
 }
 
+import fs from 'node:fs';
+import path from 'node:path';
+
+export function getFileTimestamps(filePath: string) {
+  let datePublished = new Date();
+  let dateModified = new Date();
+  try {
+    if (fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      datePublished = stats.birthtime;
+      dateModified = stats.mtime;
+    }
+  } catch (e) {
+    // Fallback
+  }
+  return { datePublished, dateModified };
+}
+
+export interface NewsEntryWithDates {
+  id: string;
+  data: CollectionEntry<'news'>['data'] & {
+    datePublished: Date;
+    dateModified: Date;
+  };
+  body?: string;
+}
+
+export async function getAllNews(): Promise<NewsEntryWithDates[]> {
+  const newsEntries = await getCollection('news', ({ data }) => !data.draft);
+  return newsEntries.map((n) => {
+    const filePath = path.join(process.cwd(), 'src/content/news', n.id);
+    const { datePublished, dateModified } = getFileTimestamps(filePath);
+    return {
+      id: n.id,
+      data: {
+        ...n.data,
+        datePublished,
+        dateModified,
+      },
+      body: n.body,
+    };
+  });
+}
+
+export interface PostWithDates {
+  id: string;
+  data: CollectionEntry<'posts'>['data'] & {
+    datePublished: Date;
+    dateModified: Date;
+  };
+  body?: string;
+}
+
+export async function getAllPostsWithDates(): Promise<PostWithDates[]> {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((p) => {
+    const filePath = path.join(process.cwd(), 'src/content/posts', p.id);
+    const { datePublished, dateModified } = getFileTimestamps(filePath);
+    return {
+      id: p.id,
+      data: {
+        ...p.data,
+        datePublished,
+        dateModified,
+      },
+      body: p.body,
+    };
+  });
+}
+

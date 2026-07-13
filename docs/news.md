@@ -10,7 +10,6 @@ Every news file must begin with a front matter block enclosed by `---` lines.
 ---
 title: "Awesome Developer Platform Reaches Major Milestone"
 description: "The Awesome platform has officially crossed its initial milestone of listing over 1,000 developer resources."
-pubDate: "2026-07-11"
 authors: ["muhammad-fiaz"]
 organisations: ["google"]
 category: "general"
@@ -28,7 +27,7 @@ draft: false
 |---|---|---|---|
 | `title` | string | **Yes** | The headline of the news article. |
 | `description` | string | **Yes** | A short, compelling teaser summary shown on list pages. |
-| `pubDate` | date string | **Yes** | Publication date in `YYYY-MM-DD` format. |
+| `pubDate` | date string | No | Optional. Custom publication date. If omitted, publication and modification dates are dynamically resolved using file creation (`birthtime`) and modification (`mtime`) times from git/file-system stats. |
 | `authors` | array of strings | No | List of author slugs from `src/content/authors/`. Defaults to `['muhammad-fiaz']`. |
 | `organisations` | array of strings | No | List of associated organisation slugs from `src/content/organisations/`. |
 | `category` | string | No | Grouping category slug (e.g. `web-development`, `ai`, `general`). |

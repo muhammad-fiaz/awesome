@@ -32,7 +32,7 @@ export function HeroStats({ stats }: HeroStatsProps) {
             </p>
           </div>
           {stats && (
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full lg:w-auto lg:flex lg:items-center lg:gap-3 shrink-0">
+            <div className="hidden lg:flex lg:items-center lg:gap-3 shrink-0">
               <div className="bg-ds-surface-high/30 border border-ds-outline-variant/60 rounded-xl p-2 px-3 text-center lg:text-left min-w-[70px] lg:min-w-[85px] flex-1 lg:flex-initial transition-all hover:bg-ds-surface-high/50 hover:border-ds-primary/30">
                 <NumberTicker
                   value={stats.posts}

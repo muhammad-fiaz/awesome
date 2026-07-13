@@ -15,6 +15,7 @@ import {
   StarIcon,
   Tag01Icon,
   UserIcon,
+  CompassIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ import { useSidebarStore } from '@/store/sidebarStore';
 
 const ICON_MAP: Record<string, typeof File02Icon> = {
   home: Home01Icon,
+  explore: CompassIcon,
   article: File02Icon,
   news: News01Icon,
   category: Tag01Icon,

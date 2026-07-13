@@ -79,7 +79,7 @@ export function PostHero({
           >
             Home
           </a>
-          <span className="text-ds-outline-variant">/</span>
+          <span className="text-ds-text-muted">/</span>
           <a
             href={`${BASE_PATH}/posts/`}
             className="text-ds-text-muted hover:text-ds-on-surface transition-colors"
@@ -88,7 +88,7 @@ export function PostHero({
           </a>
           {categories.length > 0 && (
             <>
-              <span className="text-ds-outline-variant">/</span>
+              <span className="text-ds-text-muted">/</span>
               <a
                 href={`${BASE_PATH}/categories/${categories[0]}/`}
                 className="text-ds-text-muted hover:text-ds-on-surface transition-colors capitalize"
@@ -97,7 +97,7 @@ export function PostHero({
               </a>
             </>
           )}
-          <span className="text-ds-outline-variant">/</span>
+          <span className="text-ds-text-muted">/</span>
           <span className="text-ds-on-surface font-medium truncate max-w-[160px] sm:max-w-xs">
             {title}
           </span>

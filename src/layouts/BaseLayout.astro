@@ -89,6 +89,16 @@ const webAppSchema = {
 <html lang={SITE_CONFIG.defaultLocale} class="dark">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('sidebar-open');
+        if (saved === 'false') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        } else {
+          document.documentElement.classList.remove('sidebar-collapsed');
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>

@@ -39,7 +39,7 @@ const postItems = posts.map((p) => ({
   readingTime: getPostReadingTime(p),
   featured: p.data.featured,
   difficulty: p.data.difficulty,
-  projectName: p.data.projectName,
+  sources: p.data.sources,
 }));
 
 const tagItems = tags
@@ -102,9 +102,9 @@ const jsonLd = {
       <!-- Breadcrumbs -->
       <div class="flex items-center gap-2 mb-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <a href={`${BASE_PATH}/categories/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Categories</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">{category.data.title}</span>
       </div>
 

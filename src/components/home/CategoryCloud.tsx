@@ -1,6 +1,6 @@
 'use client';
 import { BASE_PATH } from '@/config/site';
-import { cn } from '@/lib/utils';
+import { MagicCard } from '@/components/ui/magic-card';
 
 interface CategoryItem {
   slug: string;
@@ -15,24 +15,33 @@ interface CategoryCloudProps {
 export function CategoryCloud({ categories }: CategoryCloudProps) {
   return (
     <section>
-      <h2 className="text-xl font-semibold text-ds-on-surface mb-4">
+      <h2 className="text-sm font-bold uppercase tracking-widest text-ds-text-muted mb-4">
         Popular Categories
       </h2>
-      <div className="flex flex-wrap gap-2">
+      <div className="space-y-3">
         {categories.map((cat) => (
-          <a
+          <MagicCard
             key={cat.slug}
-            href={`${BASE_PATH}/categories/${cat.slug}/`}
-            className={cn(
-              'inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium',
-              'bg-ds-surface-high border border-ds-outline-variant',
-              'text-ds-on-surface-variant hover:text-ds-on-surface',
-              'hover:scale-[1.04] transition-all duration-150 ease-out',
-              'focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:ring-offset-1 focus:ring-offset-ds-surface-lowest',
-            )}
+            className="rounded-xl overflow-hidden"
+            gradientSize={120}
+            gradientColor="var(--ds-magic-glow)"
+            gradientFrom="var(--ds-magic-glow-from)"
+            gradientTo="var(--ds-magic-glow-to)"
           >
-            {cat.title}
-          </a>
+            <a
+              href={`${BASE_PATH}/categories/${cat.slug}/`}
+              className="flex items-center justify-between p-3.5 hover:bg-ds-surface-high/30 transition-all border-0 bg-transparent"
+            >
+              <span className="font-bold text-sm text-ds-on-surface">
+                {cat.title}
+              </span>
+              {cat.count !== undefined && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-ds-surface-high text-ds-text-muted border border-ds-outline-variant">
+                  {cat.count} post{cat.count !== 1 ? 's' : ''}
+                </span>
+              )}
+            </a>
+          </MagicCard>
         ))}
       </div>
     </section>

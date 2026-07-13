@@ -1,7 +1,6 @@
 ---
 title: "Google Announces New Developer Tools for 2026"
 description: "At the latest developer keynote, Google announced a suite of next-generation tools including new AI-powered code assistants and performance monitoring integrations."
-pubDate: "2026-07-10"
 authors: ["muhammad-fiaz"]
 organisations: ["google"]
 category: "web-development"

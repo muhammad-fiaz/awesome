@@ -58,8 +58,8 @@ const posts = defineCollection({
       .optional(),
     license: z.string().optional(),
     language: z.string().default('English'),
-    difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']).optional(),
-    projectName: z.string().optional(),
+    difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+    sources: z.array(z.object({ name: z.string(), url: z.string().optional() })).default([]),
   }),
 });
 
@@ -154,7 +154,7 @@ const news = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    pubDate: z.coerce.date(),
+    pubDate: z.coerce.date().optional(),
     summary: z.string().optional(),
     authors: z.array(z.string()).default([]),
     organisations: z.array(z.string()).default([]),
@@ -186,7 +186,7 @@ const news = defineCollection({
     difficulty: z
       .enum(['beginner', 'intermediate', 'advanced', 'expert'])
       .optional(),
-    projectName: z.string().optional(),
+    sources: z.array(z.object({ name: z.string(), url: z.string().optional() })).default([]),
   }),
 });
 

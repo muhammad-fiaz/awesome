@@ -24,6 +24,7 @@ import {
   getPostReadingTime,
   getPostsByOrganisation,
   getAuthorsForOrganisation,
+  getAllNews,
 } from '@/lib/posts';
 
 export async function getStaticPaths() {
@@ -40,10 +41,10 @@ const posts = await getPostsByOrganisation(slug);
 const { Content } = await render(organisation);
 const linkedAuthors = await getAuthorsForOrganisation(slug);
 
-const allNews = await getCollection('news', ({ data }) => !data.draft);
+const allNews = await getAllNews();
 const orgNews = allNews
   .filter((n) => n.data.organisations?.includes(slug))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf());
 
 const postItems = posts.map((p) => ({
   slug: p.id.replace(/\.(md|mdx)$/, ''),
@@ -116,6 +117,12 @@ const organisationJsonLd = {
     organisation.data.website,
     organisation.data.portfolio,
   ].filter(Boolean),
+  member: linkedAuthors.map(author => ({
+    '@type': 'Person',
+    name: author.data.name,
+    url: `${SITE_CONFIG.url}${BASE_PATH}/authors/${author.id.replace(/\.md$/, '')}/`,
+    image: author.data.avatar,
+  })),
 };
 ---
 
@@ -135,9 +142,9 @@ const organisationJsonLd = {
       <!-- Breadcrumbs -->
       <div class="flex items-center gap-2 mb-6 pt-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <a href={`${BASE_PATH}/organisations/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Organisations</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">{organisation.data.name}</span>
       </div>
 
@@ -261,12 +268,12 @@ const organisationJsonLd = {
                     slug: newsSlug,
                     title: newsItem.data.title,
                     description: newsItem.data.description,
-                    pubDate: newsItem.data.pubDate.toISOString(),
+                    pubDate: newsItem.data.datePublished.toISOString(),
                     authors: newsItem.data.authors,
                     category: newsItem.data.category,
                     tags: newsItem.data.tags,
                     thumbnail: newsItem.data.thumbnail,
-                    projectName: newsItem.data.projectName,
+                    sources: newsItem.data.sources,
                   };
                   return (
                     <NewsCard news={newsItemData} view="list" client:load />

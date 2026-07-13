@@ -105,6 +105,7 @@ const rawGiscus = {
 
 const rawNavLinks = [
   { label: 'Home', href: `${BASE_PATH}/`, icon: 'home' },
+  { label: 'Explore', href: `${BASE_PATH}/explore/`, icon: 'explore' },
   { label: 'Posts', href: `${BASE_PATH}/posts/`, icon: 'article' },
   { label: 'News', href: `${BASE_PATH}/news/`, icon: 'news' },
   { label: 'Categories', href: `${BASE_PATH}/categories/`, icon: 'category' },

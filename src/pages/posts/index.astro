@@ -50,6 +50,8 @@ const posts = allPosts.map((p) => ({
   readingTime: getPostReadingTime(p),
   featured: p.data.featured,
   difficulty: p.data.difficulty,
+  sources: p.data.sources,
+  links: p.data.links,
 }));
 
 const jsonLd = {
@@ -90,7 +92,7 @@ const jsonLd = {
       <!-- Breadcrumbs -->
       <div class="flex items-center gap-2 mb-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-sm text-ds-on-surface font-medium">Resources</span>
       </div>
 
@@ -129,7 +131,7 @@ const jsonLd = {
               <p class="text-ds-text-muted text-lg">No posts found.</p>
             </div>
           ) : (
-            <PostsFeed client:load posts={posts} />
+            <PostsFeed client:load posts={posts} showSearch={true} />
           )}
         </div>
 

@@ -16,6 +16,7 @@ import {
   ShieldIcon,
   ExternalLinkIcon,
   Briefcase01Icon,
+  CompassIcon,
 } from '@hugeicons/core-free-icons';
 import { NAV_LINKS, DISCOVER_LINKS, COMMUNITY_LINKS, BASE_PATH } from '@/config/site';
 import { SidebarInteractive } from '@/components/layout/SidebarInteractive';
@@ -33,6 +34,7 @@ function isActive(href: string): boolean {
 
 const ICON_MAP: Record<string, any> = {
   home: Home01Icon,
+  explore: CompassIcon,
   article: File02Icon,
   news: News01Icon,
   category: GridIcon,

@@ -17,7 +17,8 @@ export interface NewsCardData {
   category?: string;
   tags: string[];
   thumbnail?: string;
-  projectName?: string;
+  sources?: { name: string; url?: string }[];
+  organisations?: string[];
 }
 
 interface NewsCardProps {
@@ -106,6 +107,17 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
               Read News
               <HugeiconsIcon icon={ArrowRight01Icon} size={11} />
             </Button>
+            {news.category && (
+              <span className="absolute bottom-2 left-2 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full bg-ds-surface-lowest/90 text-ds-secondary backdrop-blur-sm border border-ds-outline-variant/40">
+                {news.category}
+              </span>
+            )}
+            <span className={cn(
+              "absolute bottom-2 right-2 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider rounded-full backdrop-blur-sm border z-10",
+              "bg-orange-500/80 dark:bg-orange-950/80 text-white dark:text-orange-400 border-orange-500/30"
+            )}>
+              news
+            </span>
           </div>
 
           {/* Content */}
@@ -187,14 +199,32 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
 
         {/* Content (Right side on desktop) */}
         <div className="p-4 flex flex-col flex-1 min-w-0">
-          {news.projectName && (
-            <div className="flex items-center mb-1.5">
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20">
-                {news.projectName}
-              </span>
+          {news.sources && news.sources.length > 0 && (
+            <div className="flex flex-wrap gap-1 items-center mb-1.5">
+              {news.sources.map((src) => {
+                const badge = (
+                  <span key={src.name} className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-ds-secondary-container/10 text-ds-secondary border border-ds-secondary/20 hover:bg-ds-secondary/20 transition-colors">
+                    {src.name}
+                  </span>
+                );
+                if (src.url) {
+                  return (
+                    <a key={src.name} href={src.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="no-underline">
+                      {badge}
+                    </a>
+                  );
+                }
+                return badge;
+              })}
             </div>
           )}
-          <div className="flex items-center gap-3 text-[10px] text-ds-text-muted mb-2">
+          <div className="flex flex-wrap items-center gap-3 text-[10px] text-ds-text-muted mb-2">
+            <span className={cn(
+              "inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider border",
+              "bg-orange-500/10 text-orange-500 border-orange-500/20"
+            )}>
+              news
+            </span>
             <span className="flex items-center gap-1">
               <HugeiconsIcon icon={Calendar01Icon} size={11} strokeWidth={1.5} />
               <span>{formattedDate}</span>
@@ -203,6 +233,14 @@ export function NewsCard({ news, view = 'list' }: NewsCardProps) {
               <HugeiconsIcon icon={UserIcon} size={11} strokeWidth={1.5} />
               <span className="capitalize">{authorNames}</span>
             </span>
+            {news.organisations && news.organisations.length > 0 && (
+              <>
+                <span className="text-ds-text-muted text-[10px]">·</span>
+                <span className="text-[10px] text-ds-text-muted bg-ds-surface-high/60 px-1.5 py-0.5 rounded capitalize">
+                  {news.organisations.map((org) => org.replace(/-/g, ' ')).join(', ')}
+                </span>
+              </>
+            )}
           </div>
 
           <h3 className="font-semibold text-ds-on-surface text-sm sm:text-base line-clamp-2 leading-snug mb-1.5">

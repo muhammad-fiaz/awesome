@@ -26,6 +26,7 @@ import {
   getPostReadingTime,
   getPostsByAuthor,
   getOrganisationsForAuthor,
+  getAllNews,
 } from '@/lib/posts';
 
 export async function getStaticPaths() {
@@ -41,10 +42,10 @@ const slug = author.id.replace(/\.md$/, '');
 const posts = await getPostsByAuthor(slug);
 const { Content } = await render(author);
 
-const allNews = await getCollection('news', ({ data }) => !data.draft);
+const allNews = await getAllNews();
 const authorNews = allNews
   .filter((n) => n.data.authors.includes(slug))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort((a, b) => b.data.datePublished.valueOf() - a.data.datePublished.valueOf());
 
 const authorOrgs = await getOrganisationsForAuthor(slug);
 const authorOrg = authorOrgs[0] || null;
@@ -136,14 +137,16 @@ const authorJsonLd = {
     author.data.website,
     author.data.portfolio,
   ].filter(Boolean),
-  worksFor: authorOrg ? {
+  worksFor: authorOrgs.length > 0 ? authorOrgs.map(org => ({
     '@type': 'Organization',
-    name: authorOrg.data.name,
-    url: authorOrg.data.website || `${SITE_CONFIG.url}${BASE_PATH}/organisations/${author.data.organisation}/`,
-  } : {
-    '@type': 'Organization',
-    name: SITE_CONFIG.name,
-  },
+    name: org.data.name,
+    url: org.data.website || `${SITE_CONFIG.url}${BASE_PATH}/organisations/${org.id.replace(/\.md$/, '')}/`,
+  })) : [
+    {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+    }
+  ],
 };
 ---
 
@@ -163,9 +166,9 @@ const authorJsonLd = {
       <!-- Breadcrumbs -->
       <div class="flex items-center gap-2 mb-6 pt-4 text-sm">
         <a href={`${BASE_PATH}/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Home</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <a href={`${BASE_PATH}/authors/`} class="text-ds-text-muted hover:text-ds-on-surface transition-colors">Authors</a>
-        <span class="text-ds-outline-variant">/</span>
+        <span class="text-ds-text-muted">/</span>
         <span class="text-sm text-ds-on-surface font-medium truncate max-w-[200px]">{author.data.name}</span>
       </div>
 
@@ -304,12 +307,12 @@ const authorJsonLd = {
                     slug: newsSlug,
                     title: newsItem.data.title,
                     description: newsItem.data.description,
-                    pubDate: newsItem.data.pubDate.toISOString(),
+                    pubDate: newsItem.data.datePublished.toISOString(),
                     authors: newsItem.data.authors,
                     category: newsItem.data.category,
                     tags: newsItem.data.tags,
                     thumbnail: newsItem.data.thumbnail,
-                    projectName: newsItem.data.projectName,
+                    sources: newsItem.data.sources,
                   };
                   return (
                     <NewsCard news={newsItemData} view="list" client:load />

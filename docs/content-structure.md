@@ -31,7 +31,7 @@ See the [How to Publish](/awesome/guide/) guide for detailed instructions.
 | Type | Folder | File Format | Key Fields |
 |------|--------|-------------|------------|
 | Posts | `posts/<category>/` | `.md` or `.mdx` | title, description, authors, organisations, categories, tags |
-| News | `news/` | `.md` | title, description, pubDate, authors, organisations, category, tags, thumbnail, heroImage |
+| News | `news/` | `.md` | title, description, pubDate (optional), authors, organisations, category, tags, thumbnail, heroImage |
 | Guides | `guides/` | `.md` | title, description, keywords, heroImage, authors, organisations |
 | Authors | `authors/` | `.md` | name, avatar, organisation, bio |
 | Organisations | `organisations/` | `.md` | name, avatar, bio |
